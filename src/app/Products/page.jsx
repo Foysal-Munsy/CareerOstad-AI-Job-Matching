@@ -44,7 +44,7 @@ export default function TermsAndConditions() {
                 By accessing and using CareerOstad ("the Platform"), you accept and agree to be bound by the terms and
                 provision of this agreement. If you do not agree to abide by the above, please do not use this service.
               </p>
-              <div className="alert alert-info">
+              <div className="alert bg-secondary">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -229,7 +229,7 @@ export default function TermsAndConditions() {
                 Privacy and Data Protection
               </h2>
               <div className="divider"></div>
-              <div className="alert alert-info mb-4">
+              <div className="alert  mb-4  bg-success/10">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -338,7 +338,7 @@ export default function TermsAndConditions() {
           <div className="card bg-primary text-white shadow-xl">
             <div className="card-body">
               <h2 className="card-title text-2xl flex items-center text-white">
-                <span className="badge badge-white text-primary badge-lg mr-3">10</span>
+               
                 Contact Information
               </h2>
               <div className="divider divider-white"></div>
