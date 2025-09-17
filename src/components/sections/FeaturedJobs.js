@@ -55,7 +55,7 @@ const FeaturedJobs = () => {
             { 
               title: "UX Designer", 
               company: "DesignStudio", 
-              location: "Austin, TX", 
+              location: "Dhanmondi,Dhaka", 
               type: "Full-time",
               salary: "$85K - $115K",
               featured: false,

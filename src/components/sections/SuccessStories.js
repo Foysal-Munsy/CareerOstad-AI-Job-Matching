@@ -21,7 +21,7 @@ const SuccessStories = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
               {
-                name: "Sarah Chen",
+                name: "Tazminur Rahman Tanim",
                 role: "Software Engineer at Google",
                 avatar: "👩‍💻",
                 rating: 5,
@@ -31,7 +31,7 @@ const SuccessStories = () => {
                 salaryIncrease: "+65%"
               },
               {
-                name: "Marcus Rodriguez",
+                name: "Foysal Munsi",
                 role: "Product Manager at Spotify",
                 avatar: "👨‍💼",
                 rating: 5,
@@ -41,7 +41,7 @@ const SuccessStories = () => {
                 salaryIncrease: "+40%"
               },
               {
-                name: "Priya Patel",
+                name: "Naeem Haider",
                 role: "Data Scientist at Netflix",
                 avatar: "👩‍🔬",
                 rating: 5,
