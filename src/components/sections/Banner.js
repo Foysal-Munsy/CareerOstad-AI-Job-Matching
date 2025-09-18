@@ -51,7 +51,7 @@ const Banner = () => {
             src="https://i.ibb.co.com/hF09BJ7C/image.png"
             alt="Career Guidance"
             width={600}
-            height={500}
+            height={450}
             className="rounded-xl shadow-lg"
           />
           <span className="absolute top-3 right-3 bg-yellow-400 text-white text-sm px-3 py-1 rounded-full font-medium">
