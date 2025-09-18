@@ -5,7 +5,7 @@ import React from 'react';
 const Banner = () => {
   return (
     <section className="bg-gray-50 py-12">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-7 items-center">
         {/* Left side text */}
         <div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
