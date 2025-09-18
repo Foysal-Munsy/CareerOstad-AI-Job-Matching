@@ -7,10 +7,112 @@
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
-    --color-primary: blue;
-    --color-secondary: violet;
+    --color-primary: #19183B;
+    --color-secondary: #708993;
 };
 
+
+/* CSS for Navbar Start */
+.menu-list li {
+    /* padding: 10px 20px; */
+    border-radius: 10px;
+    transition: color 0.5s;
+    transition: background-color 0.5s;
+}
+.menu-list li a{
+    width: 100%;
+    display: block;    
+}
+.sub-menu {
+    animation: slowDown1 0.3s ease-out;
+}
+
+.icon {
+    transition: 0.5s;
+}
+
+.dropdown:hover .icon {
+    transform: rotate(270deg);
+    /* background-color: #f306f3; */
+    opacity: 1;
+    transition: 0.5s;
+}
+
+.dropdown:hover .sub-menu {
+    animation: slowDown 0.3s ease-out;
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+}
+
+.sub-menu-list:hover {
+    margin-left: 5px;
+    transition: 0.5s ease-out;
+}
+
+.sub-menu-list:hover .go-icon {
+    display: inline-block;
+}
+
+@keyframes slowDown {
+
+    from {
+        transform: rotate(-100deg);
+        /* transform: translateY(-20px); */
+        scale: 0;
+    }
+
+    to {
+        transform: rotate(0deg);
+        /* transform: translateY(0); */
+        scale: 1;
+
+    }
+}
+
+@keyframes slowDown1 {
+
+    from {
+        transform: rotate(0deg);
+        /* transform: translateY(-10px); */
+        scale: 1;
+
+    }
+
+    to {
+        transform: rotate(-100deg);
+        /* transform: translateY(-50px); */
+        scale: 0;
+
+
+    }
+}
+
+.social-area a .social-icon {
+    transition: background-color 1s;
+}
+
+.social-area button {
+    transition: background-color 1s;
+    cursor: pointer;
+    /* background-color: #f306f3; */
+}
+.side-panel-1 {
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+    animation: slideIn .4s ease-in-out
+}
+
+@keyframes slideIn {
+    from {
+        translate: 150vw 0;
+        /* opacity: 0; */
+    }
+
+    to {
+        translate: 100 100;
+        /* opacity: 1; */
+
+    }
+}
+/* CSS for Navbar End */
 
 
 
