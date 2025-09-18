@@ -20,7 +20,7 @@ const Navbar = () => {
                     <figure className='w-10'>
                         <img className='relative right-2' alt="CO" />
                     </figure>
-                    <figcaption className='-ml-3 text-xl text-primary logo-text hidden md:block'>CarrierOstad</figcaption>
+                    <figcaption className='-ml-3 text-xl text-primary logo-text hidden md:block'>CareerOstad</figcaption>
                 </Link>
                 </div>
                 <div>            

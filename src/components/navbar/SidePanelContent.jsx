@@ -11,7 +11,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
                     <figure className='w-10'>
                         <img className='relative right-2' alt="N" />
                     </figure>
-                    <figcaption className='-ml-3 text-xl logo-text'>CarrierOstad</figcaption>
+                    <figcaption className='-ml-3 text-xl logo-text'>CareerOstad</figcaption>
                 </Link>
                 <button onClick={() => setSideMenu(!sideMenu)} className='mx-6 cursor-pointer'><CgClose /></button>
             </div>

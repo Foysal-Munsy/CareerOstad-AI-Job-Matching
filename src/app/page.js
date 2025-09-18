@@ -5,8 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div>
-      <HomePage />      
-      <Link href='/Products' className="btn ">Terms and Condition</Link>
+      <HomePage />
     </div>
   );
 }

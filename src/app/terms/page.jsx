@@ -1,27 +1,13 @@
 export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-base-100">
-      {/* Header */}
-      <div className="navbar bg-primary shadow-lg">
-        <div className="container mx-auto">
-          <div className="flex-1">
-            <a className="btn btn-ghost text-xl font-bold text-white hover:text-white">CareerOstad</a>
-          </div>
-          <div className="flex-none">
-            <a href="/" className="btn btn-ghost text-white hover:text-white">
-              Back to Home
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto py-8">
         {/* Hero Section */}
         <div className="hero bg-base-200 rounded-lg mb-8">
           <div className="hero-content text-center py-12">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold text-primary">Terms & Conditions</h1>
+              <h1 className="text-4xl font-bold text-primary">Terms & Conditions</h1>
               <p className="py-6 text-base-content/70">
                 Please read these terms carefully before using CareerOstad services
               </p>
@@ -365,24 +351,6 @@ export default function TermsAndConditions() {
             </div>
           </div>
         </div>
-
-        {/* Footer */}
-        <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded-lg mt-12">
-          <nav className="grid grid-flow-col gap-4">
-            <a className="link link-hover">Privacy Policy</a>
-            <a className="link link-hover">Cookie Policy</a>
-            <a className="link link-hover">Support</a>
-            <a className="link link-hover">About Us</a>
-          </nav>
-          <aside>
-            <p className="font-bold">
-              CareerOstad
-              <br />
-              AI-Powered Career Solutions Since 2024
-            </p>
-            <p>Copyright © 2024 - All rights reserved</p>
-          </aside>
-        </footer>
       </div>
     </div>
   )
