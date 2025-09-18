@@ -35,7 +35,8 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
                             <li className='sub-menu-list px-5 py-2.5'><a href="#">Post Job<span className='hidden go-icon'>&gt;</span></a></li>
                         </ul>
                     </div>
-                </details>                
+                </details>
+                <li className='px-5 py-2.5' onClick={() => setSideMenu(!sideMenu)}><Link href="/advice" className=''>Carrier Advice</Link></li>                
                 {/* <Dropdowns sideMenu={sideMenu} setSideMenu={setSideMenu} /> */}
                 <div className='md:hidden'>
                     <Link href='/' className='inline-flex text-sm items-center cursor-pointer border px-4 py-1 rounded-lg transition-all duration-1000 mx-4 w-fit justify-center'>
