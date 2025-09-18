@@ -11,7 +11,6 @@ export default function Home() {
       <h1 className="text-secondary">This is secondary color</h1>
       <Link href='/Products' className="btn ">Terms and Condition</Link> */}
       <HomePage></HomePage>
-
     </div>
   );
 }
