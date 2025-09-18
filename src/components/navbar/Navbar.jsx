@@ -16,9 +16,9 @@ const Navbar = () => {
         <nav className={`sticky top-0 transition-all duration-1000 z-[9999] bg-base-200`}>
             <div className='py-2 font-bold container mx-auto flex justify-between items-center'>
                 <div>
-                <Link href='/' onClick={() => window.scrollTo(0, 0)} className='flex items-end boder'>
+                <Link href='/' onClick={() => window.scrollTo(0, 0)} className='border flex items-end'>
                     <figure className='w-10'>
-                        <img className='relative right-2' alt="N" />
+                        <img className='relative right-2' alt="CO" />
                     </figure>
                     <figcaption className='-ml-3 text-xl text-primary logo-text hidden md:block'>CarrierOstad</figcaption>
                 </Link>
@@ -27,7 +27,7 @@ const Navbar = () => {
                 <Search/>
                 </div>
                 <div className='hidden lg:block'>
-                    <ul className='flex gap-3 menu-list text-sm xl:text-[16px]'>
+                    <ul className='flex gap-2 xl:gap-6 menu-list text-sm xl:text-[16px]'>
                         <li onClick={() => window.scrollTo(0, 0)}><Link href='/'>Home</Link></li>
                         <li><a href="/#about">Jobs</a></li>
                         <Dropdowns />
