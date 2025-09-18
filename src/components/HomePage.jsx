@@ -14,7 +14,6 @@ const HomePage = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Import and render all sections */}
       <Banner></Banner>
-
       <KeyHighlights />
       <HowItWorks />
       <ExploreCareerPaths />
