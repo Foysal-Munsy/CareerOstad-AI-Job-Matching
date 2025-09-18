@@ -1,27 +1,13 @@
 export default function TermsAndConditions() {
   return (
     <div className="min-h-screen bg-base-100">
-      {/* Header */}
-      <div className="navbar bg-primary shadow-lg">
-        <div className="container mx-auto">
-          <div className="flex-1">
-            <a className="btn btn-ghost text-xl font-bold text-white hover:text-white">CareerOstad</a>
-          </div>
-          <div className="flex-none">
-            <a href="/" className="btn btn-ghost text-white hover:text-white">
-              Back to Home
-            </a>
-          </div>
-        </div>
-      </div>
-
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto py-8">
         {/* Hero Section */}
         <div className="hero bg-base-200 rounded-lg mb-8">
           <div className="hero-content text-center py-12">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold text-primary">Terms & Conditions</h1>
+              <h1 className="text-4xl font-bold text-primary">Terms & Conditions</h1>
               <p className="py-6 text-base-content/70">
                 Please read these terms carefully before using CareerOstad services
               </p>
@@ -335,54 +321,43 @@ export default function TermsAndConditions() {
           </div>
 
           {/* Section 10: Contact Information */}
-          <div className="card bg-primary text-white shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title text-2xl flex items-center text-white">
-               
-                Contact Information
-              </h2>
-              <div className="divider divider-white"></div>
-              <p className="leading-relaxed mb-4">
-                For questions about these Terms and Conditions or our services, please contact us:
-              </p>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">📧</div>
-                  <div className="font-semibold">Email</div>
-                  <div className="text-sm opacity-90">legal@careerostd.com</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">📞</div>
-                  <div className="font-semibold">Phone</div>
-                  <div className="text-sm opacity-90">+1 (555) 123-4567</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🏢</div>
-                  <div className="font-semibold">Address</div>
-                  <div className="text-sm opacity-90">123 Career St, Tech City</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <div className="card bg-primary text-white shadow-2xl rounded-2xl">
+  <div className="card-body">
+    <h2 className="card-title text-3xl font-bold flex items-center gap-2">
+      📬 Contact Information
+    </h2>
+    <div className="divider opacity-60"></div>
 
-        {/* Footer */}
-        <footer className="footer footer-center p-10 bg-base-200 text-base-content rounded-lg mt-12">
-          <nav className="grid grid-flow-col gap-4">
-            <a className="link link-hover">Privacy Policy</a>
-            <a className="link link-hover">Cookie Policy</a>
-            <a className="link link-hover">Support</a>
-            <a className="link link-hover">About Us</a>
-          </nav>
-          <aside>
-            <p className="font-bold">
-              CareerOstad
-              <br />
-              AI-Powered Career Solutions Since 2024
-            </p>
-            <p>Copyright © 2024 - All rights reserved</p>
-          </aside>
-        </footer>
+    <p className="leading-relaxed mb-6 text-sm md:text-base opacity-90">
+      For questions about these Terms and Conditions or our services, please contact us:
+    </p>
+
+    <div className="grid md:grid-cols-3 gap-6">
+      {/* Email */}
+      <div className="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition">
+        <div className="text-3xl mb-2">📧</div>
+        <div className="font-semibold text-lg">Email</div>
+        <div className="text-sm opacity-90">legal@careerostd.com</div>
+      </div>
+
+      {/* Phone */}
+      <div className="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition">
+        <div className="text-3xl mb-2">📞</div>
+        <div className="font-semibold text-lg">Phone</div>
+        <div className="text-sm opacity-90">+1 (555) 123-4567</div>
+      </div>
+
+      {/* Address */}
+      <div className="text-center p-4 bg-white/10 rounded-xl hover:bg-white/20 transition">
+        <div className="text-3xl mb-2">🏢</div>
+        <div className="font-semibold text-lg">Address</div>
+        <div className="text-sm opacity-90">123 Career St, Tech City</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+        </div>
       </div>
     </div>
   )
