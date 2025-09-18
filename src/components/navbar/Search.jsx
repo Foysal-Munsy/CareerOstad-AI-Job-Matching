@@ -14,23 +14,31 @@ const Search = () => {
 
     return (
         <form
-            className="flex items-center mx-2 text-sm rounded-lg border border-primary h-8"
+            className="flex items-center mx-2 text-sm rounded-lg h-8 shadow-md"
             onSubmit={e => {
                 e.preventDefault();
                 // Handle search logic here
             }}
         >
-            <select
+            {/* <select
                 value={searchCategory}
                 onChange={e => setSearchCategory(e.target.value)}
-                className="h-8 hidden sm:block shadow-none rounded-l-lg focus:outline-none cursor-pointer bg-gray-100 border border-primary text-sm"
+                className="h-8 hidden sm:block rounded-l-lg focus:outline-none cursor-pointer bg-gray-200 text-center text-sm"
             >
+                <div className='px-4 py-2'>
                 <option value="All">All</option>
                 <option value="Candidates">Candidates</option>
                 <option value="Companies">Companies</option>
                 <option value="Jobs">Jobs</option>
+                </div>
+            </select> */}
+            <select defaultValue="All" className="select h-8 hidden sm:block rounded-none rounded-l-lg border-none focus:outline-none cursor-pointer bg-gray-200 text-center text-sm w-fit">
+                <option>All</option>
+                <option>Jobs</option>
+                <option>Candidates</option>
+                <option>Companies</option>
             </select>
-            <div className="flex items-center px-2 rounded-md relative">
+            <div className="flex items-center px-2 relative bg-white h-8 rounded-l-lg sm:rounded-l-none">
                 <FaSearch className="text-gray-400 mr-2" />
                 <input
                     type="text"
