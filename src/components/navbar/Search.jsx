@@ -38,7 +38,7 @@ const Search = () => {
                     onChange={e => setSearchQuery(e.target.value)}
                     placeholder={`Search For `}
                     className="bg-transparent outline-none w-full"
-                    style={{ minWidth: '180px' }}
+                    style={{ minWidth: '140px' }}
                 />
                 {searchQuery === "" && (
                     <span className="absolute left-[105px] pointer-events-none text-gray-400">
