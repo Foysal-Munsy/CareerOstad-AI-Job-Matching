@@ -29,10 +29,11 @@ const Navbar = () => {
                     <ul className='flex gap-2 xl:gap-6 menu-list text-sm xl:text-[16px]'>
                         <li onClick={() => window.scrollTo(0, 0)}><Link href='/'>Home</Link></li>
                         <li><a href="/#about">Jobs</a></li>
-                        <Dropdowns />                        
+                        <Dropdowns />
+                        <li><a href="/advice">Advice</a></li>                        
                     </ul>
                 </div>
-                <div className='hidden md:flex items-center gap-3 social-area ml-3'>                    
+                <div className='hidden md:flex items-center gap-3 social-area mx-3'>                    
                     <a href='#' target='_blank' className='inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-lg text-primary transition-all duration-1000 hover:bg-black hover:text-white'>
                         Login
                     </a>
