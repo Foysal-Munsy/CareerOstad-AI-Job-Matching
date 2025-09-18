@@ -3,17 +3,17 @@ const menus = [
     {
         label: 'Candidates',
         items: [
-            { label: 'Route-1', href: '/#projects' },
-            { label: 'Route-2', href: '/projects' },
-            { label: 'Route-3', href: '/projects' },
+            { label: 'Cadidate Dashboard', href: '#' },
+            { label: 'Match Your Skill', href: '#' },
+            { label: 'Apply For Job', href: '#' },
         ]
     },
     {
         label: 'Company',
         items: [
-            { label: 'Route-1', href: '/#projects' },
-            { label: 'Route-2', href: '/projects' },
-            { label: 'Route-3', href: '/projects' },
+            { label: 'Company Dashboard', href: '#' },
+            { label: 'Match Candidate', href: '#' },
+            { label: 'Post Job', href: '#' },
         ]
     }
 ]
@@ -31,7 +31,7 @@ const Dropdowns = ({ sideMenu, setSideMenu }) => {
                                     <div className='icon w-2 h-0.5 bg-primary text-primary -rotate-45 opacity-80 -ml-1'></div>
                                 </div>
                             </div>
-                            <ul tabIndex={0} className="dropdown-content menu bg-[#10263f] mt-0 rounded-box z-1 w-52 p-2 shadow-lg text-white sub-menu">
+                            <ul tabIndex={0} className="dropdown-content menu bg-[#10263f] mt-0 rounded-box z-1 w-52 p-2 py-4 space-y-3 shadow-lg text-white sub-menu">
                                 {
                                     menu.items.map((item, index) => {
                                         return (

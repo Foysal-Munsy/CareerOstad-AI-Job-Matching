@@ -1,38 +1,94 @@
 import React from "react";
 import Link from "next/link";
-import { FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook, FaLinkedin, FaWhatsapp, FaGooglePlay, FaApple, FaYoutube, FaInstagram } from "react-icons/fa";
 import { SiGmail } from "react-icons/si";
 
 const Footer = () => (
-  <footer className="bg-base-200 text-gray-700 py-10">
-    <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
-      <div className="mb-4 md:mb-0 text-center md:text-left">
-        <span className="font-bold text-primary text-lg">CareerOstad</span>
-        <span className="block text-sm mt-1">&copy; {new Date().getFullYear()} All rights reserved.</span>
+  <footer className="bg-gray-800 text-gray-200 pt-10 pb-6 mt-10">
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {/* About Us */}
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-white">About Us</h3>
+          <ul className="space-y-2">
+            <li><Link href="/about" className="hover:underline transition">About CareerOstad</Link></li>
+            <li><Link href="/terms" className="hover:underline transition">Terms & Conditions</Link></li>
+            <li><Link href="/accessibility" className="hover:underline transition">Accessibility Statement</Link></li>
+            <li><Link href="/partners/international" className="hover:underline transition">International Partners</Link></li>
+            <li><Link href="/partners/other" className="hover:underline transition">Other Partners</Link></li>
+            <li><Link href="/privacy" className="hover:underline transition">Privacy Policy</Link></li>
+            <li><Link href="/feedback" className="hover:underline transition">Feedback</Link></li>
+            <li><Link href="/contact" className="hover:underline transition">Contact Us</Link></li>
+          </ul>
+        </div>
+        {/* Job Seekers */}
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-white">Job Seekers</h3>
+          <ul className="space-y-2">
+            <li><Link href="/register" className="hover:underline transition">Create Account</Link></li>
+            <li><Link href="/pro" className="hover:underline transition">CareerOstad Pro</Link></li>
+            <li><Link href="/video-cv" className="hover:underline transition">Video CV</Link></li>
+            <li><Link href="/panel" className="hover:underline transition">My Panel</Link></li>
+            <li><Link href="/features" className="hover:underline transition">List of Features</Link></li>
+            <li><Link href="/counseling" className="hover:underline transition">Career Counseling</Link></li>
+            <li><Link href="/guides" className="hover:underline transition">Video Guides</Link></li>
+            <li><Link href="/faq" className="hover:underline transition">FAQ</Link></li>
+          </ul>
+        </div>
+        {/* Recruiter */}
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-white">Recruiter</h3>
+          <ul className="space-y-2">
+            <li><Link href="/employer/register" className="hover:underline transition">Create Account</Link></li>
+            <li><Link href="/employer/products" className="hover:underline transition">Products/Service</Link></li>
+            <li><Link href="/employer/disability" className="hover:underline transition">Disability Inclusion Practice</Link></li>
+            <li><Link href="/employer/post-job" className="hover:underline transition">Post a Job</Link></li>
+            <li><Link href="/employer/faq" className="hover:underline transition">FAQ</Link></li>
+          </ul>
+          <div className="mt-4">
+            <span className="block mb-2 text-sm text-gray-400">Download Employer App</span>
+            <div className="flex gap-2">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <FaGooglePlay size={32} className="hover:underline" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <FaApple size={32} className="hover:underline" />
+              </a>
+            </div>
+          </div>
+        </div>
+        {/* Tools & Social Media */}
+        <div>
+          <h3 className="font-bold text-lg mb-3 text-white">Tools & Social Media</h3>
+          <ul className="space-y-2">
+            <li><a href="#" className="hover:underline transition">CareerOstad Android App</a></li>
+            <li><a href="#" className="hover:underline transition">CareerOstad iOS App</a></li>
+            <li><a href="#" className="hover:underline transition flex items-center gap-2"><FaFacebook /> Facebook</a></li>
+            <li><a href="#" className="hover:underline transition flex items-center gap-2"><FaGooglePlay /> Google</a></li>
+            <li><a href="#" className="hover:underline transition flex items-center gap-2"><FaYoutube /> Youtube</a></li>
+            <li><a href="#" className="hover:underline transition flex items-center gap-2"><FaLinkedin /> LinkedIn</a></li>
+            <li><a href="#" className="hover:underline transition flex items-center gap-2"><FaInstagram /> Instagram</a></li>
+          </ul>
+          <div className="mt-4">
+            <span className="block mb-2 text-sm text-gray-400">Download Mobile App</span>
+            <div className="flex gap-2">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <FaGooglePlay size={32} className="hover:underline" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <FaApple size={32} className="hover:underline" />
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="mb-4 md:mb-0 flex flex-wrap gap-4 justify-center md:justify-start">
-        <Link href="/" className="hover:text-primary transition">Home</Link>
-        <Link href="/jobs" className="hover:text-primary transition">Jobs</Link>
-        <Link href="/candidates" className="hover:text-primary transition">Candidates</Link>
-        <Link href="/companies" className="hover:text-primary transition">Companies</Link>
-        <Link href="/about" className="hover:text-primary transition">About</Link>
-        <Link href="/contact" className="hover:text-primary transition">Contact</Link>
-        <Link href="/privacy" className="hover:text-primary transition">Privacy</Link>
-        <Link href="/terms" className="hover:text-primary transition">Terms & Condition</Link>
+      {/* Support Section */}
+      <div className="mt-8 text-center text-sm text-gray-300">
+        Need any support? Call to <span className="text-orange-400 font-bold">16479, 09638666444, 01897627858</span><br />
+        Our Contact Centre is available from 9 am to 8 pm (Saturday to Thursday).
       </div>
-      <div className="flex gap-4 justify-center md:justify-end">
-        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-          <FaFacebook size={22} />
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-          <FaLinkedin size={22} />
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-          <FaWhatsapp size={22} />
-        </a>
-        <a href="#" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">
-          <SiGmail size={22} />
-        </a>
+      <div className="mt-2 text-center text-xs text-gray-500">
+        &copy; {new Date().getFullYear()} CareerOstad. All rights reserved.
       </div>
     </div>
   </footer>

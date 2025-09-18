@@ -8,6 +8,8 @@ import { IoCodeDownload } from 'react-icons/io5';
 import SidePanel from './SidePanel';
 import Link from 'next/link';
 import Search from './Search';
+import Logo from './Logo';
+
 const Navbar = () => {
     const [sideMenu, setSideMenu] = useState(false);
     const [scrollY, setScrollY] = useState(false);
@@ -16,11 +18,8 @@ const Navbar = () => {
         <nav className={`sticky top-0 transition-all duration-1000 z-[9999] bg-base-200`}>
             <div className='py-2 font-bold container mx-auto flex justify-between items-center'>
                 <div>
-                <Link href='/' onClick={() => window.scrollTo(0, 0)} className='border flex items-end'>
-                    <figure className='w-10'>
-                        <img className='relative right-2' alt="CO" />
-                    </figure>
-                    <figcaption className='-ml-3 text-xl text-primary logo-text hidden md:block'>CareerOstad</figcaption>
+                <Link href='/' onClick={() => window.scrollTo(0, 0)} className='flex items-end'>
+                    <Logo/>
                 </Link>
                 </div>
                 <div>            
@@ -30,8 +29,7 @@ const Navbar = () => {
                     <ul className='flex gap-2 xl:gap-6 menu-list text-sm xl:text-[16px]'>
                         <li onClick={() => window.scrollTo(0, 0)}><Link href='/'>Home</Link></li>
                         <li><a href="/#about">Jobs</a></li>
-                        <Dropdowns />
-                        <li><a href="/#skill">Skills</a></li>
+                        <Dropdowns />                        
                     </ul>
                 </div>
                 <div className='hidden md:flex items-center gap-3 social-area ml-3'>                    
