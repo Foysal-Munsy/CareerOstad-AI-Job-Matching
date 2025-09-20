@@ -1,65 +1,59 @@
-# Career Ostad Main
+# 🎨 Colors for CareerOstad Website
 
-demo
+## DaisyUI Theme Configuration
 
-## Installation
+```css
+@plugin "daisyui/theme" {
+  name: "careerostap-light";
+  default: true;
 
-To get started with this project, follow these steps:
+  /* Primary Brand Colors */
+  --color-primary: #2563eb;
+  --color-secondary: #10b981;
+  --color-accent: #f59e0b;
 
-1. Clone the repository:
+  /* Status Colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #2563eb;
 
-   ```bash
-   git clone http
-   cd career-ostad-main
-   ```
+  /* Background Colors */
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #f1f5f9;
 
-2. Install the dependencies:
+  /* Text Colors */
+  --color-base-content: #1e293b;
+  --color-neutral: #64748b;
+  --color-neutral-content: #ffffff;
 
-   ```bash
-   npm install
-   ```
+  /* Custom CareerOstad Colors */
+  --color-custom-background: #f8fafc;
+  --color-custom-text: #1e293b;
+  --color-custom-text-muted: #64748b;
+  --color-custom-accent: #10b981;
+  --color-custom-highlighted: #dbeafe;
+  --color-custom-cardBg: #ffffff;
+  --color-custom-border: #e2e8f0;
+  --color-custom-primary-hover: #1d4ed8;
+  --color-custom-success-hover: #059669;
+  --color-custom-warning-hover: #d97706;
+}
+```
 
-## Scripts
+## Color Palette
 
-This project comes with a few pre-configured scripts to help with development, building, and starting the app:
+| Color                 | Hex Code  | Usage                                    |
+| --------------------- | --------- | ---------------------------------------- |
+| **🔵 Primary Blue**   | `#2563eb` | Main buttons, navigation, brand elements |
+| **🟢 Success Green**  | `#10b981` | Success states, apply buttons            |
+| **🟠 Warning Orange** | `#f59e0b` | Warnings, premium features               |
+| **🔴 Error Red**      | `#ef4444` | Error messages, validation               |
+| **⚪ Background**     | `#f8fafc` | Page backgrounds, cards                  |
+| **⚫ Text Dark**      | `#1e293b` | Primary text, headings                   |
+| **🔘 Text Muted**     | `#64748b` | Secondary text, placeholders             |
 
-- **dev**: Start the development server.
+---
 
-  ```bash
-  npm run dev
-  ```
-
-  This will run the app on `http://localhost:3000` by default.
-
-- **build**: Build the project for production.
-
-  ```bash
-  npm run build
-  ```
-
-- **start**: Start the app in production mode.
-
-  ```bash
-  npm run start
-  ```
-
-- **lint**: Run ESLint for linting the code.
-  ```bash
-  npm run lint
-  ```
-
-## Dependencies
-
-- `lucide-react`: A set of icons for React.
-- `next`: The React framework for building the application.
-- `react`: React library.
-- `react-dom`: The React DOM package.
-- `react-countup`: A library for adding animated number counting effects.
-- `react-icon`, `react-icons`: Collections of icons for React.
-- `react-simple-typewriter`: A typewriter effect library.
-
-## DevDependencies
-
-- `@eslint/eslintrc`, `eslint`, `eslint-config-next`: ESLint setup for linting.
-- `@tailwindcss/postcss`, `tailwindcss`: Tailwind CSS for styling.
-- `daisyui`: A Tailwind CSS component library.
+_Professional AI-powered job portal color system_
