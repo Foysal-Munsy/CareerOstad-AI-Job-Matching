@@ -8,11 +8,62 @@
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
+
+
+    /* CareerOstad Blue */
     --color-primary: #2563eb;
-    --color-secondary: #708993;
+
+    /* Text on primary buttons */
+    --color-primary-content: #ffffff;
+
+    /* Accent Green */
+    --color-secondary: #10b981;
+
+    /* Text on secondary buttons */
+    --color-secondary-content: #ffffff;
+
+    /* Warning Amber */
+    --color-accent: #f59e0b;
+
+    /* Text on accent buttons */
+    --color-accent-content: #1e293b;
+
+    /* Medium Gray - secondary text */
+    --color-neutral: #64748b;
+
+    --color-neutral-content: #ffffff;
+
+    /* Light Gray Background */
+    --color-base-100: #f8fafc;
+
+    /* Soft Border Gray */
+    --color-base-200: #e2e8f0;
+
+    /* Card or section background */
+    --color-base-300: #ffffff;
+
+    /* Deep Slate Gray - main text */
+    --color-base-content: #1e293b;
+
+
+    /* Status Colors */
+    --color-success: #10b981;
+    --color-success-content: #ffffff;
+
+    --color-warning: #f59e0b;
+    --color-warning-content: #1e293b;
+
+    /* Standard error red */
+    --color-error: #ef4444;
+
+    --color-error-content: #ffffff;
+
+    /* Optional border radius and sizes */
+    --radius-btn: 0.5rem;
+    --radius-input: 0.25rem;
+    --border: 1px;
 }
 
-;
 
 
 /* CSS for Navbar Start */
