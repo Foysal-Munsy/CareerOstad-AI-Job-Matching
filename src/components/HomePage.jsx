@@ -19,9 +19,9 @@ const HomePage = () => {
       <ExploreCareerPaths />
       <FeaturedJobs />
       <TrustedCompanies />
-      <CareerTools />
-      <SuccessStories />
-      <CallToAction />
+      {/* <CareerTools /> */}
+      {/* <SuccessStories /> */}
+      {/* <CallToAction /> */}
     </div>
   );
 };
