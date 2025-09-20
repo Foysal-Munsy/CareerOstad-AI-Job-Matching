@@ -25,7 +25,6 @@ const FeaturedJobs = () => {
               featured: true,
               skills: ["React", "TypeScript", "Node.js"],
               posted: "2 days ago",
-              theme: "primary",
               icon: "💻",
             },
             {
@@ -37,7 +36,6 @@ const FeaturedJobs = () => {
               featured: true,
               skills: ["Strategy", "Analytics", "Leadership"],
               posted: "1 day ago",
-              theme: "secondary",
               icon: "📊",
             },
             {
@@ -49,7 +47,6 @@ const FeaturedJobs = () => {
               featured: false,
               skills: ["Python", "ML", "Statistics"],
               posted: "3 days ago",
-              theme: "accent",
               icon: "🤖",
             },
             {
@@ -61,49 +58,13 @@ const FeaturedJobs = () => {
               featured: false,
               skills: ["Figma", "User Research", "Prototyping"],
               posted: "1 day ago",
-              theme: "warning",
               icon: "🎨",
             },
           ].map((job, index) => {
-            // Define color themes using your theme colors
-            const themes = {
-              primary: {
-                bg: "bg-primary/10",
-                accent: "bg-primary",
-                text: "text-primary",
-                border: "border-primary/20",
-                button: "bg-primary hover:bg-primary/90 text-primary-content",
-              },
-              secondary: {
-                bg: "bg-secondary/10",
-                accent: "bg-secondary",
-                text: "text-secondary",
-                border: "border-secondary/20",
-                button:
-                  "bg-secondary hover:bg-secondary/90 text-secondary-content",
-              },
-              accent: {
-                bg: "bg-accent/10",
-                accent: "bg-accent",
-                text: "text-accent",
-                border: "border-accent/20",
-                button: "bg-accent hover:bg-accent/90 text-accent-content",
-              },
-              warning: {
-                bg: "bg-warning/10",
-                accent: "bg-warning",
-                text: "text-warning",
-                border: "border-warning/20",
-                button: "bg-warning hover:bg-warning/90 text-warning-content",
-              },
-            };
-
-            const theme = themes[job.theme];
-
             return (
               <div
                 key={index}
-                className={`${theme.bg} rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 cursor-pointer p-6 ${theme.border} border-2 relative overflow-hidden group`}
+                className="bg-primary/10 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 cursor-pointer p-6 border border-primary/20 border-2 relative overflow-hidden group"
               >
                 {/* Background Pattern */}
                 <div className="absolute top-0 right-0 w-24 h-24 -mr-12 -mt-12 rounded-full bg-base-100 opacity-20"></div>
@@ -112,16 +73,14 @@ const FeaturedJobs = () => {
                 <div className="relative z-10">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div
-                        className={`w-12 h-12 ${theme.accent} rounded-xl flex items-center justify-center text-base-100 text-xl shadow-lg group-hover:scale-110 transition-transform duration-300`}
-                      >
+                      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-content text-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
                         {job.icon}
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-base-content group-hover:text-primary transition-colors duration-300">
                           {job.title}
                         </h3>
-                        <p className={`text-sm font-medium ${theme.text}`}>
+                        <p className="text-sm font-medium text-primary">
                           {job.company}
                         </p>
                       </div>
@@ -183,9 +142,7 @@ const FeaturedJobs = () => {
 
                   {/* Type Badge */}
                   <div className="mb-4">
-                    <span
-                      className={`${theme.text} bg-base-100 ${theme.border} border text-sm font-medium px-3 py-1 rounded-full shadow-sm`}
-                    >
+                    <span className="text-primary bg-base-100 border border-primary/20 text-sm font-medium px-3 py-1 rounded-full shadow-sm">
                       {job.type}
                     </span>
                   </div>
@@ -206,9 +163,7 @@ const FeaturedJobs = () => {
                 {/* Bottom Section */}
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-xs text-neutral">{job.posted}</span>
-                  <button
-                    className={`${theme.button} text-sm font-semibold py-2 px-4 rounded-btn transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105`}
-                  >
+                  <button className="bg-primary hover:bg-primary/90 text-primary-content text-sm font-semibold py-2 px-4 rounded-btn transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105">
                     Apply Now
                     <svg
                       className="w-4 h-4"
