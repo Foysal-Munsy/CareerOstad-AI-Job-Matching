@@ -1,17 +1,16 @@
-// sections/Banner.js
 import React from "react";
 
 const Banner = () => {
   return (
-    <section className="bg-gray-50 py-12">
+    <section className="bg-base-100 py-12">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-7 items-center">
         {/* Left side text */}
         <div>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-extrabold text-base-content leading-tight">
             AI-Powered Job Matching &{" "}
-            <span className="text-blue-600">Career Guidance</span>
+            <span className="text-primary">Career Guidance</span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-neutral">
             Transform your career with intelligent job matching, personalized
             guidance, and expert insights. Connect with top employers and unlock
             your potential.
@@ -19,10 +18,10 @@ const Banner = () => {
 
           {/* Buttons */}
           <div className="mt-6 flex space-x-4">
-            <button className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg shadow hover:bg-blue-700 transition">
+            <button className="px-6 py-3 bg-primary text-primary-content font-medium rounded-btn shadow hover:bg-primary/90 transition">
               Find Jobs
             </button>
-            <button className="px-6 py-3 bg-white border border-gray-300 text-gray-800 font-medium rounded-lg shadow hover:bg-gray-100 transition">
+            <button className="px-6 py-3 bg-base-300 border border-base-300 text-base-content font-medium rounded-btn shadow hover:bg-base-200 transition">
               Post a Job
             </button>
           </div>
@@ -30,16 +29,16 @@ const Banner = () => {
           {/* Stats */}
           <div className="mt-10 flex space-x-10 text-center">
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">50K+</h3>
-              <p className="text-gray-500 text-sm">Active Jobs</p>
+              <h3 className="text-2xl font-bold text-base-content">50K+</h3>
+              <p className="text-neutral text-sm">Active Jobs</p>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">25K+</h3>
-              <p className="text-gray-500 text-sm">Companies</p>
+              <h3 className="text-2xl font-bold text-base-content">25K+</h3>
+              <p className="text-neutral text-sm">Companies</p>
             </div>
             <div>
-              <h3 className="text-2xl font-bold text-gray-900">100K+</h3>
-              <p className="text-gray-500 text-sm">Candidates</p>
+              <h3 className="text-2xl font-bold text-base-content">100K+</h3>
+              <p className="text-neutral text-sm">Candidates</p>
             </div>
           </div>
         </div>
@@ -53,10 +52,10 @@ const Banner = () => {
             height={450}
             className="rounded-xl shadow-lg"
           />
-          <span className="absolute top-3 right-3 bg-yellow-400 text-white text-sm px-3 py-1 rounded-full font-medium">
+          <span className="absolute top-3 right-3 bg-accent text-accent-content text-sm px-3 py-1 rounded-full font-medium">
             AI Powered
           </span>
-          <span className="absolute bottom-3 left-3 bg-green-600 text-white text-sm px-3 py-1 rounded-full font-medium">
+          <span className="absolute bottom-3 left-3 bg-secondary text-secondary-content text-sm px-3 py-1 rounded-full font-medium">
             95% Match Rate
           </span>
         </div>
