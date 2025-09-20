@@ -1,15 +1,69 @@
 @import "tailwindcss";
 @plugin "daisyui"
-{
+
+    {
     themes: light
 }
 
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
-    --color-primary: #19183B;
-    --color-secondary: #708993;
-};
+
+
+    /* CareerOstad Blue */
+    --color-primary: #2563eb;
+
+    /* Text on primary buttons */
+    --color-primary-content: #ffffff;
+
+    /* Accent Green */
+    --color-secondary: #10b981;
+
+    /* Text on secondary buttons */
+    --color-secondary-content: #ffffff;
+
+    /* Warning Amber */
+    --color-accent: #f59e0b;
+
+    /* Text on accent buttons */
+    --color-accent-content: #1e293b;
+
+    /* Medium Gray - secondary text */
+    --color-neutral: #64748b;
+
+    --color-neutral-content: #ffffff;
+
+    /* Light Gray Background */
+    --color-base-100: #f8fafc;
+
+    /* Soft Border Gray */
+    --color-base-200: #e2e8f0;
+
+    /* Card or section background */
+    --color-base-300: #ffffff;
+
+    /* Deep Slate Gray - main text */
+    --color-base-content: #1e293b;
+
+
+    /* Status Colors */
+    --color-success: #10b981;
+    --color-success-content: #ffffff;
+
+    --color-warning: #f59e0b;
+    --color-warning-content: #1e293b;
+
+    /* Standard error red */
+    --color-error: #ef4444;
+
+    --color-error-content: #ffffff;
+
+    /* Optional border radius and sizes */
+    --radius-btn: 0.5rem;
+    --radius-input: 0.25rem;
+    --border: 1px;
+}
+
 
 
 /* CSS for Navbar Start */
@@ -19,10 +73,12 @@
     transition: color 0.5s;
     transition: background-color 0.5s;
 }
-.menu-list li a{
+
+.menu-list li a {
     width: 100%;
-    display: block;    
+    display: block;
 }
+
 .sub-menu {
     animation: slowDown1 0.3s ease-out;
 }
@@ -95,6 +151,7 @@
     cursor: pointer;
     /* background-color: #f306f3; */
 }
+
 .side-panel-1 {
     /* animation: name duration timing-function delay iteration-count direction fill-mode; */
     animation: slideIn .4s ease-in-out
@@ -112,30 +169,32 @@
 
     }
 }
+
 /* CSS for Navbar End */
 
 
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Custom animations */
 @keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .animate-scroll {
-  animation: scroll 30s linear infinite;
+    animation: scroll 30s linear infinite;
 }
 
 .animate-scroll:hover {
-  animation-play-state: paused;
+    animation-play-state: paused;
 }

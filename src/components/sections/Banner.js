@@ -1,6 +1,5 @@
 // sections/Banner.js
-import React from 'react';
-
+import React from "react";
 
 const Banner = () => {
   return (
@@ -9,7 +8,7 @@ const Banner = () => {
         {/* Left side text */}
         <div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900 leading-tight">
-            AI-Powered Job Matching &{' '}
+            AI-Powered Job Matching &{" "}
             <span className="text-blue-600">Career Guidance</span>
           </h1>
           <p className="mt-4 text-lg text-gray-600">
