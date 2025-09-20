@@ -18,9 +18,9 @@ const HomePage = () => {
       <HowItWorks />
       <ExploreCareerPaths />
       <FeaturedJobs />
-      <TrustedCompanies />
-      <CareerTools />
-      <SuccessStories />
+      {/* <TrustedCompanies /> */}
+      {/* <CareerTools /> */}
+      {/* <SuccessStories /> */}
       <CallToAction />
     </div>
   );
