@@ -1,15 +1,18 @@
 @import "tailwindcss";
 @plugin "daisyui"
-{
+
+    {
     themes: light
 }
 
 @plugin "daisyui/theme" {
     name: "light";
     default: true;
-    --color-primary: #19183B;
+    --color-primary: #2563eb;
     --color-secondary: #708993;
-};
+}
+
+;
 
 
 /* CSS for Navbar Start */
@@ -19,10 +22,12 @@
     transition: color 0.5s;
     transition: background-color 0.5s;
 }
-.menu-list li a{
+
+.menu-list li a {
     width: 100%;
-    display: block;    
+    display: block;
 }
+
 .sub-menu {
     animation: slowDown1 0.3s ease-out;
 }
@@ -95,6 +100,7 @@
     cursor: pointer;
     /* background-color: #f306f3; */
 }
+
 .side-panel-1 {
     /* animation: name duration timing-function delay iteration-count direction fill-mode; */
     animation: slideIn .4s ease-in-out
@@ -112,30 +118,32 @@
 
     }
 }
+
 /* CSS for Navbar End */
 
 
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 /* Custom animations */
 @keyframes scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
 }
 
 .animate-scroll {
-  animation: scroll 30s linear infinite;
+    animation: scroll 30s linear infinite;
 }
 
 .animate-scroll:hover {
-  animation-play-state: paused;
+    animation-play-state: paused;
 }
