@@ -1,13 +1,13 @@
-import React from 'react';
-import ExploreCareerPaths from './sections/ExploreCareerPaths';
-import FeaturedJobs from './sections/FeaturedJobs';
-import TrustedCompanies from './sections/TrustedCompanies';
-import CareerTools from './sections/CareerTools';
-import SuccessStories from './sections/SuccessStories';
-import CallToAction from './sections/CallToAction';
-import Banner from './sections/Banner';
-import KeyHighlights from './sections/KeyHighlights';
-import HowItWorks from './sections/HowItWorks';
+import React from "react";
+import ExploreCareerPaths from "./sections/ExploreCareerPaths";
+import FeaturedJobs from "./sections/FeaturedJobs";
+import TrustedCompanies from "./sections/TrustedCompanies";
+import CareerTools from "./sections/CareerTools";
+import SuccessStories from "./sections/SuccessStories";
+import CallToAction from "./sections/CallToAction";
+import Banner from "./sections/Banner";
+import KeyHighlights from "./sections/KeyHighlights";
+import HowItWorks from "./sections/HowItWorks";
 
 const HomePage = () => {
   return (

@@ -1,65 +1,15 @@
-# Career Ostad Main
+## 🎨 Color Palette
 
-demo
+The CareerOstad platform uses a professional and clean color palette designed to convey trust, clarity, and innovation. Below is the list of colors with their HEX codes and intended usage throughout the website:
 
-## Installation
+| Color Name                | HEX       | Usage                                                                                                          |
+| ------------------------- | --------- | -------------------------------------------------------------------------------------------------------------- |
+| **CareerOstad Blue**      | `#2563eb` | Primary brand color used for logos, headers, and main call-to-action buttons. Represents trust and technology. |
+| **Deep Slate Gray**       | `#1e293b` | Primary text color for readability and professionalism across all content.                                     |
+| **Medium Gray**           | `#64748b` | Used for secondary text, metadata, and less prominent UI elements.                                             |
+| **Light Gray Background** | `#f8fafc` | Main background color for pages and sections to keep the UI light and open.                                    |
+| **Accent Green**          | `#10b981` | Utilized for success messages, positive feedback, and subtle highlights.                                       |
+| **Warning Amber**         | `#f59e0b` | Highlights warnings, alerts, and important calls to action that need user attention.                           |
+| **Soft Border Gray**      | `#e2e8f0` | Used for UI borders, dividers, and input field outlines for subtle structure.                                  |
 
-To get started with this project, follow these steps:
-
-1. Clone the repository:
-
-   ```bash
-   git clone http
-   cd career-ostad-main
-   ```
-
-2. Install the dependencies:
-
-   ```bash
-   npm install
-   ```
-
-## Scripts
-
-This project comes with a few pre-configured scripts to help with development, building, and starting the app:
-
-- **dev**: Start the development server.
-
-  ```bash
-  npm run dev
-  ```
-
-  This will run the app on `http://localhost:3000` by default.
-
-- **build**: Build the project for production.
-
-  ```bash
-  npm run build
-  ```
-
-- **start**: Start the app in production mode.
-
-  ```bash
-  npm run start
-  ```
-
-- **lint**: Run ESLint for linting the code.
-  ```bash
-  npm run lint
-  ```
-
-## Dependencies
-
-- `lucide-react`: A set of icons for React.
-- `next`: The React framework for building the application.
-- `react`: React library.
-- `react-dom`: The React DOM package.
-- `react-countup`: A library for adding animated number counting effects.
-- `react-icon`, `react-icons`: Collections of icons for React.
-- `react-simple-typewriter`: A typewriter effect library.
-
-## DevDependencies
-
-- `@eslint/eslintrc`, `eslint`, `eslint-config-next`: ESLint setup for linting.
-- `@tailwindcss/postcss`, `tailwindcss`: Tailwind CSS for styling.
-- `daisyui`: A Tailwind CSS component library.
+This palette ensures a modern and approachable interface that reinforces CareerOstad’s commitment to helping candidates and employers connect effectively with AI-powered tools.
