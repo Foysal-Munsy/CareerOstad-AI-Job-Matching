@@ -63,7 +63,7 @@ export default function CareerAdvice() {
                     </div>
                 </div>
             </div>
-
+                <div className="divider">OR</div>
 
             <section>
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
