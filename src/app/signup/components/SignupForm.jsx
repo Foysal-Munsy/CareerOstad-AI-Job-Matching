@@ -4,8 +4,12 @@ import SocialLogin from "@/app/login/components/SocialLogin";
 import React, { useState } from "react";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
+import { useRouter } from "next/navigation";
+
+
 
 const SignupForm = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -53,6 +57,8 @@ const SignupForm = () => {
           customClass: {
             popup: 'swal-toast-zindex'
           }
+        }).then(() => {
+          router.push("/login"); // redirect manually
         });
         setForm({
           name: "",
