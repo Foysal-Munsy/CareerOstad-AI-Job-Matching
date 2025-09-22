@@ -9,15 +9,17 @@ import SidePanel from "./SidePanel";
 import Link from "next/link";
 import Search from "./Search";
 import Logo from "./Logo";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const [sideMenu, setSideMenu] = useState(false);
   const [scrollY, setScrollY] = useState(false);
 
+  const { data: session, status } = useSession();
+  //console.log(session, status);
+
   return (
-    <nav
-      className={`sticky top-0 transition-all duration-1000 z-[9999] bg-base-200`}
-    >
+    <nav>
       <div className="py-2 font-bold container mx-auto flex justify-between items-center">
         <div>
           <Link
@@ -41,26 +43,43 @@ const Navbar = () => {
             </li>
             <Dropdowns />
             <li>
-              <a href="/advice">Advice</a>
+              <Link href="/advice">Advice</Link>
             </li>
           </ul>
         </div>
-        <div className="hidden md:flex items-center gap-3 social-area mx-3">
-          <a
-            href="#"
-            target="_blank"
-            className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn border-primary text-primary transition-all duration-1000 hover:bg-primary hover:text-primary-content"
+
+        {
+          status === 'authenticated'?
+          <div className="hidden md:flex items-center gap-3 social-area mx-3">
+          <span
+            className="inline-flex items-center gap-2 cursor-pointer text-md text-primary transition-all duration-1000 hover:bg-primary"
           >
-            Login
-          </a>
-          <a
-            href="#"
+            {session?.user?.name}
+          </span>
+          <button
+            onClick={() => signOut()}
             target="_blank"
             className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn bg-primary text-primary-content transition-all duration-1000 hover:bg-primary/90"
           >
-            Signup
-          </a>
+            Logout
+          </button>
         </div>
+          :
+          <div className="hidden md:flex items-center gap-3 social-area mx-3">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn border-primary text-primary transition-all duration-1000 hover:bg-primary hover:text-primary-content"
+          >
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn bg-primary text-primary-content transition-all duration-1000 hover:bg-primary/90"
+          >
+            Signup
+          </Link>
+        </div>
+        }        
         <div className="social-area lg:hidden">
           <button
             onClick={() => setSideMenu(!sideMenu)}

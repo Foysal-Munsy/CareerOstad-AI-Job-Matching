@@ -12,7 +12,7 @@ const SocialLogin = () => {
             </div>
             <div className="flex flex-col gap-3">
                 <button
-                    type="submit"
+                    //type="submit"
                     name="action"
                     value="google"
                     //onClick={handleGoogleLogin}
@@ -21,7 +21,7 @@ const SocialLogin = () => {
                     <FaGoogle /> Login with Google
                 </button>
                 <button
-                    type="submit"
+                    //type="submit"
                     name="action"
                     value="github"
                     //onClick={handleGithubLogin}

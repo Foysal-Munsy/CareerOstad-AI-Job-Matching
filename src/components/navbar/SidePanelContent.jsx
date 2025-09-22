@@ -14,7 +14,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             window.scrollTo(0, 0);
             setSideMenu(!sideMenu);
           }}
-          className="flex items-end mx-6"
+          className="flex items-end mx-4"
         >
           <Logo />
         </Link>
@@ -93,13 +93,13 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
         {/* <Dropdowns sideMenu={sideMenu} setSideMenu={setSideMenu} /> */}
         <div className="md:hidden">
           <Link
-            href="/"
+            href="/login"
             className="inline-flex text-sm items-center cursor-pointer border px-4 py-1 rounded-lg transition-all duration-1000 mx-4 w-fit justify-center"
           >
             Login
           </Link>
           <Link
-            href="/"
+            href="/signup"
             className="inline-flex text-sm items-center bg-primary text-white cursor-pointer px-4 py-1 rounded-lg transition-all duration-1000 w-fit justify-center"
           >
             Signup

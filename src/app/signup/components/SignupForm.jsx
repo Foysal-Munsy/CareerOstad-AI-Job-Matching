@@ -2,6 +2,8 @@
 import { registerUser } from "@/app/actions/auth/registerUser";
 import SocialLogin from "@/app/login/components/SocialLogin";
 import React, { useState } from "react";
+import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
 
 const SignupForm = () => {
   const [form, setForm] = useState({
@@ -16,20 +18,77 @@ const SignupForm = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const {name, email, password, confirmPassword, imageUrl} = form;
-    registerUser(form)
+    const { name, email, password, confirmPassword, imageUrl } = form;
+    //registerUser(form)
+    // const data = JSON.parse(JSON.stringify(form))
+    // console.log(data)
     if (form.password !== form.confirmPassword) {
-      alert("Passwords do not match!");
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'Passwords do not match!',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        customClass: {
+          popup: 'swal-toast-zindex'
+        }
+      });
       return;
     }
-    // // Handle signup logic here
-    // const form = e.target;
-    // const name = form.name.value;
-    // const email = form.email.value;
-    // const password = form.password.value;
-    // const password = form.password.value;
+    try {
+      const result = await registerUser(form);
+      if (result?.insertedId) {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Signup successful!',
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'swal-toast-zindex'
+          }
+        });
+        setForm({
+          name: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          imageUrl: "",
+        });
+      } else {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'error',
+          title: 'Signup failed! Email may already exist.',
+          showConfirmButton: false,
+          timer: 2500,
+          timerProgressBar: true,
+          customClass: {
+            popup: 'swal-toast-zindex'
+          }
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'error',
+        title: 'An error occurred. Please try again.',
+        showConfirmButton: false,
+        timer: 2500,
+        timerProgressBar: true,
+        customClass: {
+          popup: 'swal-toast-zindex'
+        }
+      });
+    }
   };
 
   return (
@@ -150,7 +209,7 @@ const SignupForm = () => {
       >
         Sign Up
       </button>
-      <SocialLogin/>
+      <SocialLogin />
     </form>
   );
 };
