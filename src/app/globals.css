@@ -198,3 +198,7 @@ body {
 .animate-scroll:hover {
     animation-play-state: paused;
 }
+
+/* .swal-toast-zindex {
+    z-index: 2147483647 !important;
+} */
