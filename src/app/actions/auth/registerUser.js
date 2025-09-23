@@ -14,6 +14,7 @@ export const registerUser = async (form) => {
     const user = await userCollection.findOne({email: form.email})
 
     if(!user){
+        
         const hashedPass = await bcrypt.hash(password, 10);
 
         form.password = hashedPass

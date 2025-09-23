@@ -3,6 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
 import dbConnect, { collectionNamesObj } from "./dbConnect";
+import { cookies } from 'next/headers'; // For Next.js app router
+
 export const authOptions = {
     // Configure one or more authentication providers
     providers: [
@@ -50,7 +52,8 @@ export const authOptions = {
     callbacks: {
         async signIn({ user, account, profile, email, credentials }) {
             // Console these to check necessary properites
-            // console.log({ user, account, profile, email, credentials })
+            console.log({ user, account, profile, email, credentials })
+            const role = cookies().get('role')?.value;
             if (account) {
                 const { providerAccountId, provider } = account
                 const { email, image, name } = user
@@ -59,7 +62,7 @@ export const authOptions = {
                 const isExisted = await userCollection.findOne({ providerAccountId })
                 console.log(isExisted);
                 if (!isExisted) {
-                    const payload = { providerAccountId, provider, email, image, name, }
+                    const payload = { providerAccountId, provider, email, image, name, role }
                     await userCollection.insertOne(payload)
                 }
             }

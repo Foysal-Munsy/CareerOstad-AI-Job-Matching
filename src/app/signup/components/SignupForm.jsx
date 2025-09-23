@@ -16,6 +16,7 @@ const SignupForm = () => {
     password: "",
     confirmPassword: "",
     imageUrl: "",
+    role: ""
   });
 
   const handleChange = (e) => {
@@ -24,7 +25,7 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password, confirmPassword, imageUrl } = form;
+    //const { name, email, password, confirmPassword, imageUrl } = form;
     //registerUser(form)
     // const data = JSON.parse(JSON.stringify(form))
     // console.log(data)
@@ -66,6 +67,7 @@ const SignupForm = () => {
           password: "",
           confirmPassword: "",
           imageUrl: "",
+          role:""
         });
       } else {
         Swal.fire({
@@ -123,6 +125,21 @@ const SignupForm = () => {
           name="name"
           placeholder="Enter Your Name"
           value={form.name}
+          onChange={handleChange}
+          required
+          style={{
+            padding: "0.7rem",
+            borderRadius: "6px",
+            border: "1px solid #cbd5e1",
+            fontSize: "1rem",
+          }}
+        />
+        <input
+          id="role"
+          type="text"
+          name="role"
+          placeholder="Enter Your Role"
+          value={form.role}
           onChange={handleChange}
           required
           style={{

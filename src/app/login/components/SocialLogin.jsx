@@ -6,23 +6,46 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Swal from 'sweetalert2';
+import Cookies from 'js-cookie';
 import { useSearchParams } from "next/navigation";
-
-
 
 const SocialLogin = () => {
     const router = useRouter();
     const session = useSession();
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
-    const handleSocialLogin = (providerName) => {
-        signIn(providerName , { callbackUrl });
-               
-}
-useEffect(() => {
-    if (session?.status == "authenticated") {
-      router.push(callbackUrl);
-      Swal.fire({
+
+    const handleSocialLogin = async (providerName) => {
+        const { value: role } = await Swal.fire({
+            title: 'Select Your Role',
+            input: 'radio',
+            inputOptions: {
+                candidate: 'Candidate',
+                company: 'Company'
+            },
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to choose a role!';
+                }
+            },
+            confirmButtonText: 'Continue',
+            showCancelButton: true,
+            customClass: {
+                popup: 'swal-toast-zindex'
+            }
+        });
+
+        if (role) {
+            // Pass role as a query param to backend
+            Cookies.set('role', role);
+            signIn(providerName, { callbackUrl, role });
+        }
+    };
+
+    useEffect(() => {
+        if (session?.status === "authenticated") {
+            router.push(callbackUrl);
+            Swal.fire({
                 toast: true,
                 position: 'top-end',
                 icon: 'success',
@@ -31,11 +54,12 @@ useEffect(() => {
                 timer: 2500,
                 timerProgressBar: true,
                 customClass: {
-                  popup: 'swal-toast-zindex'
+                    popup: 'swal-toast-zindex'
                 }
-              })
-    }
-  }, [session?.status]);
+            });
+        }
+    }, [session?.status]);
+
     return (
         <div>
             <div className="my-6 flex items-center">
@@ -45,19 +69,13 @@ useEffect(() => {
             </div>
             <div className="flex flex-col gap-3">
                 <div
-                    //type="submit"
-                    //name="action"
-                    //value="google"
-                    onClick={()=>handleSocialLogin("google")}
+                    onClick={() => handleSocialLogin("google")}
                     className="cursor-pointer flex items-center justify-center gap-2 bg-red-500 text-white py-2 rounded hover:bg-red-600 transition font-semibold"
                 >
                     <FaGoogle /> Login with Google
                 </div>
                 <div
-                    //type="submit"
-                    //name="action"
-                    //value="github"
-                    onClick={()=>handleSocialLogin("github")}
+                    onClick={() => handleSocialLogin("github")}
                     className="cursor-pointer flex items-center justify-center gap-2 bg-gray-800 text-white py-2 rounded hover:bg-black transition font-semibold"
                 >
                     <FaGithub /> Login with Github
