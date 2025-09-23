@@ -10,7 +10,7 @@ const SidePanel = ({ sideMenu, setSideMenu }) => {
                     <CgClose/>
                 </div>
             </div>
-            <div className={`lg:hidden fixed top-0 transition-all z-10000 duration-500 ${sideMenu ? '-left-0' : '-left-200'} text-primary bg-secondary p-4 w-2/3 h-screen overflow-y-scroll `}>
+            <div className={`lg:hidden fixed top-0 transition-all z-10000 duration-500 ${sideMenu ? '-left-0' : '-left-200'} text-base-content bg-base-100 p-4 w-2/3 h-screen overflow-y-scroll `}>
                 <div>
                     <SidePanelContent sideMenu={sideMenu} setSideMenu={setSideMenu} />
                 </div>
