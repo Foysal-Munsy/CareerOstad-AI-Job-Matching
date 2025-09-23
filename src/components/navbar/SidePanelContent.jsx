@@ -21,6 +21,10 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
           className="flex items-end mx-4"
         >
           <Logo />
+          <div className="block sm:hidden">
+                              <h1 className="text-xl font-bold text-primary">CareerOstad</h1>
+                              <p className="text-[9px] text-gray-500 text-muted-foreground -mt-1 font-light">AI-Powered Career Guidance</p>
+                          </div>
         </Link>
         <button
           onClick={() => setSideMenu(!sideMenu)}
@@ -97,7 +101,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
         {/* <Dropdowns sideMenu={sideMenu} setSideMenu={setSideMenu} /> */}
         {
           status === 'authenticated' ?
-            <div className="md:hidden flex items-center gap-3 social-area mx-4">
+            <div onClick={() => setSideMenu(!sideMenu)} className="md:hidden flex items-center gap-3 social-area mx-4">
               <span
                 className="inline-flex items-center gap-2 cursor-pointer text-md text-primary transition-all duration-1000 hover:bg-primary"
               >
@@ -112,7 +116,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
               </button>
             </div>
             :
-            <div className="hidden md:flex items-center gap-3 social-area mx-3">
+            <div onClick={() => setSideMenu(!sideMenu)} className=" md:hidden flex items-center gap-3 social-area mx-5">
               <Link
                 href="/login"
                 className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn border-primary text-primary transition-all duration-1000 hover:bg-primary hover:text-primary-content"
@@ -123,7 +127,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
                 href="/signup"
                 className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn bg-primary text-primary-content transition-all duration-1000 hover:bg-primary/90"
               >
-                Signup
+                Signups
               </Link>
             </div>
         }

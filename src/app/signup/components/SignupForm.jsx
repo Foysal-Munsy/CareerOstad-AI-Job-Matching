@@ -121,6 +121,7 @@ const SignupForm = () => {
           id="name"
           type="text"
           name="name"
+          placeholder="Enter Your Name"
           value={form.name}
           onChange={handleChange}
           required
@@ -138,6 +139,7 @@ const SignupForm = () => {
           id="email"
           type="email"
           name="email"
+          placeholder="Enter Your Email"
           value={form.email}
           onChange={handleChange}
           required
@@ -155,6 +157,7 @@ const SignupForm = () => {
           id="password"
           type="password"
           name="password"
+          placeholder="Enter Your Password"
           value={form.password}
           onChange={handleChange}
           required
@@ -172,6 +175,7 @@ const SignupForm = () => {
           id="confirmPassword"
           type="password"
           name="confirmPassword"
+          placeholder="Re-Enter Your Password"
           value={form.confirmPassword}
           onChange={handleChange}
           required
@@ -189,6 +193,7 @@ const SignupForm = () => {
           id="imageUrl"
           type="url"
           name="imageUrl"
+          placeholder="Enter Your Image URL"
           value={form.imageUrl}
           onChange={handleChange}
           style={{

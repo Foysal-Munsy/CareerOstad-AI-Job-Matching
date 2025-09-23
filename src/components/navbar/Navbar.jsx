@@ -1,10 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Dropdowns from "./Dropdowns";
-import { FaFacebook, FaLinkedin, FaWhatsapp } from "react-icons/fa";
-import { SiGmail } from "react-icons/si";
 import { CiMenuFries } from "react-icons/ci";
-import { IoCodeDownload } from "react-icons/io5";
 import SidePanel from "./SidePanel";
 import Link from "next/link";
 import Search from "./Search";
@@ -20,7 +17,7 @@ const Navbar = () => {
 
   return (
     <nav>
-      <div className="py-2 font-bold container mx-auto flex justify-between items-center">
+      <div className="py-2 font-bold container mx-auto flex justify-between items-center px-2 sm:px-0">
         <div>
           <Link
             href="/"
@@ -52,7 +49,7 @@ const Navbar = () => {
           status === 'authenticated'?
           <div className="hidden md:flex items-center gap-3 social-area mx-3">
           <span
-            className="inline-flex items-center gap-2 cursor-pointer text-md text-primary transition-all duration-1000 hover:bg-primary"
+            className="inline-flex items-center gap-2 text-md text-primary transition-all duration-1000"
           >
             {session?.user?.name}
           </span>
@@ -83,7 +80,7 @@ const Navbar = () => {
         <div className="social-area lg:hidden">
           <button
             onClick={() => setSideMenu(!sideMenu)}
-            className="p-1 rounded-sm border border-primary hover:border-secondary text-primary hover:text-secondary"
+            className="p-1 rounded-sm border border-primary text-primary"
           >
             <CiMenuFries
               id="menu-icon"
