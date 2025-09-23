@@ -47,7 +47,7 @@ const Navbar = () => {
         </div>
         <div className="hidden md:flex items-center gap-3 social-area mx-3">
           <a
-            href="#"
+            href="/login"
             target="_blank"
             className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn border-primary text-primary transition-all duration-1000 hover:bg-primary hover:text-primary-content"
           >
