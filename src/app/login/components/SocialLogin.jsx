@@ -6,18 +6,22 @@ import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Swal from 'sweetalert2';
+import { useSearchParams } from "next/navigation";
+
 
 
 const SocialLogin = () => {
     const router = useRouter();
     const session = useSession();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
     const handleSocialLogin = (providerName) => {
-        signIn(providerName);
+        signIn(providerName , { callbackUrl });
                
 }
 useEffect(() => {
     if (session?.status == "authenticated") {
-      router.push("/");
+      router.push(callbackUrl);
       Swal.fire({
                 toast: true,
                 position: 'top-end',

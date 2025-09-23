@@ -5,12 +5,15 @@ import { signIn } from "next-auth/react";
 import Swal from 'sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get("callbackUrl") || "/";
 
     const handleCredentialLogin = async (e) => {
         e.preventDefault();        
@@ -18,7 +21,8 @@ const LoginForm = () => {
             const res = await signIn("credentials", {
                 email,
                 password,
-                redirect: false,                               
+                redirect: false,
+                callbackUrl                               
             });
             if (res?.ok) {
                 Swal.fire({
@@ -33,7 +37,7 @@ const LoginForm = () => {
                         popup: 'swal-toast-zindex'
                     }
                 }).then(() => {
-                    router.push("/"); // redirect manually
+                    router.push(res.url || callbackUrl); // redirect manually
                 });
             } else {
                 Swal.fire({
