@@ -128,25 +128,23 @@ export async function POST(request) {
                 console.log(`✅ Password reset email sent to: ${email}`);
                 
             } catch (emailError) {
-                console.error('❌ Email sending failed:', emailError);
-                console.log('=== DEVELOPMENT MODE - EMAIL FAILED ===');
-                console.log('Reset URL:', resetUrl);
-                console.log('====================================');
+                
             }
         } else {
-            // Development mode - no email config
-            console.log('=== DEVELOPMENT MODE - NO EMAIL CONFIG ===');
-            console.log('📧 Email would be sent to:', email);
-            console.log('🔗 Reset URL:', resetUrl);
-            console.log('📝 To enable email sending, add EMAIL_USER and EMAIL_PASS to .env');
-            console.log('=========================================');
+           
         }
 
         return NextResponse.json(
             { 
-                message: 'If an account with that email exists, we have sent a password reset link.',
-                // In development, you might want to include the reset URL
-                ...(process.env.NODE_ENV === 'development' && { resetUrl })
+                message: hasEmailConfig 
+                    ? 'If an account with that email exists, we have sent a password reset link to your email.'
+                    : 'Password reset link generated. Check the server console for the reset URL.',
+                // Always include reset URL in development for testing
+                ...(process.env.NODE_ENV === 'development' && { 
+                    resetUrl,
+                    email: email,
+                    note: 'This is development mode. In production, the reset link would be sent via email.'
+                })
             },
             { status: 200 }
         );
