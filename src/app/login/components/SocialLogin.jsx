@@ -25,47 +25,39 @@ const SocialLogin = () => {
         
         const { value: role } = await Swal.fire({
             title: `
-                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-                    <div style="width: 40px; height: 40px; background: ${color}; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-                        ${icon}
-                    </div>
-                    <div>
-                        <h3 style="margin: 0; color: #1f2937; font-size: 22px; font-weight: 700;">Continue with ${name}</h3>
-                        <p style="margin: 4px 0 0 0; color: #6b7280; font-size: 14px;">Choose your role to get started</p>
-                    </div>
-                </div>
+                Continue with ${name}
             `,
             html: `
-                <div style="margin-top: 20px;">
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <label class="swal-role-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; background: #fafbfc; position: relative; overflow: hidden;">
+                <div style="margin-top: 8px;">
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label class="swal-role-option" style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; background: #fafbfc; position: relative; overflow: hidden;">
                             <input type="radio" name="role" value="candidate" style="margin: 0;">
-                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
-                                <span style="color: white; font-size: 18px;">👤</span>
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);">
+                                <span style="color: white; font-size: 16px;">👤</span>
                             </div>
                             <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px; font-size: 15px;">I'm a Candidate</div>
-                                <div style="font-size: 13px; color: #6b7280;">Looking for job opportunities</div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 1px; font-size: 14px;">I'm a Candidate</div>
+                                <div style="font-size: 12px; color: #6b7280;">Looking for job opportunities</div>
                             </div>
-                            <div class="swal-check-icon" style="opacity: 0; color: #2563eb; font-size: 18px; transition: all 0.3s ease;">✓</div>
+                            <div class="swal-check-icon" style="opacity: 0; color: #2563eb; font-size: 16px; transition: all 0.3s ease;">✓</div>
                         </label>
                         
-                        <label class="swal-role-option" style="display: flex; align-items: center; gap: 12px; padding: 16px; border: 2px solid #e5e7eb; border-radius: 12px; cursor: pointer; transition: all 0.3s ease; background: #fafbfc; position: relative; overflow: hidden;">
+                        <label class="swal-role-option" style="display: flex; align-items: center; gap: 10px; padding: 12px; border: 2px solid #e5e7eb; border-radius: 10px; cursor: pointer; transition: all 0.3s ease; background: #fafbfc; position: relative; overflow: hidden;">
                             <input type="radio" name="role" value="company" style="margin: 0;">
-                            <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);">
-                                <span style="color: white; font-size: 18px;">🏢</span>
+                            <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);">
+                                <span style="color: white; font-size: 16px;">🏢</span>
                             </div>
                             <div style="flex: 1;">
-                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 2px; font-size: 15px;">I'm a Company</div>
-                                <div style="font-size: 13px; color: #6b7280;">Looking to hire talent</div>
+                                <div style="font-weight: 600; color: #1f2937; margin-bottom: 1px; font-size: 14px;">I'm a Company</div>
+                                <div style="font-size: 12px; color: #6b7280;">Looking to hire talent</div>
                             </div>
-                            <div class="swal-check-icon" style="opacity: 0; color: #2563eb; font-size: 18px; transition: all 0.3s ease;">✓</div>
+                            <div class="swal-check-icon" style="opacity: 0; color: #2563eb; font-size: 16px; transition: all 0.3s ease;">✓</div>
                         </label>
                     </div>
                     
-                    <div style="margin-top: 20px; padding: 12px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 10px; border-left: 4px solid #0ea5e9;">
-                        <div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: #0369a1;">
-                            <span style="font-size: 16px;">💡</span>
+                    <div style="margin-top: 10px; padding: 8px 10px; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; border-left: 3px solid #0ea5e9;">
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #0369a1;">
+                            <span style="font-size: 14px;">💡</span>
                             <span>We'll personalize your experience based on your role</span>
                         </div>
                     </div>
@@ -95,8 +87,8 @@ const SocialLogin = () => {
             `,
             cancelButtonColor: '#6b7280',
             showCancelButton: true,
-            width: '480px',
-            padding: '28px',
+            width: '420px',
+            padding: '16px 20px',
             customClass: {
                 popup: 'swal-advanced-professional',
                 title: 'swal-advanced-title',
