@@ -131,30 +131,30 @@ const SocialLogin = () => {
     }, [session?.status]);
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <div className="relative">
                 <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-gray-200"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-white text-gray-500 font-medium">Or continue with</span>
+                <div className="relative flex justify-center text-xs">
+                    <span className="px-3 bg-white text-gray-500 font-medium">Or continue with</span>
                 </div>
             </div>
             
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-3">
                 <button
                     onClick={() => handleSocialLogin("google")}
-                    className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 border border-gray-200 rounded-xl font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-lg hover:shadow-blue-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-red-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
-                    <div className="relative flex items-center gap-3">
-                        <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-red-500 rounded-full flex items-center justify-center">
-                            <FaGoogle className="text-white text-sm" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-red-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg"></div>
+                    <div className="relative flex items-center gap-2">
+                        <div className="w-5 h-5 bg-gradient-to-r from-blue-500 to-red-500 rounded-full flex items-center justify-center">
+                            <FaGoogle className="text-white text-xs" />
                         </div>
-                        <span className="font-semibold">Continue with Google</span>
+                        <span className="font-medium">Continue with Google</span>
                     </div>
-                    <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-1">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-1">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
@@ -162,17 +162,17 @@ const SocialLogin = () => {
                 
                 <button
                     onClick={() => handleSocialLogin("github")}
-                    className="group relative w-full flex items-center justify-center gap-3 px-6 py-4 border border-gray-200 rounded-xl font-semibold text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-lg hover:shadow-gray-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    className="group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-gray-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-xl"></div>
-                    <div className="relative flex items-center gap-3">
-                        <div className="w-6 h-6 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
-                            <FaGithub className="text-white text-sm" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg"></div>
+                    <div className="relative flex items-center gap-2">
+                        <div className="w-5 h-5 bg-gradient-to-r from-gray-700 to-gray-900 rounded-full flex items-center justify-center">
+                            <FaGithub className="text-white text-xs" />
                         </div>
-                        <span className="font-semibold">Continue with GitHub</span>
+                        <span className="font-medium">Continue with GitHub</span>
                     </div>
-                    <div className="absolute right-4 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-1">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="absolute right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-1">
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
