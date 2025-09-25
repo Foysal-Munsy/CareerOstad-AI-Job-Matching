@@ -20,5 +20,6 @@ export const middleware = async (req) => {
 export const config = {
     matcher: [
         '/advice',
+        '/dashboard',
     ],
 }

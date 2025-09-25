@@ -127,7 +127,7 @@ const SignupForm = () => {
         </div>
         
         <div className="group">
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
+          <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
             Professional Role
           </label>
           <div className="relative">
@@ -136,16 +136,23 @@ const SignupForm = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0V6a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V8a2 2 0 012-2V6" />
               </svg>
             </div>
-            <input
-              id="role"
-              type="text"
-              name="role"
-              placeholder="e.g. Software Engineer"
-              value={form.role}
+            <select
+              id="userType"
+              name="userType"
+              value={form.userType}
               onChange={handleChange}
               required
-              className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 focus:bg-white"
-            />
+              className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 focus:bg-white appearance-none cursor-pointer"
+            >
+              <option value="">Select your role</option>
+              <option value="candidate">👤 I'm a Candidate - Looking for job opportunities</option>
+              <option value="company">🏢 I'm a Company - Looking to hire talent</option>
+            </select>
+            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
