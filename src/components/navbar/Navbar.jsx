@@ -42,6 +42,7 @@ const Navbar = () => {
             <li>
               <Link href="/advice">Advice</Link>
             </li>
+            {/* Dashboard link removed for cleaner public navbar */}
           </ul>
         </div>
 
@@ -55,7 +56,6 @@ const Navbar = () => {
           </span>
           <button
             onClick={() => signOut()}
-            target="_blank"
             className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn bg-primary text-primary-content transition-all duration-1000 hover:bg-primary/90"
           >
             Logout
