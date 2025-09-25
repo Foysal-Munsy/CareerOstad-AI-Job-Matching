@@ -15,6 +15,23 @@ const SocialLogin = () => {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
+    useEffect(() => {
+        if (session?.status === "authenticated") {
+            router.push(callbackUrl || '/');
+            // Swal.fire({
+            //     toast: true,
+            //     position: 'top-end',
+            //     icon: 'success',
+            //     title: 'Signup successful!',
+            //     showConfirmButton: false,
+            //     timer: 2500,
+            //     timerProgressBar: true,
+            //     customClass: {
+            //         popup: 'swal-toast-zindex'
+            //     }
+            // });
+        }
+    }, [session?.status]);
     const handleSocialLogin = async (providerName) => {
         const providerInfo = {
             google: { name: 'Google', icon: '🔍', color: '#4285F4' },
@@ -102,25 +119,7 @@ const SocialLogin = () => {
             Cookies.set('role', role);
             signIn(providerName, { callbackUrl, role });
         }
-    };
-
-    useEffect(() => {
-        if (session?.status === "authenticated") {
-            router.push(callbackUrl);
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Signup successful!',
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal-toast-zindex'
-                }
-            });
-        }
-    }, [session?.status]);
+    };    
 
     return (
         <div className="space-y-4">

@@ -19,6 +19,17 @@ const LoginForm = () => {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
+    // Autofill from localStorage if available
+    React.useEffect(() => {
+        const savedEmail = window.localStorage.getItem("login_email");
+        const savedPassword = window.localStorage.getItem("login_password");
+        if (savedEmail && savedPassword) {
+            setEmail(savedEmail);
+            setPassword(savedPassword);
+            setRememberMe(true);
+        }
+    }, []);
+
     const handleCredentialLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -42,7 +53,7 @@ const LoginForm = () => {
                         popup: 'swal-toast-zindex'
                     }
                 }).then(() => {
-                    setLoading(false);
+                    //setLoading(false);
                     router.push(res.url || callbackUrl);
                 });
                 // Save credentials if rememberMe is checked
@@ -54,7 +65,7 @@ const LoginForm = () => {
                     window.localStorage.removeItem("login_password");
                 }
             } else {
-                setLoading(false);
+                //setLoading(false);
                 Swal.fire({
                     toast: true,
                     position: 'top-end',
@@ -69,7 +80,7 @@ const LoginForm = () => {
                 });
             }
         } catch (error) {
-            setLoading(false);
+            //setLoading(false);
             Swal.fire({
                 toast: true,
                 position: 'top-end',

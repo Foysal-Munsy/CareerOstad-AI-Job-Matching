@@ -19,6 +19,8 @@ import { HiOutlineDocumentText } from "react-icons/hi";
 const SignupForm = () => {
   const imgbbApiKey = "5d5648f9ca8a568a4a4f1c8ef50bc48e";
   const imageInputRef = useRef();
+  const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -136,36 +138,25 @@ const SignupForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (passwordError) {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'error',
-        title: 'Please fix password errors!',
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        customClass: {
-          popup: 'swal-toast-zindex'
-        }
-      });
+    setLoading(true);
+
+    // Validate required fields
+    const errors = {};
+    if (!form.name.trim()) errors.name = "Full Name is required.";
+    if (!form.role) errors.role = "Professional Role is required.";
+    if (!form.email.trim()) errors.email = "Email Address is required.";
+    if (!form.password) errors.password = "Password is required.";
+    if (!form.confirmPassword) errors.confirmPassword = "Confirm Password is required.";
+    if (passwordError) errors.password = passwordError;
+    if (form.password !== form.confirmPassword) errors.confirmPassword = "Passwords do not match.";
+
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      setLoading(false);
       return;
     }
-    if (form.password !== form.confirmPassword) {
-      Swal.fire({
-        toast: true,
-        position: 'top-end',
-        icon: 'error',
-        title: 'Passwords do not match!',
-        showConfirmButton: false,
-        timer: 2500,
-        timerProgressBar: true,
-        customClass: {
-          popup: 'swal-toast-zindex'
-        }
-      });
-      return;
-    }
+
     try {
       const result = await registerUser(form);
       if (result?.insertedId) {
@@ -195,7 +186,9 @@ const SignupForm = () => {
         setIsTypingConfirm(false);
         setPasswordError("");
         setConfirmMsg("");
+        setFieldErrors({});
       } else {
+        setLoading(false);
         Swal.fire({
           toast: true,
           position: 'top-end',
@@ -210,6 +203,7 @@ const SignupForm = () => {
         });
       }
     } catch (error) {
+      setLoading(false);
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -247,6 +241,12 @@ const SignupForm = () => {
               className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 focus:bg-white"
             />
           </div>
+          {fieldErrors.name && (
+            <div className="flex items-center mt-1 text-xs text-red-600">
+              <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
+              {fieldErrors.name}
+            </div>
+          )}
         </div>
 
         <div className="group">
@@ -288,6 +288,12 @@ const SignupForm = () => {
               <HiOutlineArrowNarrowRight className="h-4 w-4 text-purple-400" />
             </div>
           </div>
+          {fieldErrors.role && (
+            <div className="flex items-center mt-1 text-xs text-red-600">
+              <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
+              {fieldErrors.role}
+            </div>
+          )}
         </div>
       </div>
 
@@ -310,6 +316,12 @@ const SignupForm = () => {
             className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 bg-gray-50/50 hover:bg-white/80 focus:bg-white"
           />
         </div>
+        {fieldErrors.email && (
+          <div className="flex items-center mt-1 text-xs text-red-600">
+            <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
+            {fieldErrors.email}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -349,6 +361,12 @@ const SignupForm = () => {
             <div className="flex items-center mt-1 text-xs text-red-600">
               <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
               {passwordError}
+            </div>
+          )}
+          {fieldErrors.password && (
+            <div className="flex items-center mt-1 text-xs text-red-600">
+              <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
+              {fieldErrors.password}
             </div>
           )}
         </div>
@@ -393,6 +411,12 @@ const SignupForm = () => {
                 <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
               )}
               {confirmMsg}
+            </div>
+          )}
+          {fieldErrors.confirmPassword && (
+            <div className="flex items-center mt-1 text-xs text-red-600">
+              <HiOutlineExclamationCircle className="mr-1 h-4 w-4" />
+              {fieldErrors.confirmPassword}
             </div>
           )}
         </div>
@@ -458,7 +482,16 @@ const SignupForm = () => {
       >
         <span className="flex items-center justify-center">
           <HiOutlineDocumentText className="w-4 h-4 mr-2" />
-          Create Account
+          {loading ? (
+            <>
+              Creating Account
+              <span className="ml-1">
+                <span className="loading loading-dots loading-xs"></span>
+              </span>
+            </>
+          ) : (
+            "Create Account"
+          )}
         </span>
       </button>
 
