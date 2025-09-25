@@ -15,6 +15,23 @@ const SocialLogin = () => {
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/";
 
+    useEffect(() => {
+        if (session?.status === "authenticated") {
+            router.push(callbackUrl || '/');
+            // Swal.fire({
+            //     toast: true,
+            //     position: 'top-end',
+            //     icon: 'success',
+            //     title: 'Signup successful!',
+            //     showConfirmButton: false,
+            //     timer: 2500,
+            //     timerProgressBar: true,
+            //     customClass: {
+            //         popup: 'swal-toast-zindex'
+            //     }
+            // });
+        }
+    }, [session?.status]);
     const handleSocialLogin = async (providerName) => {
         const providerInfo = {
             google: { name: 'Google', icon: '🔍', color: '#4285F4' },
@@ -110,25 +127,7 @@ const SocialLogin = () => {
                 role: role 
             });
         }
-    };
-
-    useEffect(() => {
-        if (session?.status === "authenticated") {
-            router.push(callbackUrl);
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Signup successful!',
-                showConfirmButton: false,
-                timer: 2500,
-                timerProgressBar: true,
-                customClass: {
-                    popup: 'swal-toast-zindex'
-                }
-            });
-        }
-    }, [session?.status]);
+    };    
 
     return (
         <div className="space-y-4">
@@ -142,9 +141,9 @@ const SocialLogin = () => {
             </div>
             
             <div className="grid grid-cols-1 gap-3">
-                <button
+                <div
                     onClick={() => handleSocialLogin("google")}
-                    className="group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                    className="cursor-pointer group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-blue-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-red-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg"></div>
                     <div className="relative flex items-center gap-2">
@@ -158,11 +157,11 @@ const SocialLogin = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
-                </button>
+                </div>
                 
-                <button
+                <div
                     onClick={() => handleSocialLogin("github")}
-                    className="group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-gray-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                    className="cursor-pointer group relative w-full flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-lg font-medium text-sm text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-md hover:shadow-gray-500/10 hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 >
                     <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-slate-50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg"></div>
                     <div className="relative flex items-center gap-2">
@@ -176,7 +175,7 @@ const SocialLogin = () => {
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </div>
-                </button>
+                </div>
             </div>
             
             <div className="text-center">
