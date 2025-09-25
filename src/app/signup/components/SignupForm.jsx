@@ -250,7 +250,7 @@ const SignupForm = () => {
         </div>
 
         <div className="group">
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
+          <label htmlFor="userType" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
             Professional Role
           </label>
           <div className="relative">

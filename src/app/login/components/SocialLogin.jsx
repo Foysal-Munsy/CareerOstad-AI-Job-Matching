@@ -40,7 +40,7 @@ const SocialLogin = () => {
         
         const { name, icon, color } = providerInfo[providerName];
         
-        const { value: role } = await Swal.fire({
+        const result = await Swal.fire({
             title: `
                 Continue with ${name}
             `,
@@ -80,10 +80,14 @@ const SocialLogin = () => {
                     </div>
                 </div>
             `,
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'Please select your role to continue!';
+            preConfirm: () => {
+                const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
+                console.log('PreConfirm - selected role:', selectedRole);
+                if (!selectedRole) {
+                    Swal.showValidationMessage('Please select your role to continue!');
+                    return false;
                 }
+                return selectedRole;
             },
             confirmButtonText: `
                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -114,10 +118,14 @@ const SocialLogin = () => {
             }
         });
 
-        if (role) {
-            // Pass role as a query param to backend
-            Cookies.set('role', role);
-            signIn(providerName, { callbackUrl, role });
+        if (result.isConfirmed && result.value) {
+            const role = result.value;
+            console.log('Selected role from SweetAlert:', role);
+            // Pass role directly in signIn options
+            signIn(providerName, { 
+                callbackUrl, 
+                role: role 
+            });
         }
     };    
 

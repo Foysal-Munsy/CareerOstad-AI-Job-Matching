@@ -47,6 +47,7 @@ const Navbar = () => {
             <li>
               <Link href="/advice">Advice</Link>
             </li>
+            {/* Dashboard link removed for cleaner public navbar */}
           </ul>
         </div>
 

@@ -48,51 +48,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             Jobs
           </a>
         </li>
-        <details className="collapse collapse-plus">
-          <summary className="collapse-title font-bold">Candidates</summary>
-          <div className="collapse-content text-sm">
-            <ul onClick={() => setSideMenu(!sideMenu)}>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Candidate Dashboard
-                  <span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Match Your Skill<span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Apply For Job<span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </details>
-        <details className="collapse collapse-plus">
-          <summary className="collapse-title font-bold">Companies</summary>
-          <div className="collapse-content text-sm">
-            <ul>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Company Dashboard<span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Match Candidate<span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-              <li className="sub-menu-list px-5 py-2.5">
-                <a href="#">
-                  Post Job<span className="hidden go-icon">&gt;</span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </details>
+        {/* Dashboard-related collapses removed for a cleaner public navbar */}
         <li className="px-5 py-2.5" onClick={() => setSideMenu(!sideMenu)}>
           <Link href="/advice" className="">
             Carrier Advice
