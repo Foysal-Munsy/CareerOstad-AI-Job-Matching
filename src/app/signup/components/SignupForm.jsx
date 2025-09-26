@@ -31,7 +31,7 @@ const SignupForm = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    imageUrl: "",
+    image: "",
     role: ""
   });
 
@@ -88,7 +88,7 @@ const SignupForm = () => {
       });
       const data = await res.json();
       if (data.success) {
-        setForm((prev) => ({ ...prev, imageUrl: data.data.url }));
+        setForm((prev) => ({ ...prev, image: data.data.url }));
         Swal.fire({
           toast: true,
           position: 'top-end',
@@ -156,7 +156,7 @@ const SignupForm = () => {
       setLoading(false);
       return;
     }
-
+    //console.log(form)
     try {
       const result = await registerUser(form);
       if (result?.insertedId) {
@@ -179,7 +179,7 @@ const SignupForm = () => {
           email: "",
           password: "",
           confirmPassword: "",
-          imageUrl: "",
+          image: "",
           role: ""
         });
         setIsTypingPassword(false);
@@ -423,7 +423,7 @@ const SignupForm = () => {
       </div>
 
       <div className="group">
-        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
+        <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1.5 transition-colors group-focus-within:text-purple-600">
           Profile Picture <span className="text-gray-400 font-normal text-xs">(Optional)</span>
         </label>
         <div
@@ -434,11 +434,11 @@ const SignupForm = () => {
         >
           <div className="flex gap-2 items-center">
             <input
-              id="imageUrl"
+              id="image"
               type="url"
-              name="imageUrl"
+              name="image"
               placeholder="Paste image URL or upload below"
-              value={form.imageUrl}
+              value={form.image}
               onChange={handleChange}
               className="flex-1 pl-3 pr-2 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white"
             />
@@ -461,9 +461,9 @@ const SignupForm = () => {
           <p className="text-xs text-gray-500 mt-1">
             Drag & drop, paste, or upload an image.
           </p>
-          {form.imageUrl && (
+          {form.image && (
             <div className="mt-2">
-              <img src={form.imageUrl} alt="Preview" className="h-16 rounded shadow border" />
+              <img src={form.image} alt="Preview" className="h-16 rounded shadow border" />
             </div>
           )}
         </div>
