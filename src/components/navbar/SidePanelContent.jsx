@@ -48,18 +48,29 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             Jobs
           </a>
         </li>
+              
         {/* Dashboard-related collapses removed for a cleaner public navbar */}
         <li className="px-5 py-2.5" onClick={() => setSideMenu(!sideMenu)}>
           <Link href="/advice" className="">
             Carrier Advice
           </Link>
         </li>
+        <details className="collapse collapse-plus">
+                    <summary className="collapse-title font-bold">Profile</summary>
+                    <div className="collapse-content text-sm">
+                        <ul onClick={() => setSideMenu(!sideMenu)}>
+                            <li className='sub-menu-list px-5 py-2.5'><Link href="/dashboard">Dashboard <span className='hidden go-icon'>&gt;</span></Link></li>
+                            <li className='sub-menu-list px-5 py-2.5'><a href="#">Route-2 <span className='hidden go-icon'>&gt;</span></a></li>
+                            <li className='sub-menu-list px-5 py-2.5'><a href="#">Route-3 <span className='hidden go-icon'>&gt;</span></a></li>
+                        </ul>
+                    </div>
+                </details>
         {/* <Dropdowns sideMenu={sideMenu} setSideMenu={setSideMenu} /> */}
         {
           status === 'authenticated' ?
             <div onClick={() => setSideMenu(!sideMenu)} className="md:hidden flex items-center gap-3 social-area mx-4">
               <span
-                className="inline-flex items-center gap-2 cursor-pointer text-md text-primary transition-all duration-1000 hover:bg-primary"
+                className="inline-flex items-center gap-2 text-md text-primary transition-all duration-1000"
               >
                 {session?.user?.name}
               </span>
@@ -83,7 +94,7 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
                 href="/signup"
                 className="inline-flex items-center gap-2 cursor-pointer text-md border py-1 px-4 rounded-btn bg-primary text-primary-content transition-all duration-1000 hover:bg-primary/90"
               >
-                Signups
+                Signup
               </Link>
             </div>
         }

@@ -51,7 +51,17 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {status === "authenticated" ? (
+        {
+          status === "loading" ? (
+  // Loading spinner (DaisyUI)
+  <div className="hidden md:flex items-center gap-3 mx-3">
+    <span className="loading loading-dots loading-xs text-primary"></span>
+  </div>
+          )
+  :
+        
+
+        status === "authenticated" ? (
           <div className="hidden md:flex items-center gap-3 social-area mx-3 relative">
             {/* Profile Picture and Drawer */}
             <div ref={profileDrawerRef} className="flex items-center gap-2 relative">
@@ -61,7 +71,7 @@ const Navbar = () => {
                 aria-label="Open profile menu"
               >
                 <img
-                  src={session?.user?.image || "/default-avatar.png"}
+                  src={session?.user?.image}
                   alt="Profile"
                   className="w-10 h-10 rounded-full border-2 border-primary object-cover shadow transition-all duration-300"
                 />
@@ -88,7 +98,7 @@ const Navbar = () => {
               >
                 <div className="p-4 border-b border-gray-100 flex items-center gap-3">
                   <img
-                    src={session?.user?.image || "/default-avatar.png"}
+                    src={session?.user?.image}
                     alt="Profile"
                     className="w-12 h-12 rounded-full border-2 border-primary object-cover"
                   />
