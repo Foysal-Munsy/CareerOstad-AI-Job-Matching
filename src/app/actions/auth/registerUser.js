@@ -7,9 +7,9 @@ import bcrypt from "bcrypt";
 export const registerUser = async (form) => {
     const userCollection = dbConnect(collectionNamesObj.userCollection);
 
-    const {email, password, userType} = form;
+    const {email, password} = form;
 
-    console.log('Registering user with form:', form);
+    //console.log('Registering user with form:', form);
 
     // Validation
     const user = await userCollection.findOne({email: form.email})
@@ -21,7 +21,7 @@ export const registerUser = async (form) => {
         form.password = hashedPass
         form.confirmPassword = hashedPass
         // Set role based on userType for compatibility
-        form.role = userType || 'candidate';
+        //form.role = userType || 'candidate';
         
         console.log('User data to be saved:', form);
 
