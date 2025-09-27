@@ -1,5 +1,20 @@
 import Head from 'next/head';
 import Image from 'next/image';
+const advice = async () => {
+    try {
+        const res = await fetch('/api/advice'); 
+        if (!res.ok) {
+            throw new Error('Failed to fetch advice');
+        }
+        const data = await res.json();
+        return data.advice;
+    }   
+    catch (error) {
+        console.error('Error fetching advice:', error);
+        return [];
+    }   
+    
+}
 
 const adviceSections = [
     {

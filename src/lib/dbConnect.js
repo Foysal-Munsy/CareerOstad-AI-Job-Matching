@@ -2,7 +2,8 @@ import { MongoClient, ServerApiVersion } from "mongodb"
 
 export const collectionNamesObj = {
     userCollection: "sample-user",
-    jobsCollection: "jobs"
+    jobsCollection: "jobs",
+    adviceCollection: "advice",
 }
 export default function dbConnect(collectionName) {
     const uri = process.env.MONGO_URI;
