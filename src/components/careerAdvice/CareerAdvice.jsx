@@ -1,8 +1,26 @@
 import Head from 'next/head';
 import Image from 'next/image';
+<<<<<<< HEAD
 import React from 'react';
 
 
+=======
+const advice = async () => {
+    try {
+        const res = await fetch('/api/advice'); 
+        if (!res.ok) {
+            throw new Error('Failed to fetch advice');
+        }
+        const data = await res.json();
+        return data.advice;
+    }   
+    catch (error) {
+        console.error('Error fetching advice:', error);
+        return [];
+    }   
+    
+}
+>>>>>>> 8bc51115ae0e520130147179eb7442cafd6a8b98
 
 const adviceSections = [
     {
@@ -111,4 +129,8 @@ export default function CareerAdvice() {
             </main>
         </>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 8bc51115ae0e520130147179eb7442cafd6a8b98
