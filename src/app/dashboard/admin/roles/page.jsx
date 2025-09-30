@@ -18,7 +18,7 @@ export default function RoleManagementPage() {
     try {
       setLoading(true);
       const response = await fetch('/api/admin/users');
-      
+
       if (response.ok) {
         const data = await response.json();
         setUsers(data.users || []);
@@ -56,7 +56,7 @@ export default function RoleManagementPage() {
   const handleRoleChange = async (userId, newRole) => {
     try {
       setUpdating(true);
-      
+
       const response = await fetch('/api/admin/users/role', {
         method: 'PUT',
         headers: {
@@ -72,10 +72,10 @@ export default function RoleManagementPage() {
 
       if (response.ok && result.success) {
         // Update local state
-        setUsers(users.map(user => 
+        setUsers(users.map(user =>
           user._id === userId ? { ...user, role: newRole } : user
         ));
-        
+
         // Show success alert
         Swal.fire({
           icon: 'success',
@@ -149,7 +149,7 @@ export default function RoleManagementPage() {
   // Filter users based on search and role filter
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === '' || user.role === filterRole;
     return matchesSearch && matchesRole;
   });
@@ -340,14 +340,14 @@ export default function RoleManagementPage() {
               </tbody>
             </table>
           </div>
-          
+
           {filteredUsers.length === 0 && (
             <div className="text-center py-12">
               <FaUsers className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-600 mb-2">No Users Found</h3>
               <p className="text-gray-500">
-                {searchTerm || filterRole 
-                  ? 'Try adjusting your search criteria.' 
+                {searchTerm || filterRole
+                  ? 'Try adjusting your search criteria.'
                   : 'No users available at the moment.'
                 }
               </p>
