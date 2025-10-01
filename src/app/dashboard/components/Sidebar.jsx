@@ -12,6 +12,7 @@ import { HiOutlineDocumentText, HiOutlineUsers } from "react-icons/hi";
 import { BiMessageSquareDots } from "react-icons/bi";
 import { RiTeamLine } from "react-icons/ri";
 import { useSession } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 const NavItem = ({ href, label, icon: Icon, onClick }) => {
   const pathname = usePathname();
@@ -35,6 +36,78 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
   const role = session?.user?.role || "candidate";
   const isAdmin = role === "admin";
   const isCompany = role === "company";
+  const [candidateStats, setCandidateStats] = useState({ applications: 0, saved: 0, interviews: 0 });
+  const [adminStats, setAdminStats] = useState({ users: 0, activeJobs: 0, applications: 0, companies: 0 });
+  const [companyStats, setCompanyStats] = useState({ activeJobs: 0, applications: 0, interviews: 0 });
+  const [statsLoading, setStatsLoading] = useState(false);
+
+  useEffect(() => {
+    async function loadCandidateStats() {
+      if (isCompany || isAdmin || !session?.user?.email) return;
+      setStatsLoading(true);
+      try {
+        const [appsRes, savedRes] = await Promise.all([
+          fetch('/api/applications', { cache: 'no-store' }),
+          fetch('/api/saved-jobs', { cache: 'no-store' })
+        ]);
+        const [appsData, savedData] = await Promise.all([appsRes.json(), savedRes.json()]);
+        const apps = appsRes.ok ? (appsData.applications || []) : [];
+        const saved = savedRes.ok ? (savedData.saved || []) : [];
+        setCandidateStats({
+          applications: apps.length,
+          saved: saved.length,
+          interviews: apps.filter(a => a.status === 'Interview Scheduled').length,
+        });
+      } catch (e) {
+        // silent fail for sidebar
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+    loadCandidateStats();
+  }, [session?.user?.email, isCompany, isAdmin]);
+
+  useEffect(() => {
+    async function loadAdminStats() {
+      if (!isAdmin) return;
+      setStatsLoading(true);
+      try {
+        const res = await fetch('/api/admin/stats', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const s = data?.stats || {};
+          setAdminStats({
+            users: s.users || 0,
+            activeJobs: s.activeJobs || 0,
+            applications: s.applications || 0,
+            companies: s.companies || 0,
+          });
+        }
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+    async function loadCompanyStats() {
+      if (!isCompany) return;
+      setStatsLoading(true);
+      try {
+        const res = await fetch('/api/company/stats', { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const s = data?.stats || {};
+          setCompanyStats({
+            activeJobs: s.activeJobs || 0,
+            applications: s.applications || 0,
+            interviews: s.interviews || 0,
+          });
+        }
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+    loadAdminStats();
+    loadCompanyStats();
+  }, [isAdmin, isCompany]);
   const containerClass =
     variant === "mobile"
       ? "w-72 shrink-0 bg-base-100 h-full flex flex-col"
@@ -155,6 +228,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/admin/jobs" label="All Jobs" icon={FaBriefcase} onClick={itemClick} />
             <NavItem href="/dashboard/admin/applications" label="Applications" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/admin/categories" label="Job Categories" icon={FaTags} onClick={itemClick} />
+            <NavItem href="/dashboard/admin/advice" label="Advice Management" icon={HiOutlineDocumentText} onClick={itemClick} />
             
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Analytics & Reports</div>
             <NavItem href="/dashboard/admin/analytics" label="Analytics" icon={FaChartBar} onClick={itemClick} />
@@ -177,49 +251,49 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <>
               <div className="flex items-center justify-between">
                 <span>Total Users</span>
-                <span className="badge badge-primary badge-sm">1,247</span>
+                <span className="badge badge-primary badge-sm">{statsLoading ? '-' : adminStats.users}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Active Jobs</span>
-                <span className="badge badge-success badge-sm">89</span>
+                <span className="badge badge-success badge-sm">{statsLoading ? '-' : adminStats.activeJobs}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Applications</span>
-                <span className="badge badge-info badge-sm">342</span>
+                <span className="badge badge-info badge-sm">{statsLoading ? '-' : adminStats.applications}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Companies</span>
-                <span className="badge badge-warning badge-sm">156</span>
+                <span className="badge badge-warning badge-sm">{statsLoading ? '-' : adminStats.companies}</span>
               </div>
             </>
           ) : isCompany ? (
             <>
               <div className="flex items-center justify-between">
                 <span>Active Jobs</span>
-                <span className="badge badge-success badge-sm">12</span>
+                <span className="badge badge-success badge-sm">{statsLoading ? '-' : companyStats.activeJobs}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Applications</span>
-                <span className="badge badge-info badge-sm">48</span>
+                <span className="badge badge-info badge-sm">{statsLoading ? '-' : companyStats.applications}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Interviews</span>
-                <span className="badge badge-warning badge-sm">8</span>
+                <span className="badge badge-warning badge-sm">{statsLoading ? '-' : companyStats.interviews}</span>
               </div>
             </>
           ) : (
             <>
               <div className="flex items-center justify-between">
                 <span>Applications</span>
-                <span className="badge badge-info badge-sm">5</span>
+                <span className="badge badge-info badge-sm">{statsLoading ? '-' : candidateStats.applications}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Saved Jobs</span>
-                <span className="badge badge-success badge-sm">12</span>
+                <span className="badge badge-success badge-sm">{statsLoading ? '-' : candidateStats.saved}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Interviews</span>
-                <span className="badge badge-warning badge-sm">2</span>
+                <span className="badge badge-warning badge-sm">{statsLoading ? '-' : candidateStats.interviews}</span>
               </div>
             </>
           )}

@@ -1,9 +1,14 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, use } from "react";
+import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 
-export default function PostJobPage() {
+export default function EditJobPage({ params }) {
+  const router = useRouter();
+  const resolvedParams = use(params);
+  const { id } = resolvedParams;
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(!!id);
   const [form, setForm] = useState({
     title: "",
     category: "",
@@ -30,6 +35,7 @@ export default function PostJobPage() {
     genderPreference: "",
     ageLimit: "",
     tags: "",
+    status: "open"
   });
 
   const titleOk = form.title && form.title.trim().length >= 6;
@@ -43,6 +49,57 @@ export default function PostJobPage() {
     return max >= min;
   }, [form.salaryMin, form.salaryMax]);
   const deadlineOk = form.applicationDeadline ? new Date(form.applicationDeadline) > new Date() : true;
+
+  // Fetch job data if editing
+  useEffect(() => {
+    if (!id) return;
+
+    async function fetchJob() {
+      setFetching(true);
+      try {
+        const res = await fetch(`/api/jobs/${id}`);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data?.error || "Failed to fetch job");
+        
+        const job = data.job;
+        setForm({
+          title: job.title || "",
+          category: job.category || "",
+          employmentType: job.employmentType || "Full-time",
+          jobLevel: job.jobLevel || "Mid-level",
+          overview: job.overview || "",
+          requirements: job.requirements || "",
+          preferredQualifications: job.preferredQualifications || "",
+          toolsTechnologies: job.toolsTechnologies ? job.toolsTechnologies.join(", ") : "",
+          location: job.location || "",
+          workMode: job.workMode || "On-site",
+          salaryMin: job.salaryMin ? job.salaryMin.toString() : "",
+          salaryMax: job.salaryMax ? job.salaryMax.toString() : "",
+          salaryType: job.salaryType || "BDT",
+          isNegotiable: job.isNegotiable || false,
+          perksBenefits: job.perksBenefits || "",
+          applicationDeadline: job.applicationDeadline ? new Date(job.applicationDeadline).toISOString().split('T')[0] : "",
+          howToApply: job.howToApply || "Website",
+          applicationUrl: job.applicationUrl || "",
+          applicationEmail: job.applicationEmail || "",
+          numberOfVacancies: job.numberOfVacancies || 1,
+          experienceRequired: job.experienceRequired || "",
+          educationRequired: job.educationRequired || "",
+          genderPreference: job.genderPreference || "",
+          ageLimit: job.ageLimit || "",
+          tags: job.tags ? job.tags.join(", ") : "",
+          status: job.status || "open"
+        });
+      } catch (e) {
+        Swal.fire({ icon: "error", title: "Failed to load job", text: String(e.message || e) });
+        router.push("/dashboard/company/jobs");
+      } finally {
+        setFetching(false);
+      }
+    }
+
+    fetchJob();
+  }, [id, router]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -62,11 +119,11 @@ export default function PostJobPage() {
     }
 
     const confirm = await Swal.fire({
-      title: "Publish job?",
-      text: "Your job will be visible to candidates immediately.",
+      title: id ? "Update job?" : "Publish job?",
+      text: id ? "Your job will be updated with the new information." : "Your job will be visible to candidates immediately.",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Publish",
+      confirmButtonText: id ? "Update" : "Publish",
     });
     if (!confirm.isConfirmed) return;
 
@@ -97,27 +154,29 @@ export default function PostJobPage() {
       genderPreference: form.genderPreference.trim(),
       ageLimit: form.ageLimit.trim(),
       tags: form.tags.split(",").map((s) => s.trim()).filter(Boolean),
+      status: form.status
     };
 
     try {
-      const res = await fetch("/api/jobs", {
-        method: "POST",
+      const url = id ? `/api/jobs/${id}` : "/api/jobs";
+      const method = id ? "PUT" : "POST";
+      
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed to create job");
-      await Swal.fire({ icon: "success", title: "Job posted!", text: "Your job has been published." });
-      setForm({ 
-        title: "", category: "", employmentType: "Full-time", jobLevel: "Mid-level",
-        overview: "", requirements: "", preferredQualifications: "", toolsTechnologies: "",
-        location: "", workMode: "On-site", salaryMin: "", salaryMax: "", salaryType: "BDT",
-        isNegotiable: false, perksBenefits: "", applicationDeadline: "", howToApply: "Website",
-        applicationUrl: "", applicationEmail: "", numberOfVacancies: 1, experienceRequired: "",
-        educationRequired: "", genderPreference: "", ageLimit: "", tags: ""
+      if (!res.ok) throw new Error(data?.error || `Failed to ${id ? 'update' : 'create'} job`);
+      
+      await Swal.fire({ 
+        icon: "success", 
+        title: id ? "Job updated!" : "Job posted!", 
+        text: id ? "Your job has been updated." : "Your job has been published." 
       });
+      router.push("/dashboard/company/jobs");
     } catch (e) {
-      Swal.fire({ icon: "error", title: "Failed to post", text: String(e.message || e) });
+      Swal.fire({ icon: "error", title: `Failed to ${id ? 'update' : 'post'}`, text: String(e.message || e) });
     } finally {
       setLoading(false);
     }
@@ -130,14 +189,29 @@ export default function PostJobPage() {
 
   const remainingDesc = Math.max(0, 2000 - (form.overview ? form.overview.length : 0));
 
+  if (fetching) {
+    return (
+      <div className="p-4">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-base-content/70">Loading job data...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 space-y-6">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Post a Job</h1>
-          <p className="mt-1 text-base-content/70">Craft a compelling job post with clear requirements.</p>
+          <h1 className="text-2xl font-bold">{id ? "Edit Job" : "Post a Job"}</h1>
+          <p className="mt-1 text-base-content/70">
+            {id ? "Update your job post with new information." : "Craft a compelling job post with clear requirements."}
+          </p>
         </div>
-        <a href="/dashboard/company/jobs" className="btn btn-sm btn-outline">My Posts</a>
+        <div className="flex gap-2">
+          <a href="/dashboard/company/jobs" className="btn btn-sm btn-outline">My Posts</a>
+          {!id && <a href="/dashboard/company/post-job" className="btn btn-sm btn-outline">New Job</a>}
+        </div>
       </div>
 
       <section className="relative overflow-hidden rounded-2xl border border-base-200 bg-base-100 p-5 shadow-sm card-professional">
@@ -147,14 +221,14 @@ export default function PostJobPage() {
           <div className="divider text-lg font-semibold">Basic Job Details</div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="label">
+            <div>
+              <label className="label">
                 <span className="label-text">Job Title (Required)</span>
-              {!titleOk ? <span className="label-text-alt text-error">Min 6 chars</span> : null}
-            </label>
-            <input
-              name="title"
-              value={form.title}
+                {!titleOk ? <span className="label-text-alt text-error">Min 6 chars</span> : null}
+              </label>
+              <input
+                name="title"
+                value={form.title}
                 onChange={onChange}
                 className={`input input-bordered w-full ${!titleOk && form.title ? "input-error" : ""}`}
                 placeholder="e.g., MERN Stack Developer"
@@ -227,7 +301,7 @@ export default function PostJobPage() {
           <div>
             <label className="label">
               <span className="label-text">Overview / Responsibilities (Required)</span>
-              {!overviewOk ? <span className="label-text-alt text-error">Min 50 chars</span> : <span className="label-text-alt">{Math.max(0, 2000 - form.overview.length)} left</span>}
+              {!overviewOk ? <span className="label-text-alt text-error">Min 50 chars</span> : <span className="label-text-alt">{Math.max(0, 2000 - (form.overview ? form.overview.length : 0))} left</span>}
             </label>
             <textarea
               name="overview"
@@ -465,8 +539,8 @@ export default function PostJobPage() {
                 className={`input input-bordered w-full ${form.howToApply === "Email" && !form.applicationEmail ? "input-error" : ""}`}
                 placeholder="careers@company.com"
               />
-                </div>
-              ) : null}
+            </div>
+          ) : null}
 
           {/* Extra Information */}
           <div className="divider text-lg font-semibold">Additional Information</div>
@@ -539,9 +613,25 @@ export default function PostJobPage() {
             ) : null}
           </div>
 
+          {id && (
+            <div>
+              <label className="label"><span className="label-text">Job Status</span></label>
+              <select
+                name="status"
+                value={form.status}
+                onChange={onChange}
+                className="select select-bordered w-full"
+              >
+                <option value="open">Open</option>
+                <option value="closed">Closed</option>
+                <option value="draft">Draft</option>
+              </select>
+            </div>
+          )}
+
           <div className="flex items-center gap-3">
             <button type="submit" className={`btn btn-primary btn-professional ${loading ? 'btn-loading' : ''}`} disabled={loading}>
-              {loading ? "Publishing..." : "Publish Job"}
+              {loading ? (id ? "Updating..." : "Publishing...") : (id ? "Update Job" : "Publish Job")}
             </button>
             <button
               type="button"
@@ -552,7 +642,7 @@ export default function PostJobPage() {
                 location: "", workMode: "On-site", salaryMin: "", salaryMax: "", salaryType: "BDT",
                 isNegotiable: false, perksBenefits: "", applicationDeadline: "", howToApply: "Website",
                 applicationUrl: "", applicationEmail: "", numberOfVacancies: 1, experienceRequired: "",
-                educationRequired: "", genderPreference: "", ageLimit: "", tags: ""
+                educationRequired: "", genderPreference: "", ageLimit: "", tags: "", status: "open"
               })}
             >
               Reset
@@ -563,5 +653,3 @@ export default function PostJobPage() {
     </div>
   );
 }
-
-

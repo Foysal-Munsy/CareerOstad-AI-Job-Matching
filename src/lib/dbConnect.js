@@ -4,6 +4,9 @@ export const collectionNamesObj = {
     userCollection: "sample-user",
     jobsCollection: "jobs",
     adviceCollection: "advice",
+    applicationsCollection: "applications",
+    messagesCollection: "messages",
+    savedJobsCollection: "saved-jobs",
 }
 export default function dbConnect(collectionName) {
     const uri = process.env.MONGO_URI;
