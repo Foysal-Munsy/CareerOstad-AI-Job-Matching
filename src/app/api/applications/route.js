@@ -55,7 +55,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { jobId, coverLetter, resumeUrl } = body;
+    const { jobId, coverLetter, resumeUrl, expectedSalary } = body;
 
     if (!jobId) {
       return NextResponse.json({ 
@@ -97,6 +97,7 @@ export async function POST(request) {
       jobId: jobId,
       coverLetter: coverLetter || '',
       resumeUrl: resumeUrl || '',
+      expectedSalary: expectedSalary || '',
       status: 'Applied',
       appliedAt: new Date(),
       createdAt: new Date(),

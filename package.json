@@ -9,10 +9,13 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@google/genai": "^1.22.0",
+    "@google/generative-ai": "^0.24.1",
     "@lottiefiles/dotlottie-react": "^0.17.1",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.7.0",
+    "genai": "^0.0.18",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.544.0",
     "mongodb": "^6.20.0",

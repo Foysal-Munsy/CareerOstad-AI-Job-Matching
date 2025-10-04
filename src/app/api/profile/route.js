@@ -154,6 +154,8 @@ export async function PUT(request) {
         professionalTitle: body.personalInfo?.professionalTitle || '',
         availability: body.personalInfo?.availability || 'Available for new opportunities',
         experienceYears: body.personalInfo?.experience || '0+ years',
+        image: body.personalInfo?.avatar || session.user.image || '',
+        avatar: body.personalInfo?.avatar || session.user.image || '',
         resumeUrl: body.resumeUrl || '',
         linkedin: body.socialLinks?.linkedin || '',
         github: body.socialLinks?.github || '',

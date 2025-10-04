@@ -7,7 +7,7 @@ import { ObjectId } from "mongodb";
 // GET /api/jobs/[id] - get a specific job by ID (public access)
 export async function GET(request, { params }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
@@ -45,7 +45,7 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        const { id } = params;
+        const { id } = await params;
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
@@ -57,7 +57,7 @@ export async function PUT(request, { params }) {
             salaryMin, salaryMax, salaryType, isNegotiable, perksBenefits,
             applicationDeadline, howToApply, applicationUrl, applicationEmail,
             numberOfVacancies, experienceRequired, educationRequired,
-            genderPreference, ageLimit, tags = [], status 
+            genderPreference, ageLimit, tags = [], status, companyWebsite
         } = body;
 
         if (!title || !category || !overview || !requirements) {
@@ -110,6 +110,7 @@ export async function PUT(request, { params }) {
             genderPreference: genderPreference || '',
             ageLimit: ageLimit || '',
             tags: Array.isArray(tags) ? tags : [],
+            companyWebsite: companyWebsite || '',
             updatedAt: new Date(),
             ...(status && { status }) // Only update status if provided
         };
@@ -142,7 +143,7 @@ export async function DELETE(request, { params }) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
 
-        const { id } = params;
+        const { id } = await params;
         if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
