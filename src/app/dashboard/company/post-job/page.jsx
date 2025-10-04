@@ -30,6 +30,7 @@ export default function PostJobPage() {
     genderPreference: "",
     ageLimit: "",
     tags: "",
+    companyWebsite: "",
   });
 
   const titleOk = form.title && form.title.trim().length >= 6;
@@ -114,7 +115,7 @@ export default function PostJobPage() {
         location: "", workMode: "On-site", salaryMin: "", salaryMax: "", salaryType: "BDT",
         isNegotiable: false, perksBenefits: "", applicationDeadline: "", howToApply: "Website",
         applicationUrl: "", applicationEmail: "", numberOfVacancies: 1, experienceRequired: "",
-        educationRequired: "", genderPreference: "", ageLimit: "", tags: ""
+        educationRequired: "", genderPreference: "", ageLimit: "", tags: "", companyWebsite: ""
       });
     } catch (e) {
       Swal.fire({ icon: "error", title: "Failed to post", text: String(e.message || e) });
@@ -539,6 +540,21 @@ export default function PostJobPage() {
             ) : null}
           </div>
 
+          <div>
+            <label className="label">
+              <span className="label-text">Company Website</span>
+              <span className="label-text-alt">Optional</span>
+            </label>
+            <input
+              name="companyWebsite"
+              value={form.companyWebsite}
+              onChange={onChange}
+              className="input input-bordered w-full"
+              placeholder="https://yourcompany.com"
+              type="url"
+            />
+          </div>
+
           <div className="flex items-center gap-3">
             <button type="submit" className={`btn btn-primary btn-professional ${loading ? 'btn-loading' : ''}`} disabled={loading}>
               {loading ? "Publishing..." : "Publish Job"}
@@ -552,7 +568,7 @@ export default function PostJobPage() {
                 location: "", workMode: "On-site", salaryMin: "", salaryMax: "", salaryType: "BDT",
                 isNegotiable: false, perksBenefits: "", applicationDeadline: "", howToApply: "Website",
                 applicationUrl: "", applicationEmail: "", numberOfVacancies: 1, experienceRequired: "",
-                educationRequired: "", genderPreference: "", ageLimit: "", tags: ""
+                educationRequired: "", genderPreference: "", ageLimit: "", tags: "", companyWebsite: ""
               })}
             >
               Reset

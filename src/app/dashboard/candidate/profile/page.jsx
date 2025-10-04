@@ -47,6 +47,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [resumeUploading, setResumeUploading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState('');
 
   // Profile data from API - will be loaded from backend
@@ -208,6 +209,69 @@ export default function ProfilePage() {
       Swal.fire({ icon: 'error', title: 'Upload failed', text: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setResumeUploading(false);
+      // reset input value to allow re-uploading same file
+      if (event?.target) event.target.value = '';
+    }
+  };
+
+  const handleAvatarUpload = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Invalid file type', 
+          text: 'Please select a valid image (JPEG, PNG, GIF, or WebP).' 
+        });
+        return;
+      }
+      
+      // Validate file size (5MB max for profile pictures)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'File too large', 
+          text: 'Max size is 5MB for profile pictures.' 
+        });
+        return;
+      }
+      
+      setAvatarUploading(true);
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/profile/upload-avatar', { method: 'POST', body: form });
+      const data = await res.json();
+      
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+      
+      const avatarUrl = String(data.avatarUrl || '');
+      setProfile(prev => ({ 
+        ...prev, 
+        personalInfo: { 
+          ...prev.personalInfo, 
+          avatar: avatarUrl 
+        } 
+      }));
+      
+      Swal.fire({ 
+        icon: 'success', 
+        title: 'Profile picture updated', 
+        text: 'Your profile picture has been saved successfully.' 
+      });
+    } catch (err) {
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Upload failed', 
+        text: err instanceof Error ? err.message : 'Unknown error' 
+      });
+    } finally {
+      setAvatarUploading(false);
       // reset input value to allow re-uploading same file
       if (event?.target) event.target.value = '';
     }
@@ -689,6 +753,29 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
+              
+              {/* Upload Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full">
+                <label 
+                  htmlFor="avatar-upload" 
+                  className="cursor-pointer p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
+                  title="Upload Profile Picture"
+                >
+                  {avatarUploading ? (
+                    <div className="loading loading-spinner loading-sm text-primary"></div>
+                  ) : (
+                    <FaCamera className="w-4 h-4 text-primary" />
+                  )}
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  disabled={avatarUploading}
+                />
+              </div>
             </div>
             
             <div className="flex-1">
@@ -756,6 +843,52 @@ export default function ProfilePage() {
                     placeholder="Bio"
                     rows={3}
                   />
+                  
+                  {/* Profile Picture Upload Section */}
+                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+                      {profile.personalInfo.avatar && profile.personalInfo.avatar.trim() !== '' ? (
+                        <img 
+                          src={profile.personalInfo.avatar} 
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <FaUser className="w-8 h-8 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <label 
+                        htmlFor="avatar-upload-form" 
+                        className="btn btn-outline btn-sm cursor-pointer"
+                        disabled={avatarUploading}
+                      >
+                        {avatarUploading ? (
+                          <>
+                            <div className="loading loading-spinner loading-xs mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FaCamera className="w-3 h-3 mr-2" />
+                            {profile.personalInfo.avatar ? 'Change Picture' : 'Upload Picture'}
+                          </>
+                        )}
+                      </label>
+                      <input
+                        id="avatar-upload-form"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                        disabled={avatarUploading}
+                      />
+                      <p className="text-xs text-base-content/60 mt-1">
+                        JPG, PNG, GIF or WebP. Max 5MB.
+                      </p>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="text"

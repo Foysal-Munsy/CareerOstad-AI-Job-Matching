@@ -17,7 +17,7 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const { email } = params;
+    const { email } = await params;
     const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
     const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
 
