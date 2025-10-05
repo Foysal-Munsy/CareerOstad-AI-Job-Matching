@@ -8,6 +8,7 @@ import CallToAction from "./sections/CallToAction";
 import Banner from "./sections/Banner";
 import KeyHighlights from "./sections/KeyHighlights";
 import HowItWorks from "./sections/HowItWorks";
+import StripePayment from "./stripePayment/StripePayment";
 
 const HomePage = () => {
   return (
@@ -18,7 +19,9 @@ const HomePage = () => {
       <HowItWorks />
       <ExploreCareerPaths />
       <FeaturedJobs />
+      <StripePayment />
       <TrustedCompanies />
+
       {/* <CareerTools /> */}
       {/* <SuccessStories /> */}
       {/* <CallToAction /> */}
