@@ -43,11 +43,22 @@ const CheckoutPage = ({ amount }) => {
       return;
     }
 
+    // const { error } = await stripe.confirmPayment({
+    //   elements,
+    //   clientSecret,
+    //   confirmParams: {
+    //     return_url: `http://www.localhost:3000/payment-success?amount=${amount}`,
+    //   },
+    // });
     const { error } = await stripe.confirmPayment({
       elements,
       clientSecret,
       confirmParams: {
-        return_url: `http://www.localhost:3000/payment-success?amount=${amount}`,
+        return_url: `${
+          process.env.NODE_ENV === "production"
+            ? "https://career-ostad.vercel.app/payment-success"
+            : "http://localhost:3000/payment-success"
+        }?amount=${amount}`,
       },
     });
 
