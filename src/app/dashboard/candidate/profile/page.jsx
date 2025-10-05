@@ -42,9 +42,13 @@ import {
 export default function ProfilePage() {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
+  const [editingSection, setEditingSection] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
+  const [resumeUploading, setResumeUploading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [resumeUrl, setResumeUrl] = useState('');
 
   // Profile data from API - will be loaded from backend
   const [profile, setProfile] = useState({
@@ -59,6 +63,7 @@ export default function ProfilePage() {
       availability: 'Available for new opportunities',
       experience: '0+ years'
     },
+    resumeUrl: '',
     socialLinks: {
       linkedin: '',
       github: '',
@@ -73,7 +78,7 @@ export default function ProfilePage() {
     portfolio: []
   });
 
-  const [stats] = useState({
+  const [stats, setStats] = useState({
     profileViews: 0,
     profileCompleteness: 0,
     jobMatches: 0,
@@ -90,6 +95,7 @@ export default function ProfilePage() {
       if (response.ok) {
         const profileData = await response.json();
         setProfile(profileData);
+        setResumeUrl(String(profileData?.resumeUrl || ''));
         console.log('Profile fetched successfully');
       } else {
         const errorData = await response.json();
@@ -161,6 +167,116 @@ export default function ProfilePage() {
     }
   }, [session?.user?.email]); // Remove fetchProfile dependency
 
+  // Update stats when profile changes
+  useEffect(() => {
+    const completionPercentage = calculateProfileCompletion();
+    console.log('Profile data:', {
+      avatar: profile.personalInfo.avatar,
+      name: profile.personalInfo.name,
+      email: profile.personalInfo.email
+    });
+    setStats(prevStats => ({
+      ...prevStats,
+      profileCompleteness: completionPercentage
+    }));
+  }, [profile]);
+
+  const handleResumeUpload = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      if (file.type !== 'application/pdf') {
+        Swal.fire({ icon: 'error', title: 'Invalid file', text: 'Please select a PDF file.' });
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        Swal.fire({ icon: 'error', title: 'File too large', text: 'Max size is 10MB.' });
+        return;
+      }
+      setResumeUploading(true);
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/profile/upload-resume', { method: 'POST', body: form });
+      const data = await res.json();
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+      const url = String(data.resumeUrl || '');
+      setResumeUrl(url);
+      setProfile(prev => ({ ...prev, resumeUrl: url }));
+      Swal.fire({ icon: 'success', title: 'Resume uploaded', text: 'Your resume has been saved.' });
+    } catch (err) {
+      Swal.fire({ icon: 'error', title: 'Upload failed', text: err instanceof Error ? err.message : 'Unknown error' });
+    } finally {
+      setResumeUploading(false);
+      // reset input value to allow re-uploading same file
+      if (event?.target) event.target.value = '';
+    }
+  };
+
+  const handleAvatarUpload = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Invalid file type', 
+          text: 'Please select a valid image (JPEG, PNG, GIF, or WebP).' 
+        });
+        return;
+      }
+      
+      // Validate file size (5MB max for profile pictures)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'File too large', 
+          text: 'Max size is 5MB for profile pictures.' 
+        });
+        return;
+      }
+      
+      setAvatarUploading(true);
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/profile/upload-avatar', { method: 'POST', body: form });
+      const data = await res.json();
+      
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+      
+      const avatarUrl = String(data.avatarUrl || '');
+      setProfile(prev => ({ 
+        ...prev, 
+        personalInfo: { 
+          ...prev.personalInfo, 
+          avatar: avatarUrl 
+        } 
+      }));
+      
+      Swal.fire({ 
+        icon: 'success', 
+        title: 'Profile picture updated', 
+        text: 'Your profile picture has been saved successfully.' 
+      });
+    } catch (err) {
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Upload failed', 
+        text: err instanceof Error ? err.message : 'Unknown error' 
+      });
+    } finally {
+      setAvatarUploading(false);
+      // reset input value to allow re-uploading same file
+      if (event?.target) event.target.value = '';
+    }
+  };
+
   const handleSave = async () => {
     try {
       setLoading(true);
@@ -176,6 +292,7 @@ export default function ProfilePage() {
 
       if (response.ok && result.success) {
         setIsEditing(false);
+        setEditingSection(null);
         console.log('Profile updated successfully');
         // Show success message with SweetAlert
         Swal.fire({
@@ -210,6 +327,56 @@ export default function ProfilePage() {
     }
   };
 
+  // Save specific section data
+  const handleSectionSave = async (sectionName) => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profile),
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        setEditingSection(null);
+        console.log(`${sectionName} section updated successfully`);
+        // Show success message with SweetAlert
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: `${sectionName} section updated successfully!`,
+          confirmButtonText: 'OK',
+          timer: 2000,
+          timerProgressBar: true
+        });
+      } else {
+        console.error(`Failed to update ${sectionName} section:`, result.error);
+        // Show error message with SweetAlert
+        Swal.fire({
+          icon: 'error',
+          title: 'Update Failed',
+          text: result.error || 'Unknown error occurred',
+          confirmButtonText: 'OK'
+        });
+      }
+    } catch (error) {
+      console.error(`Error updating ${sectionName} section:`, error);
+      // Show network error message with SweetAlert
+      Swal.fire({
+        icon: 'error',
+        title: 'Network Error',
+        text: 'Please check your connection and try again.',
+        confirmButtonText: 'OK'
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getSkillLevelColor = (level) => {
     switch (level) {
       case 'Expert': return 'bg-green-500';
@@ -228,6 +395,111 @@ export default function ProfilePage() {
       case 'Beginner': return '30%';
       default: return '30%';
     }
+  };
+
+  // Calculate total years of experience from experience array
+  const calculateTotalExperience = () => {
+    if (!profile.experience || profile.experience.length === 0) {
+      return '0+ years';
+    }
+
+    let totalMonths = 0;
+    profile.experience.forEach(exp => {
+      if (exp.startDate && exp.endDate) {
+        const start = new Date(exp.startDate);
+        const end = new Date(exp.endDate);
+        const diffTime = Math.abs(end - start);
+        const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+        totalMonths += diffMonths;
+      } else if (exp.startDate && !exp.endDate) {
+        // Current job
+        const start = new Date(exp.startDate);
+        const now = new Date();
+        const diffTime = Math.abs(now - start);
+        const diffMonths = Math.ceil(diffTime / (1000 * 60 * 60 * 24 * 30));
+        totalMonths += diffMonths;
+      }
+    });
+
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+    
+    if (years === 0 && months === 0) {
+      return '0+ years';
+    } else if (years === 0) {
+      return `${months}+ months`;
+    } else if (months === 0) {
+      return `${years}+ years`;
+    } else {
+      return `${years}+ years`;
+    }
+  };
+
+  // Calculate profile completion percentage
+  const calculateProfileCompletion = () => {
+    let totalScore = 0;
+    let maxScore = 0;
+    const debugInfo = {};
+
+    // Personal Information (40% weight)
+    const personalInfoFields = [
+      'name', 'email', 'phone', 'location', 'bio', 
+      'professionalTitle', 'availability', 'experience'
+    ];
+    personalInfoFields.forEach(field => {
+      maxScore += 5; // Each field worth 5 points
+      const hasValue = profile.personalInfo[field] && profile.personalInfo[field].toString().trim() !== '';
+      if (hasValue) {
+        totalScore += 5;
+      }
+      debugInfo[`personal_${field}`] = hasValue;
+    });
+
+    // Social Links (10% weight)
+    const socialFields = ['linkedin', 'github', 'website', 'twitter'];
+    socialFields.forEach(field => {
+      maxScore += 2.5; // Each social link worth 2.5 points
+      const hasValue = profile.socialLinks[field] && profile.socialLinks[field].trim() !== '';
+      if (hasValue) {
+        totalScore += 2.5;
+      }
+      debugInfo[`social_${field}`] = hasValue;
+    });
+
+    // Skills (15% weight)
+    maxScore += 15;
+    const hasSkills = profile.skills && profile.skills.length > 0;
+    if (hasSkills) {
+      totalScore += 15;
+    }
+    debugInfo.skills = hasSkills;
+
+    // Experience (20% weight)
+    maxScore += 20;
+    const hasExperience = profile.experience && profile.experience.length > 0;
+    if (hasExperience) {
+      totalScore += 20;
+    }
+    debugInfo.experience = hasExperience;
+
+    // Education (10% weight)
+    maxScore += 10;
+    const hasEducation = profile.education && profile.education.length > 0;
+    if (hasEducation) {
+      totalScore += 10;
+    }
+    debugInfo.education = hasEducation;
+
+    // Languages (5% weight)
+    maxScore += 5;
+    const hasLanguages = profile.languages && profile.languages.length > 0;
+    if (hasLanguages) {
+      totalScore += 5;
+    }
+    debugInfo.languages = hasLanguages;
+
+    const percentage = Math.round((totalScore / maxScore) * 100);
+    return percentage;
   };
 
   const tabs = [
@@ -254,62 +526,138 @@ export default function ProfilePage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link 
-            href="/dashboard/candidate"
-            className="btn btn-ghost btn-sm"
-          >
-            <FaArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
-          <div>
-            <h1 className="text-2xl font-bold text-primary flex items-center gap-2">
-              <FaUser className="w-6 h-6" />
-              My Profile
-            </h1>
-            <p className="text-base-content/70">
-              Manage your professional profile and showcase your skills
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {isEditing ? (
-            <>
-              <button 
-                onClick={handleSave}
-                disabled={loading}
-                className="btn btn-primary btn-sm"
-              >
-                {loading ? (
-                  <span className="loading loading-spinner loading-sm"></span>
-                ) : (
-                  <FaSave className="w-4 h-4" />
-                )}
-                Save Changes
-              </button>
-              <button 
-                onClick={() => setIsEditing(false)}
-                className="btn btn-ghost btn-sm"
-              >
-                <FaTimes className="w-4 h-4" />
-                Cancel
-              </button>
-            </>
-          ) : (
-            <button 
-              onClick={() => setIsEditing(true)}
-              className="btn btn-primary btn-sm"
+      <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-6 border border-primary/10">
+        <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/dashboard/candidate"
+              className="btn btn-ghost btn-sm hover:bg-primary/10 transition-colors"
             >
-              <FaEdit className="w-4 h-4" />
-              Edit Profile
-            </button>
-          )}
+              <FaArrowLeft className="w-4 h-4" />
+              <span className="hidden sm:inline">Back to Dashboard</span>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  <FaUser className="w-5 h-5 text-primary" />
+                </div>
+                My Profile
+              </h1>
+              <p className="text-base-content/70 mt-1">
+                Manage your professional profile and showcase your skills
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              id="resume-input"
+              type="file"
+              accept="application/pdf"
+              className="hidden"
+              onChange={handleResumeUpload}
+            />
+            <label htmlFor="resume-input" className="btn btn-outline btn-sm cursor-pointer">
+              {resumeUploading ? (
+                <span className="loading loading-spinner loading-xs"></span>
+              ) : (
+                <FaUpload className="w-4 h-4" />
+              )}
+              <span className="hidden md:inline">Upload Resume (PDF)</span>
+            </label>
+            {isEditing && (
+              <>
+                <button 
+                  onClick={handleSave}
+                  disabled={loading}
+                  className="btn btn-primary btn-sm shadow-lg hover:shadow-xl transition-all duration-200"
+                >
+                  {loading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    <FaSave className="w-4 h-4" />
+                  )}
+                  <span className="hidden sm:inline">Save Changes</span>
+                </button>
+                <button 
+                  onClick={() => {
+                    setIsEditing(false);
+                    setEditingSection(null);
+                  }}
+                  className="btn btn-ghost btn-sm hover:bg-base-200 transition-colors"
+                >
+                  <FaTimes className="w-4 h-4" />
+                  <span className="hidden sm:inline">Cancel</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Profile Completion Tips */}
+      {stats.profileCompleteness < 100 && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+          <div className="flex items-center gap-3 mb-3">
+            <FaRocket className="w-5 h-5 text-blue-600" />
+            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+              Complete Your Profile ({stats.profileCompleteness}%)
+            </h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {!profile.personalInfo.bio && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaUser className="w-4 h-4" />
+                <span>Add a professional bio</span>
+              </div>
+            )}
+            {!profile.personalInfo.phone && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaPhone className="w-4 h-4" />
+                <span>Add your phone number</span>
+              </div>
+            )}
+            {!profile.personalInfo.location && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaMapMarkerAlt className="w-4 h-4" />
+                <span>Add your location</span>
+              </div>
+            )}
+            {profile.skills.length === 0 && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaCode className="w-4 h-4" />
+                <span>Add your skills</span>
+              </div>
+            )}
+            {profile.experience.length === 0 && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaBriefcase className="w-4 h-4" />
+                <span>Add work experience</span>
+              </div>
+            )}
+            {profile.education.length === 0 && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaGraduationCap className="w-4 h-4" />
+                <span>Add education</span>
+              </div>
+            )}
+            {profile.languages.length === 0 && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaLanguage className="w-4 h-4" />
+                <span>Add languages</span>
+              </div>
+            )}
+            {!profile.socialLinks.linkedin && (
+              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+                <FaLinkedin className="w-4 h-4" />
+                <span>Add LinkedIn profile</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Profile Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-base-100 p-4 rounded-xl border border-base-300 shadow-sm">
           <div className="flex items-center justify-between">
             <div>
@@ -322,9 +670,24 @@ export default function ProfilePage() {
 
         <div className="bg-base-100 p-4 rounded-xl border border-base-300 shadow-sm">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-base-content/60">Completeness</p>
+            <div className="flex-1">
+              <p className="text-sm text-base-content/60">Profile Completeness</p>
               <p className="text-xl font-bold text-primary">{stats.profileCompleteness}%</p>
+              <div className="w-full bg-base-300 rounded-full h-2 mt-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    stats.profileCompleteness >= 80 ? 'bg-green-500' :
+                    stats.profileCompleteness >= 60 ? 'bg-yellow-500' :
+                    stats.profileCompleteness >= 40 ? 'bg-orange-500' : 'bg-red-500'
+                  }`}
+                  style={{ width: `${stats.profileCompleteness}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-base-content/50 mt-1">
+                {stats.profileCompleteness >= 80 ? 'Excellent!' :
+                 stats.profileCompleteness >= 60 ? 'Good progress' :
+                 stats.profileCompleteness >= 40 ? 'Getting there' : 'Needs work'}
+              </p>
             </div>
             <FaCheck className="w-6 h-6 text-green-600" />
           </div>
@@ -362,30 +725,93 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile Header Card */}
-      <div className="bg-base-100 rounded-xl border border-base-300 shadow-sm overflow-hidden">
-        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-6">
+      <div className="bg-base-100 rounded-2xl border border-base-300 shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-primary/10 via-secondary/5 to-accent/10 p-6 relative">
+
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
-            <div className="relative">
-              <div className="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden">
-                {profile.personalInfo.avatar ? (
+            <div className="relative group">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden shadow-lg ring-4 ring-white/50">
+                {profile.personalInfo.avatar && profile.personalInfo.avatar.trim() !== '' ? (
                   <img 
                     src={profile.personalInfo.avatar} 
                     alt={profile.personalInfo.name}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.log('Image failed to load:', profile.personalInfo.avatar);
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
                   />
-                ) : (
-                  <FaUser className="w-16 h-16 text-primary" />
-                )}
+                ) : null}
+                <div className={`w-full h-full flex items-center justify-center ${profile.personalInfo.avatar && profile.personalInfo.avatar.trim() !== '' ? 'hidden' : 'flex'}`}>
+                  {profile.personalInfo.name ? (
+                    <span className="text-4xl font-bold text-primary">
+                      {profile.personalInfo.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </span>
+                  ) : (
+                    <FaUser className="w-16 h-16 text-primary" />
+                  )}
+                </div>
               </div>
-              {isEditing && (
-                <button className="absolute bottom-2 right-2 btn btn-sm btn-circle bg-primary text-primary-content">
-                  <FaCamera className="w-3 h-3" />
-                </button>
-              )}
+              
+              {/* Upload Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full">
+                <label 
+                  htmlFor="avatar-upload" 
+                  className="cursor-pointer p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
+                  title="Upload Profile Picture"
+                >
+                  {avatarUploading ? (
+                    <div className="loading loading-spinner loading-sm text-primary"></div>
+                  ) : (
+                    <FaCamera className="w-4 h-4 text-primary" />
+                  )}
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  disabled={avatarUploading}
+                />
+              </div>
             </div>
             
             <div className="flex-1">
-              {isEditing ? (
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-2xl font-bold text-base-content">Personal Information</h2>
+                <div className="flex gap-2">
+                  {editingSection === 'personalInfo' ? (
+                    <>
+                      <button 
+                        onClick={() => setEditingSection(null)}
+                        className="btn btn-sm btn-ghost hover:bg-base-200"
+                        title="Cancel"
+                      >
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleSectionSave('Personal Information')}
+                        className="btn btn-sm btn-primary"
+                        title="Save Changes"
+                      >
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setEditingSection('personalInfo')}
+                      className="btn btn-sm btn-primary"
+                      title="Edit Personal Information"
+                    >
+                      <FaEdit className="w-3 h-3" />
+                      Edit
+                    </button>
+                  )}
+                </div>
+              </div>
+              {(isEditing || editingSection === 'personalInfo') ? (
                 <div className="space-y-4">
                   <input
                     type="text"
@@ -394,7 +820,7 @@ export default function ProfilePage() {
                       ...profile,
                       personalInfo: { ...profile.personalInfo, name: e.target.value }
                     })}
-                    className="input input-bordered w-full text-2xl font-bold"
+                    className="input input-bordered w-full text-2xl font-bold focus:ring-2 focus:ring-primary/20"
                     placeholder="Full Name"
                   />
                   <input
@@ -404,7 +830,7 @@ export default function ProfilePage() {
                       ...profile,
                       personalInfo: { ...profile.personalInfo, professionalTitle: e.target.value }
                     })}
-                    className="input input-bordered w-full text-lg"
+                    className="input input-bordered w-full text-lg focus:ring-2 focus:ring-primary/20"
                     placeholder="Professional Title"
                   />
                   <textarea
@@ -413,10 +839,78 @@ export default function ProfilePage() {
                       ...profile,
                       personalInfo: { ...profile.personalInfo, bio: e.target.value }
                     })}
-                    className="textarea textarea-bordered w-full"
+                    className="textarea textarea-bordered w-full focus:ring-2 focus:ring-primary/20"
                     placeholder="Bio"
                     rows={3}
                   />
+                  
+                  {/* Profile Picture Upload Section */}
+                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+                      {profile.personalInfo.avatar && profile.personalInfo.avatar.trim() !== '' ? (
+                        <img 
+                          src={profile.personalInfo.avatar} 
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <FaUser className="w-8 h-8 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <label 
+                        htmlFor="avatar-upload-form" 
+                        className="btn btn-outline btn-sm cursor-pointer"
+                        disabled={avatarUploading}
+                      >
+                        {avatarUploading ? (
+                          <>
+                            <div className="loading loading-spinner loading-xs mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FaCamera className="w-3 h-3 mr-2" />
+                            {profile.personalInfo.avatar ? 'Change Picture' : 'Upload Picture'}
+                          </>
+                        )}
+                      </label>
+                      <input
+                        id="avatar-upload-form"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                        disabled={avatarUploading}
+                      />
+                      <p className="text-xs text-base-content/60 mt-1">
+                        JPG, PNG, GIF or WebP. Max 5MB.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input
+                      type="text"
+                      value={profile.personalInfo.location}
+                      onChange={(e) => setProfile({
+                        ...profile,
+                        personalInfo: { ...profile.personalInfo, location: e.target.value }
+                      })}
+                      className="input input-bordered w-full focus:ring-2 focus:ring-primary/20"
+                      placeholder="Location"
+                    />
+                    <input
+                      type="text"
+                      value={profile.personalInfo.availability}
+                      onChange={(e) => setProfile({
+                        ...profile,
+                        personalInfo: { ...profile.personalInfo, availability: e.target.value }
+                      })}
+                      className="input input-bordered w-full focus:ring-2 focus:ring-primary/20"
+                      placeholder="Availability Status"
+                    />
+                  </div>
                 </div>
               ) : (
                 <>
@@ -439,7 +933,7 @@ export default function ProfilePage() {
                 </span>
                 <span className="flex items-center gap-1">
                   <FaBriefcase className="w-4 h-4" />
-                  {profile.personalInfo.experience}
+                  {calculateTotalExperience()}
                 </span>
                 <span className="flex items-center gap-1">
                   <FaRocket className="w-4 h-4" />
@@ -448,8 +942,42 @@ export default function ProfilePage() {
               </div>
 
               {/* Social Links */}
-              <div className="mt-4">
-                {isEditing ? (
+              <div className="mt-6">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="text-lg font-semibold text-base-content">Social Links</h3>
+                  <div className="flex gap-2">
+                    {editingSection === 'socialLinks' ? (
+                      <>
+                        <button 
+                          onClick={() => setEditingSection(null)}
+                          className="btn btn-sm btn-ghost hover:bg-base-200"
+                          title="Cancel"
+                        >
+                          <FaTimes className="w-3 h-3" />
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={() => handleSectionSave('Social Links')}
+                          className="btn btn-sm btn-primary"
+                          title="Save Changes"
+                        >
+                          <FaSave className="w-3 h-3" />
+                          Save
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={() => setEditingSection('socialLinks')}
+                        className="btn btn-sm btn-primary"
+                        title="Edit Social Links"
+                      >
+                        <FaEdit className="w-3 h-3" />
+                        Edit
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {(isEditing || editingSection === 'socialLinks') ? (
                   <div className="space-y-3">
                     <label className="label">
                       <span className="label-text font-medium">Social Links</span>
@@ -540,21 +1068,26 @@ export default function ProfilePage() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-base-100 rounded-xl border border-base-300 shadow-sm">
-        <div className="border-b border-base-300">
-          <div className="flex overflow-x-auto">
+      <div className="bg-base-100 rounded-2xl border border-base-300 shadow-lg overflow-hidden">
+        <div className="border-b border-base-300 bg-gradient-to-r from-base-100 to-base-200/50">
+          <div className="flex overflow-x-auto scrollbar-hide">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
+                className={`flex items-center gap-2 px-6 py-4 text-sm font-medium whitespace-nowrap border-b-2 transition-all duration-200 relative group ${
                   activeTab === tab.id
-                    ? 'border-primary text-primary bg-primary/5'
-                    : 'border-transparent text-base-content/70 hover:text-base-content hover:bg-base-200'
+                    ? 'border-primary text-primary bg-primary/5 shadow-sm'
+                    : 'border-transparent text-base-content/70 hover:text-base-content hover:bg-base-200/50'
                 }`}
               >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
+                <tab.icon className={`w-4 h-4 transition-transform duration-200 ${
+                  activeTab === tab.id ? 'scale-110' : 'group-hover:scale-105'
+                }`} />
+                <span className="hidden sm:inline">{tab.label}</span>
+                {activeTab === tab.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-secondary"></div>
+                )}
               </button>
             ))}
           </div>
@@ -563,15 +1096,51 @@ export default function ProfilePage() {
         <div className="p-6">
           {/* Overview Tab */}
           {activeTab === 'overview' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Contact Information */}
-                <div className="space-y-4">
-                  <h3 className="text-lg font-bold text-base-content">Contact Information</h3>
+                <div className="bg-gradient-to-br from-base-100 to-base-200/30 p-6 rounded-xl border border-base-300 shadow-sm">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-lg font-bold text-base-content flex items-center gap-2">
+                        <FaEnvelope className="w-5 h-5 text-primary" />
+                        Contact Information
+                      </h3>
+                      <div className="flex gap-2">
+                        {editingSection === 'contactInfo' ? (
+                          <>
+                            <button 
+                              onClick={() => setEditingSection(null)}
+                              className="btn btn-sm btn-ghost hover:bg-base-200"
+                              title="Cancel"
+                            >
+                              <FaTimes className="w-3 h-3" />
+                              Cancel
+                            </button>
+                            <button 
+                              onClick={() => handleSectionSave('Contact Information')}
+                              className="btn btn-sm btn-primary"
+                              title="Save Changes"
+                            >
+                              <FaSave className="w-3 h-3" />
+                              Save
+                            </button>
+                          </>
+                        ) : (
+                          <button 
+                            onClick={() => setEditingSection('contactInfo')}
+                            className="btn btn-sm btn-primary"
+                            title="Edit Contact Information"
+                          >
+                            <FaEdit className="w-3 h-3" />
+                            Edit
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       <FaEnvelope className="w-5 h-5 text-primary" />
-                      {isEditing ? (
+                      {(isEditing || editingSection === 'contactInfo') ? (
                         <input
                           type="email"
                           value={profile.personalInfo.email}
@@ -579,7 +1148,7 @@ export default function ProfilePage() {
                             ...profile,
                             personalInfo: { ...profile.personalInfo, email: e.target.value }
                           })}
-                          className="input input-bordered input-sm flex-1"
+                          className="input input-bordered input-sm flex-1 focus:ring-2 focus:ring-primary/20"
                           placeholder="Email"
                         />
                       ) : (
@@ -588,7 +1157,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <FaPhone className="w-5 h-5 text-primary" />
-                      {isEditing ? (
+                      {(isEditing || editingSection === 'contactInfo') ? (
                         <input
                           type="tel"
                           value={profile.personalInfo.phone}
@@ -596,7 +1165,7 @@ export default function ProfilePage() {
                             ...profile,
                             personalInfo: { ...profile.personalInfo, phone: e.target.value }
                           })}
-                          className="input input-bordered input-sm flex-1"
+                          className="input input-bordered input-sm flex-1 focus:ring-2 focus:ring-primary/20"
                           placeholder="Phone Number"
                         />
                       ) : (
@@ -605,7 +1174,7 @@ export default function ProfilePage() {
                     </div>
                     <div className="flex items-center gap-3">
                       <FaMapMarkerAlt className="w-5 h-5 text-primary" />
-                      {isEditing ? (
+                      {(isEditing || editingSection === 'contactInfo') ? (
                         <input
                           type="text"
                           value={profile.personalInfo.location}
@@ -613,7 +1182,7 @@ export default function ProfilePage() {
                             ...profile,
                             personalInfo: { ...profile.personalInfo, location: e.target.value }
                           })}
-                          className="input input-bordered input-sm flex-1"
+                          className="input input-bordered input-sm flex-1 focus:ring-2 focus:ring-primary/20"
                           placeholder="Location"
                         />
                       ) : (
@@ -624,25 +1193,61 @@ export default function ProfilePage() {
                 </div>
 
                 {/* Languages */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-bold text-base-content">Languages</h3>
-                    {isEditing && (
-                      <button
-                        onClick={() => setProfile({
-                          ...profile,
-                          languages: [...profile.languages, { name: '', proficiency: 'Beginner' }]
-                        })}
-                        className="btn btn-sm btn-primary"
-                      >
-                        <FaPlus className="w-3 h-3" />
-                      </button>
-                    )}
+                <div className="bg-gradient-to-br from-base-100 to-base-200/30 p-6 rounded-xl border border-base-300 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-bold text-base-content flex items-center gap-2">
+                      <FaLanguage className="w-5 h-5 text-primary" />
+                      Languages
+                    </h3>
+                    <div className="flex gap-2">
+                      {editingSection === 'languages' ? (
+                        <>
+                          <button 
+                            onClick={() => setEditingSection(null)}
+                            className="btn btn-sm btn-ghost hover:bg-base-200"
+                            title="Cancel"
+                          >
+                            <FaTimes className="w-3 h-3" />
+                            Cancel
+                          </button>
+                          <button 
+                            onClick={() => handleSectionSave('Languages')}
+                            className="btn btn-sm btn-primary"
+                            title="Save Changes"
+                          >
+                            <FaSave className="w-3 h-3" />
+                            Save
+                          </button>
+                        </>
+                      ) : (
+                        <button 
+                          onClick={() => setEditingSection('languages')}
+                          className="btn btn-sm btn-primary"
+                          title="Edit Languages"
+                        >
+                          <FaEdit className="w-3 h-3" />
+                          Edit
+                        </button>
+                      )}
+                      {(isEditing || editingSection === 'languages') && (
+                        <button
+                          onClick={() => setProfile({
+                            ...profile,
+                            languages: [...profile.languages, { name: '', proficiency: 'Beginner' }]
+                          })}
+                          className="btn btn-sm btn-secondary"
+                          title="Add Language"
+                        >
+                          <FaPlus className="w-3 h-3" />
+                          Add
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-3">
                     {profile.languages.map((language, index) => (
                       <div key={index} className="flex items-center justify-between gap-3">
-                        {isEditing ? (
+                        {(isEditing || editingSection === 'languages') ? (
                           <>
                             <input
                               type="text"
@@ -692,89 +1297,40 @@ export default function ProfilePage() {
               </div>
 
               {/* Top Skills */}
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-bold text-base-content">Top Skills</h3>
-                  {isEditing && (
-                    <button
-                      onClick={() => setProfile({
-                        ...profile,
-                        skills: [...profile.skills, { name: '', category: '', level: 'Beginner' }]
-                      })}
-                      className="btn btn-sm btn-primary"
-                    >
-                      <FaPlus className="w-3 h-3" />
-                    </button>
-                  )}
+              <div className="bg-gradient-to-br from-base-100 to-base-200/30 p-6 rounded-xl border border-base-300 shadow-sm">
+                <div className="flex items-center justify-between mb-6">
+                  <h3 className="text-lg font-bold text-base-content flex items-center gap-2">
+                    <FaCode className="w-5 h-5 text-primary" />
+                    Top Skills
+                  </h3>
+                  <div className="text-sm text-base-content/60">
+                    Manage skills in the Skills tab
+                  </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {profile.skills.map((skill, index) => (
-                    <div key={index} className="p-4 bg-base-200 rounded-lg">
-                      {isEditing ? (
-                        <div className="space-y-3">
-                          <input
-                            type="text"
-                            value={skill.name}
-                            onChange={(e) => {
-                              const newSkills = [...profile.skills];
-                              newSkills[index] = { ...newSkills[index], name: e.target.value };
-                              setProfile({ ...profile, skills: newSkills });
-                            }}
-                            className="input input-bordered input-sm w-full"
-                            placeholder="Skill Name"
-                          />
-                          <input
-                            type="text"
-                            value={skill.category}
-                            onChange={(e) => {
-                              const newSkills = [...profile.skills];
-                              newSkills[index] = { ...newSkills[index], category: e.target.value };
-                              setProfile({ ...profile, skills: newSkills });
-                            }}
-                            className="input input-bordered input-sm w-full"
-                            placeholder="Category"
-                          />
-                          <select
-                            value={skill.level}
-                            onChange={(e) => {
-                              const newSkills = [...profile.skills];
-                              newSkills[index] = { ...newSkills[index], level: e.target.value };
-                              setProfile({ ...profile, skills: newSkills });
-                            }}
-                            className="select select-bordered select-sm w-full"
-                          >
-                            <option value="Beginner">Beginner</option>
-                            <option value="Intermediate">Intermediate</option>
-                            <option value="Advanced">Advanced</option>
-                            <option value="Expert">Expert</option>
-                          </select>
-                          <button
-                            onClick={() => {
-                              const newSkills = profile.skills.filter((_, i) => i !== index);
-                              setProfile({ ...profile, skills: newSkills });
-                            }}
-                            className="btn btn-sm btn-error w-full"
-                          >
-                            <FaTrash className="w-3 h-3" />
-                          </button>
+                  {profile.skills.length > 0 ? (
+                    profile.skills.map((skill, index) => (
+                      <div key={index} className="p-4 bg-base-200 rounded-lg hover:bg-base-300 transition-colors duration-200">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="font-medium text-base-content">{skill.name}</span>
+                          <span className="text-sm text-base-content/60">{skill.category}</span>
                         </div>
-                      ) : (
-                        <>
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="font-medium text-base-content">{skill.name}</span>
-                            <span className="text-sm text-base-content/60">{skill.category}</span>
-                          </div>
-                          <div className="w-full bg-base-300 rounded-full h-2">
-                            <div
-                              className={`h-2 rounded-full ${getSkillLevelColor(skill.level)}`}
-                              style={{ width: getSkillLevelWidth(skill.level) }}
-                            ></div>
-                          </div>
-                          <span className="text-xs text-base-content/60 mt-1 block">{skill.level}</span>
-                        </>
-                      )}
+                        <div className="w-full bg-base-300 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${getSkillLevelColor(skill.level)}`}
+                            style={{ width: getSkillLevelWidth(skill.level) }}
+                          ></div>
+                        </div>
+                        <span className="text-xs text-base-content/60 mt-1 block">{skill.level}</span>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full text-center py-8 text-base-content/60">
+                      <FaCode className="w-12 h-12 mx-auto mb-3 text-base-content/30" />
+                      <p className="text-lg font-medium mb-2">No skills added yet</p>
+                      <p className="text-sm">Go to the Skills tab to add your skills and expertise</p>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </div>
@@ -783,9 +1339,48 @@ export default function ProfilePage() {
           {/* Experience Tab */}
           {activeTab === 'experience' && (
             <div className="space-y-6">
+              {/* Experience Section Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-base-content flex items-center gap-3">
+                  <FaBriefcase className="w-6 h-6 text-primary" />
+                  Work Experience
+                </h2>
+                <div className="flex gap-2">
+                  {editingSection === 'experience' ? (
+                    <>
+                      <button 
+                        onClick={() => setEditingSection(null)}
+                        className="btn btn-sm btn-ghost hover:bg-base-200"
+                        title="Cancel"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleSectionSave('Experience')}
+                        className="btn btn-sm btn-primary"
+                        title="Save Changes"
+                      >
+                        <FaSave className="w-4 h-4" />
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setEditingSection('experience')}
+                      className="btn btn-sm btn-primary"
+                      title="Edit Experience"
+                    >
+                      <FaEdit className="w-4 h-4" />
+                      Edit Experience
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {profile.experience.map((exp, expIndex) => (
                 <div key={exp.id} className="border-l-4 border-primary pl-6 pb-6">
-                  {isEditing ? (
+                  {(isEditing || editingSection === 'experience') ? (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-bold text-primary">Experience {expIndex + 1}</h3>
@@ -949,7 +1544,7 @@ export default function ProfilePage() {
                   )}
                 </div>
               ))}
-              {isEditing && (
+              {(isEditing || editingSection === 'experience') && (
                 <button 
                   onClick={() => setProfile({
                     ...profile,
@@ -964,7 +1559,7 @@ export default function ProfilePage() {
                       achievements: ['']
                     }]
                   })}
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full hover:bg-primary hover:text-primary-content transition-all duration-200"
                 >
                   <FaPlus className="w-4 h-4" />
                   Add Experience
@@ -976,9 +1571,48 @@ export default function ProfilePage() {
           {/* Education Tab */}
           {activeTab === 'education' && (
             <div className="space-y-6">
+              {/* Education Section Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-base-content flex items-center gap-3">
+                  <FaGraduationCap className="w-6 h-6 text-primary" />
+                  Education
+                </h2>
+                <div className="flex gap-2">
+                  {editingSection === 'education' ? (
+                    <>
+                      <button 
+                        onClick={() => setEditingSection(null)}
+                        className="btn btn-sm btn-ghost hover:bg-base-200"
+                        title="Cancel"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleSectionSave('Education')}
+                        className="btn btn-sm btn-primary"
+                        title="Save Changes"
+                      >
+                        <FaSave className="w-4 h-4" />
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setEditingSection('education')}
+                      className="btn btn-sm btn-primary"
+                      title="Edit Education"
+                    >
+                      <FaEdit className="w-4 h-4" />
+                      Edit Education
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {profile.education.map((edu, eduIndex) => (
                 <div key={edu.id} className="border-l-4 border-secondary pl-6 pb-6">
-                  {isEditing ? (
+                  {(isEditing || editingSection === 'education') ? (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-bold text-secondary">Education {eduIndex + 1}</h3>
@@ -1144,7 +1778,7 @@ export default function ProfilePage() {
                   )}
                 </div>
               ))}
-              {isEditing && (
+              {(isEditing || editingSection === 'education') && (
                 <button 
                   onClick={() => setProfile({
                     ...profile,
@@ -1159,7 +1793,7 @@ export default function ProfilePage() {
                       achievements: ['']
                     }]
                   })}
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full hover:bg-secondary hover:text-secondary-content transition-all duration-200"
                 >
                   <FaPlus className="w-4 h-4" />
                   Add Education
@@ -1170,87 +1804,160 @@ export default function ProfilePage() {
 
           {/* Skills Tab */}
           {activeTab === 'skills' && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-8">
+              {/* Skills Section Header */}
+              <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-6 border border-primary/10">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <FaCode className="w-6 h-6 text-primary" />
+                    </div>
+                    <div>
+                      <h2 className="text-2xl font-bold text-base-content">Skills & Expertise</h2>
+                      <p className="text-base-content/70">Showcase your technical skills and professional expertise</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {editingSection === 'skills' ? (
+                      <>
+                        <button 
+                          onClick={() => setEditingSection(null)}
+                          className="btn btn-sm btn-ghost hover:bg-base-200"
+                          title="Cancel"
+                        >
+                          <FaTimes className="w-4 h-4" />
+                          Cancel
+                        </button>
+                        <button 
+                          onClick={() => handleSectionSave('Skills')}
+                          className="btn btn-sm btn-primary shadow-lg hover:shadow-xl"
+                          title="Save Changes"
+                        >
+                          <FaSave className="w-4 h-4" />
+                          Save Changes
+                        </button>
+                      </>
+                    ) : (
+                      <button 
+                        onClick={() => setEditingSection('skills')}
+                        className="btn btn-sm btn-primary shadow-lg hover:shadow-xl"
+                        title="Edit Skills"
+                      >
+                        <FaEdit className="w-4 h-4" />
+                        Edit Skills
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Skills Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {['Programming', 'Frontend', 'Backend', 'Cloud', 'DevOps', 'Database'].map((category) => {
                   const categorySkills = profile.skills.filter(skill => skill.category === category);
                   
                   return (
-                    <div key={category} className="space-y-4">
-                      <h3 className="text-lg font-bold text-base-content">{category}</h3>
-                      <div className="space-y-3">
+                    <div key={category} className="bg-base-100 rounded-xl border border-base-300 shadow-sm p-6">
+                      <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold text-base-content flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <FaCode className="w-4 h-4 text-primary" />
+                          </div>
+                          {category}
+                        </h3>
+                        <span className="badge badge-primary badge-sm">
+                          {categorySkills.length} skills
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-4">
                         {categorySkills.map((skill, skillIndex) => (
-                          <div key={skillIndex} className="space-y-2">
-                            {isEditing ? (
-                              <div className="space-y-3">
+                          <div key={skillIndex} className="group">
+                            {(isEditing || editingSection === 'skills') ? (
+                              <div className="bg-base-200 rounded-lg p-4 space-y-3">
                                 <div className="flex items-center justify-between">
-                                  <h4 className="text-md font-bold text-primary">Skill {skillIndex + 1}</h4>
+                                  <h4 className="text-sm font-semibold text-primary">Skill {skillIndex + 1}</h4>
                                   <button
                                     onClick={() => {
                                       const newSkills = profile.skills.filter((_, i) => i !== skillIndex);
                                       setProfile({ ...profile, skills: newSkills });
                                     }}
-                                    className="btn btn-sm btn-error"
+                                    className="btn btn-sm btn-error btn-circle"
+                                    title="Delete Skill"
                                   >
                                     <FaTrash className="w-3 h-3" />
                                   </button>
                                 </div>
-                                <input
-                                  type="text"
-                                  value={skill.name}
-                                  onChange={(e) => {
-                                    const newSkills = [...profile.skills];
-                                    newSkills[skillIndex] = { ...newSkills[skillIndex], name: e.target.value };
-                                    setProfile({ ...profile, skills: newSkills });
-                                  }}
-                                  className="input input-bordered input-sm w-full"
-                                  placeholder="Skill Name"
-                                />
-                                <input
-                                  type="text"
-                                  value={skill.category}
-                                  onChange={(e) => {
-                                    const newSkills = [...profile.skills];
-                                    newSkills[skillIndex] = { ...newSkills[skillIndex], category: e.target.value };
-                                    setProfile({ ...profile, skills: newSkills });
-                                  }}
-                                  className="input input-bordered input-sm w-full"
-                                  placeholder="Category"
-                                />
-                                <select
-                                  value={skill.level}
-                                  onChange={(e) => {
-                                    const newSkills = [...profile.skills];
-                                    newSkills[skillIndex] = { ...newSkills[skillIndex], level: e.target.value };
-                                    setProfile({ ...profile, skills: newSkills });
-                                  }}
-                                  className="select select-bordered select-sm w-full"
-                                >
-                                  <option value="Beginner">Beginner</option>
-                                  <option value="Intermediate">Intermediate</option>
-                                  <option value="Advanced">Advanced</option>
-                                  <option value="Expert">Expert</option>
-                                </select>
+                                <div className="grid grid-cols-1 gap-3">
+                                  <input
+                                    type="text"
+                                    value={skill.name}
+                                    onChange={(e) => {
+                                      const newSkills = [...profile.skills];
+                                      newSkills[skillIndex] = { ...newSkills[skillIndex], name: e.target.value };
+                                      setProfile({ ...profile, skills: newSkills });
+                                    }}
+                                    className="input input-bordered input-sm w-full focus:ring-2 focus:ring-primary/20"
+                                    placeholder="Skill Name (e.g., JavaScript, Python)"
+                                  />
+                                  <select
+                                    value={skill.category}
+                                    onChange={(e) => {
+                                      const newSkills = [...profile.skills];
+                                      newSkills[skillIndex] = { ...newSkills[skillIndex], category: e.target.value };
+                                      setProfile({ ...profile, skills: newSkills });
+                                    }}
+                                    className="select select-bordered select-sm w-full focus:ring-2 focus:ring-primary/20"
+                                  >
+                                    <option value="Programming">Programming</option>
+                                    <option value="Frontend">Frontend</option>
+                                    <option value="Backend">Backend</option>
+                                    <option value="Cloud">Cloud</option>
+                                    <option value="DevOps">DevOps</option>
+                                    <option value="Database">Database</option>
+                                  </select>
+                                  <select
+                                    value={skill.level}
+                                    onChange={(e) => {
+                                      const newSkills = [...profile.skills];
+                                      newSkills[skillIndex] = { ...newSkills[skillIndex], level: e.target.value };
+                                      setProfile({ ...profile, skills: newSkills });
+                                    }}
+                                    className="select select-bordered select-sm w-full focus:ring-2 focus:ring-primary/20"
+                                  >
+                                    <option value="Beginner">Beginner</option>
+                                    <option value="Intermediate">Intermediate</option>
+                                    <option value="Advanced">Advanced</option>
+                                    <option value="Expert">Expert</option>
+                                  </select>
+                                </div>
                               </div>
                             ) : (
-                              <>
-                                <div className="flex items-center justify-between">
-                                  <span className="font-medium text-base-content">{skill.name}</span>
-                                  <span className="text-sm text-base-content/60">{skill.level}</span>
+                              <div className="bg-gradient-to-r from-base-100 to-base-200/50 rounded-lg p-4 hover:shadow-md transition-all duration-200">
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="font-semibold text-base-content text-lg">{skill.name}</span>
+                                  <span className="badge badge-outline badge-sm">{skill.level}</span>
                                 </div>
-                                <div className="w-full bg-base-300 rounded-full h-2">
+                                <div className="w-full bg-base-300 rounded-full h-3 mb-2">
                                   <div
-                                    className={`h-2 rounded-full ${getSkillLevelColor(skill.level)}`}
+                                    className={`h-3 rounded-full transition-all duration-500 ${getSkillLevelColor(skill.level)}`}
                                     style={{ width: getSkillLevelWidth(skill.level) }}
                                   ></div>
                                 </div>
-                              </>
+                                <div className="flex items-center justify-between text-sm text-base-content/60">
+                                  <span>Proficiency Level</span>
+                                  <span className="font-medium">{skill.level}</span>
+                                </div>
+                              </div>
                             )}
                           </div>
                         ))}
-                        {categorySkills.length === 0 && isEditing && (
-                          <div className="text-center text-base-content/50 py-4">
-                            No skills in {category} category
+                        
+                        {categorySkills.length === 0 && (isEditing || editingSection === 'skills') && (
+                          <div className="text-center py-8 text-base-content/50 bg-base-200 rounded-lg">
+                            <FaCode className="w-8 h-8 mx-auto mb-2 text-base-content/30" />
+                            <p className="text-sm">No skills in {category} category</p>
+                            <p className="text-xs">Add skills using the form below</p>
                           </div>
                         )}
                       </div>
@@ -1258,88 +1965,92 @@ export default function ProfilePage() {
                   );
                 })}
               </div>
-              {isEditing && (
-                <div className="space-y-4">
-                  <div className="divider">Add New Skill</div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input
-                      type="text"
-                      placeholder="Skill Name"
-                      className="input input-bordered"
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          const skillName = e.target.value.trim();
-                          const category = e.target.nextElementSibling.value;
-                          const level = e.target.nextElementSibling.nextElementSibling.value;
-                          if (skillName && category && level) {
-                            setProfile({
-                              ...profile,
-                              skills: [...profile.skills, {
-                                name: skillName,
-                                category: category,
-                                level: level
-                              }]
-                            });
-                            e.target.value = '';
-                            e.target.nextElementSibling.value = '';
-                            e.target.nextElementSibling.nextElementSibling.value = 'Beginner';
-                          }
-                        }
-                      }}
-                    />
-                    <select
-                      className="select select-bordered"
-                      onChange={(e) => {
-                        const skillName = e.target.previousElementSibling.value;
-                        const level = e.target.nextElementSibling.value;
-                        if (skillName && e.target.value && level) {
-                          setProfile({
-                            ...profile,
-                            skills: [...profile.skills, {
-                              name: skillName,
-                              category: e.target.value,
-                              level: level
-                            }]
-                          });
-                          e.target.previousElementSibling.value = '';
-                          e.target.value = '';
-                          e.target.nextElementSibling.value = 'Beginner';
-                        }
-                      }}
-                    >
-                      <option value="">Select Category</option>
-                      <option value="Programming">Programming</option>
-                      <option value="Frontend">Frontend</option>
-                      <option value="Backend">Backend</option>
-                      <option value="Cloud">Cloud</option>
-                      <option value="DevOps">DevOps</option>
-                      <option value="Database">Database</option>
-                    </select>
-                    <select
-                      className="select select-bordered"
-                      onChange={(e) => {
-                        const skillName = e.target.previousElementSibling.previousElementSibling.value;
-                        const category = e.target.previousElementSibling.value;
-                        if (skillName && category && e.target.value) {
+              {(isEditing || editingSection === 'skills') && (
+                <div className="bg-gradient-to-r from-base-100 to-base-200/30 rounded-xl border border-base-300 p-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <FaPlus className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-base-content">Add New Skill</h3>
+                      <p className="text-sm text-base-content/70">Add your technical skills and expertise</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2">
+                      <label className="label">
+                        <span className="label-text font-medium">Skill Name</span>
+                      </label>
+                      <input
+                        type="text"
+                        id="skillName"
+                        placeholder="e.g., JavaScript, Python, React"
+                        className="input input-bordered w-full focus:ring-2 focus:ring-primary/20"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="label">
+                        <span className="label-text font-medium">Category</span>
+                      </label>
+                      <select
+                        id="skillCategory"
+                        className="select select-bordered w-full focus:ring-2 focus:ring-primary/20"
+                      >
+                        <option value="">Select Category</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Frontend">Frontend</option>
+                        <option value="Backend">Backend</option>
+                        <option value="Cloud">Cloud</option>
+                        <option value="DevOps">DevOps</option>
+                        <option value="Database">Database</option>
+                      </select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <label className="label">
+                        <span className="label-text font-medium">Proficiency Level</span>
+                      </label>
+                      <select
+                        id="skillLevel"
+                        className="select select-bordered w-full focus:ring-2 focus:ring-primary/20"
+                      >
+                        <option value="Beginner">Beginner</option>
+                        <option value="Intermediate">Intermediate</option>
+                        <option value="Advanced">Advanced</option>
+                        <option value="Expert">Expert</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-end mt-6">
+                    <button
+                      onClick={() => {
+                        const skillName = document.getElementById('skillName').value.trim();
+                        const category = document.getElementById('skillCategory').value;
+                        const level = document.getElementById('skillLevel').value;
+                        
+                        if (skillName && category && level) {
                           setProfile({
                             ...profile,
                             skills: [...profile.skills, {
                               name: skillName,
                               category: category,
-                              level: e.target.value
+                              level: level
                             }]
                           });
-                          e.target.previousElementSibling.previousElementSibling.value = '';
-                          e.target.previousElementSibling.value = '';
-                          e.target.value = 'Beginner';
+                          // Clear form
+                          document.getElementById('skillName').value = '';
+                          document.getElementById('skillCategory').value = '';
+                          document.getElementById('skillLevel').value = 'Beginner';
                         }
                       }}
+                      className="btn btn-primary shadow-lg hover:shadow-xl transition-all duration-200"
                     >
-                      <option value="Beginner">Beginner</option>
-                      <option value="Intermediate">Intermediate</option>
-                      <option value="Advanced">Advanced</option>
-                      <option value="Expert">Expert</option>
-                    </select>
+                      <FaPlus className="w-4 h-4" />
+                      Add Skill
+                    </button>
                   </div>
                 </div>
               )}
@@ -1349,11 +2060,50 @@ export default function ProfilePage() {
           {/* Portfolio Tab */}
           {activeTab === 'portfolio' && (
             <div className="space-y-6">
+              {/* Portfolio Section Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-base-content flex items-center gap-3">
+                  <FaFileAlt className="w-6 h-6 text-primary" />
+                  Portfolio & Projects
+                </h2>
+                <div className="flex gap-2">
+                  {editingSection === 'portfolio' ? (
+                    <>
+                      <button 
+                        onClick={() => setEditingSection(null)}
+                        className="btn btn-sm btn-ghost hover:bg-base-200"
+                        title="Cancel"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleSectionSave('Portfolio')}
+                        className="btn btn-sm btn-primary"
+                        title="Save Changes"
+                      >
+                        <FaSave className="w-4 h-4" />
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setEditingSection('portfolio')}
+                      className="btn btn-sm btn-primary"
+                      title="Edit Portfolio"
+                    >
+                      <FaEdit className="w-4 h-4" />
+                      Edit Portfolio
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {profile.portfolio.map((project, projectIndex) => (
                   <div key={project.id} className="card bg-base-200 shadow-sm">
                     <div className="card-body">
-                      {isEditing ? (
+                      {(isEditing || editingSection === 'portfolio') ? (
                         <div className="space-y-4">
                           <div className="flex items-center justify-between">
                             <h3 className="text-lg font-bold text-primary">Project {projectIndex + 1}</h3>
@@ -1505,7 +2255,7 @@ export default function ProfilePage() {
                   </div>
                 ))}
               </div>
-              {isEditing && (
+              {(isEditing || editingSection === 'portfolio') && (
                 <button 
                   onClick={() => setProfile({
                     ...profile,
@@ -1517,7 +2267,7 @@ export default function ProfilePage() {
                       technologies: ['']
                     }]
                   })}
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full hover:bg-accent hover:text-accent-content transition-all duration-200"
                 >
                   <FaPlus className="w-4 h-4" />
                   Add Project
@@ -1529,9 +2279,48 @@ export default function ProfilePage() {
           {/* Certifications Tab */}
           {activeTab === 'certifications' && (
             <div className="space-y-6">
+              {/* Certifications Section Header */}
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-base-content flex items-center gap-3">
+                  <FaAward className="w-6 h-6 text-primary" />
+                  Certifications & Licenses
+                </h2>
+                <div className="flex gap-2">
+                  {editingSection === 'certifications' ? (
+                    <>
+                      <button 
+                        onClick={() => setEditingSection(null)}
+                        className="btn btn-sm btn-ghost hover:bg-base-200"
+                        title="Cancel"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                        Cancel
+                      </button>
+                      <button 
+                        onClick={() => handleSectionSave('Certifications')}
+                        className="btn btn-sm btn-primary"
+                        title="Save Changes"
+                      >
+                        <FaSave className="w-4 h-4" />
+                        Save
+                      </button>
+                    </>
+                  ) : (
+                    <button 
+                      onClick={() => setEditingSection('certifications')}
+                      className="btn btn-sm btn-primary"
+                      title="Edit Certifications"
+                    >
+                      <FaEdit className="w-4 h-4" />
+                      Edit Certifications
+                    </button>
+                  )}
+                </div>
+              </div>
+
               {profile.certifications.map((cert, certIndex) => (
                 <div key={cert.id} className="p-4 bg-base-200 rounded-lg">
-                  {isEditing ? (
+                  {(isEditing || editingSection === 'certifications') ? (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <h3 className="text-lg font-bold text-primary">Certification {certIndex + 1}</h3>
@@ -1628,7 +2417,7 @@ export default function ProfilePage() {
                   )}
                 </div>
               ))}
-              {isEditing && (
+              {(isEditing || editingSection === 'certifications') && (
                 <button 
                   onClick={() => setProfile({
                     ...profile,
@@ -1641,7 +2430,7 @@ export default function ProfilePage() {
                       url: ''
                     }]
                   })}
-                  className="btn btn-outline w-full"
+                  className="btn btn-outline w-full hover:bg-warning hover:text-warning-content transition-all duration-200"
                 >
                   <FaPlus className="w-4 h-4" />
                   Add Certification
@@ -1653,19 +2442,26 @@ export default function ProfilePage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-center gap-4">
-        <button className="btn btn-primary">
-          <FaEye className="w-4 h-4" />
-          Preview Public Profile
-        </button>
-        <button className="btn btn-outline">
-          <FaShare className="w-4 h-4" />
-          Share Profile
-        </button>
-        <button className="btn btn-outline">
-          <FaDownload className="w-4 h-4" />
-          Download Resume
-        </button>
+      <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-6 border border-primary/10">
+        <div className="flex flex-col sm:flex-row justify-center gap-4">
+          <a href={`/profile/${profile?.personalInfo?.email || ''}`} className="btn btn-primary shadow-lg hover:shadow-xl transition-all duration-200">
+            <FaEye className="w-4 h-4" />
+            Preview Public Profile
+          </a>
+          <button className="btn btn-outline hover:bg-primary hover:text-primary-content transition-all duration-200">
+            <FaShare className="w-4 h-4" />
+            Share Profile
+          </button>
+          <a
+            href={resumeUrl || profile?.resumeUrl || '#'}
+            target={resumeUrl || profile?.resumeUrl ? '_blank' : undefined}
+            rel="noreferrer"
+            className={`btn btn-outline hover:bg-secondary hover:text-secondary-content transition-all duration-200 ${!(resumeUrl || profile?.resumeUrl) ? 'btn-disabled' : ''}`}
+          >
+            <FaDownload className="w-4 h-4" />
+            Download Resume
+          </a>
+        </div>
       </div>
     </div>
   );

@@ -37,6 +37,7 @@ export async function GET(request) {
           availability: 'Available for new opportunities',
           experience: '0+ years'
         },
+        resumeUrl: '',
         socialLinks: {
           linkedin: '',
           github: '',
@@ -66,6 +67,7 @@ export async function GET(request) {
           availability: 'Available for new opportunities',
           experience: '0+ years'
         },
+        resumeUrl: '',
         socialLinks: {
           linkedin: '',
           github: '',
@@ -92,8 +94,9 @@ export async function GET(request) {
         avatar: user.image || session.user.image || '',
         professionalTitle: user.professionalTitle || '',
         availability: user.availability || 'Available for new opportunities',
-        experience: user.experience || '0+ years'
+        experience: user.experienceYears || '0+ years'
       },
+      resumeUrl: user.resumeUrl || '',
       socialLinks: {
         linkedin: user.linkedin || '',
         github: user.github || '',
@@ -150,7 +153,10 @@ export async function PUT(request) {
         bio: body.personalInfo?.bio || '',
         professionalTitle: body.personalInfo?.professionalTitle || '',
         availability: body.personalInfo?.availability || 'Available for new opportunities',
-        experience: body.personalInfo?.experience || '0+ years',
+        experienceYears: body.personalInfo?.experience || '0+ years',
+        image: body.personalInfo?.avatar || session.user.image || '',
+        avatar: body.personalInfo?.avatar || session.user.image || '',
+        resumeUrl: body.resumeUrl || '',
         linkedin: body.socialLinks?.linkedin || '',
         github: body.socialLinks?.github || '',
         website: body.socialLinks?.website || '',

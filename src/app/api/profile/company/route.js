@@ -57,9 +57,10 @@ export async function PUT(request) {
 
     const update = {
       $set: {
+        name: body.name || session.user.companyName || session.user.name || "",
         company: {
           name: body.name || session.user.companyName || "",
-          logo: body.logo || session.user.image || "",
+          logo: body.logo || body.company?.logo || session.user.image || "",
           website: body.website || "",
           location: body.location || "",
           size: body.size || "",

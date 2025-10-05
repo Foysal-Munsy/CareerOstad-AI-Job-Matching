@@ -41,7 +41,7 @@ const Navbar = () => {
               <Link href="/">Home</Link>
             </li>
             <li>
-              <a href="/#about">Jobs</a>
+              <Link href="/jobs">Jobs</Link>
             </li>
             <Dropdowns />
             <li>
@@ -71,7 +71,7 @@ const Navbar = () => {
                 aria-label="Open profile menu"
               >
                 <img
-                  src={session?.user?.image}
+                  src={session?.user?.image || '/placeholder-avatar.png'}
                   alt="Profile"
                   className="w-10 h-10 rounded-full border-2 border-primary object-cover shadow transition-all duration-300"
                 />
@@ -98,7 +98,7 @@ const Navbar = () => {
               >
                 <div className="p-4 border-b border-gray-100 flex items-center gap-3">
                   <img
-                    src={session?.user?.image}
+                    src={session?.user?.image || '/placeholder-avatar.png'}
                     alt="Profile"
                     className="w-12 h-12 rounded-full border-2 border-primary object-cover"
                   />

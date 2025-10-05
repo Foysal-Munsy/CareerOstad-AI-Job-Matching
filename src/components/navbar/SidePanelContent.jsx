@@ -44,9 +44,9 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
           <Link href="/">Home</Link>
         </li>
         <li className="px-5 py-2.5" onClick={() => setSideMenu(!sideMenu)}>
-          <a href="/#about" className="">
+          <Link href="/jobs">
             Jobs
-          </a>
+          </Link>
         </li>
               
         {/* Dashboard-related collapses removed for a cleaner public navbar */}
