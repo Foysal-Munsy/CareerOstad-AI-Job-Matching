@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import VerifiedBadge from '@/components/verification/VerifiedBadge';
 import { 
   FaArrowLeft, FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaIndustry, FaCalendarAlt,
   FaEdit, FaSave, FaTimes, FaPlus, FaTrash, FaTwitter, FaLinkedin, FaFacebook,
@@ -337,11 +338,8 @@ export default function CompanyProfilePage() {
                 <>
                   <div className="flex items-center gap-3 mb-2">
                     <h2 className="text-4xl font-bold text-primary">{profile.name || "Unnamed Company"}</h2>
-                    {profile.isVerified && (
-                      <div className="flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                        <FaShieldAlt className="w-4 h-4" />
-                        Verified Company
-                      </div>
+                    {profile.verification?.isVerified && (
+                      <VerifiedBadge size="lg" showText={true} />
                     )}
                   </div>
                   {profile.tagline && (
@@ -388,6 +386,51 @@ export default function CompanyProfilePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Verification Status */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              profile.verification?.isVerified 
+                ? 'bg-green-100 dark:bg-green-900/30' 
+                : 'bg-yellow-100 dark:bg-yellow-900/30'
+            }`}>
+              {profile.verification?.isVerified ? (
+                <FaCheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+              ) : (
+                <FaBuilding className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {profile.verification?.isVerified ? 'Company Verified' : 'Get Verified'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {profile.verification?.isVerified 
+                  ? 'Your company is verified and shows a trusted badge'
+                  : 'Verify your company to build trust with candidates'
+                }
+              </p>
+            </div>
+          </div>
+          {!profile.verification?.isVerified && (
+            <Link
+              href="/dashboard/verification"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+            >
+              Verify Now
+            </Link>
+          )}
+        </div>
+        {profile.verification?.isVerified && profile.verification?.verifiedAt && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Verified on: {new Date(profile.verification.verifiedAt).toLocaleDateString()}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Main Content Grid */}

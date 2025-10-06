@@ -6,7 +6,7 @@ import { CiBoxList } from "react-icons/ci";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { TbPackage } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaUsersCog, FaUserTie, FaChartLine, FaBell, FaCog, FaFileAlt, FaSearch, FaTachometerAlt, FaUsers, FaUser, FaBuilding, FaUserShield, FaBriefcase, FaTags, FaChartBar, FaHistory, FaDatabase, FaShieldAlt } from "react-icons/fa";
+import { FaUsersCog, FaUserTie, FaChartLine, FaBell, FaCog, FaFileAlt, FaSearch, FaTachometerAlt, FaUsers, FaUser, FaBuilding, FaUserShield, FaBriefcase, FaTags, FaChartBar, FaHistory, FaDatabase, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
 import { IoMdAnalytics } from "react-icons/io";
 import { HiOutlineDocumentText, HiOutlineUsers } from "react-icons/hi";
 import { BiMessageSquareDots } from "react-icons/bi";
@@ -131,6 +131,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
       <nav className="px-2 py-4 space-y-1 overflow-y-auto">
         <div className="text-xs uppercase px-4 mb-1 text-base-content/60">Overview</div>
         <NavItem href="/dashboard" label="Dashboard" icon={MdSpaceDashboard} onClick={itemClick} />
+        <NavItem href="/dashboard/verification" label="Get Verified" icon={FaCheckCircle} onClick={itemClick} />
         <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Jobs</div>
         {isCompany && (
           <>
