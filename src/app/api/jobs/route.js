@@ -52,7 +52,7 @@ export async function POST(request) {
             salaryMin, salaryMax, salaryType, isNegotiable, perksBenefits,
             applicationDeadline, howToApply, applicationUrl, applicationEmail,
             numberOfVacancies, experienceRequired, educationRequired,
-            genderPreference, ageLimit, tags = []
+            genderPreference, ageLimit, tags = [], companyWebsite
         } = body;
 
         if (!title || !category || !overview || !requirements) {
@@ -89,6 +89,7 @@ export async function POST(request) {
             tags: Array.isArray(tags) ? tags : [],
             companyName: session.user.name || '',
             companyEmail: session.user.email || '',
+            companyWebsite: companyWebsite || '',
             companyProviderAccountId: session.user.providerAccountId || null,
             createdAt: new Date(),
             updatedAt: new Date(),

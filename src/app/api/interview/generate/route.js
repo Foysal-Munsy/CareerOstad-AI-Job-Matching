@@ -1,3 +1,4 @@
+import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from 'next/server';
 
 // Function to convert AI-generated text to structured questions
@@ -344,10 +345,12 @@ function getFallbackQuestions(role) {
 }
 
 export async function POST(request) {
-  let role;
+  // Gemini client
+  const ai = new GoogleGenAI({});
+
   try {
     const body = await request.json();
-    role = body.role;
+    const { role } = body;
 
     if (!role) {
       return NextResponse.json(
@@ -358,67 +361,50 @@ export async function POST(request) {
 
     console.log('Generating questions for role:', role);
     
-    // Try Hugging Face API first if API key is available
-    if (process.env.HUGGINGFACE_API_KEY) {
-      try {
-        console.log('Attempting Hugging Face API call...');
-        
-        const response = await fetch(
-          "https://api-inference.huggingface.co/models/gpt2-large",
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-              "Content-Type": "application/json",
-            },
-            method: "POST",
-            body: JSON.stringify({
-              inputs: `Interview Questions for ${role}:\n\n1. What are the key responsibilities of a ${role}?\n2. How would you approach solving a complex problem as a ${role}?\n3. What technical skills are essential for a ${role}?\n4. Describe your experience with relevant tools and technologies for ${role}.\n5. How do you stay updated with industry trends in ${role}?\n\nGenerate 5 comprehensive interview questions for a ${role} position with different difficulty levels:`,
-              parameters: {
-                max_new_tokens: 1200,
-                temperature: 0.7,
-                return_full_text: false,
-                do_sample: true,
-                top_p: 0.9,
-                repetition_penalty: 1.1
-              }
-            }),
-          }
-        );
+    // Create comprehensive prompt for interview questions
+    const prompt = `Generate 5 comprehensive interview questions for a ${role} position with different difficulty levels.
 
-        if (response.ok) {
-          const contentType = response.headers.get('content-type');
-          if (contentType && contentType.includes('application/json')) {
-            const result = await response.json();
-            console.log('Hugging Face API call successful');
-            
-            let responseText = '';
-            if (Array.isArray(result) && result[0]?.generated_text) {
-              responseText = result[0].generated_text;
-            } else if (result.generated_text) {
-              responseText = result.generated_text;
-            }
-            
-            if (responseText) {
-              console.log('Generated text from Hugging Face:', responseText.substring(0, 300) + '...');
-              
-              // Convert AI-generated text to structured questions
-              try {
-                const aiQuestions = convertTextToQuestions(responseText, role);
-                if (aiQuestions && aiQuestions.length >= 3) {
-                  console.log('Successfully converted AI text to questions:', aiQuestions.length);
-                  return NextResponse.json({ questions: aiQuestions });
-                }
-    } catch (parseError) {
-                console.log('Failed to convert AI response to questions:', parseError.message);
-              }
-            }
-          }
-        }
-      } catch (apiError) {
-        console.log('Hugging Face API failed, using fallback questions:', apiError.message);
+REQUIREMENTS:
+1. Generate exactly 5 questions
+2. Mix of difficulty levels: 1 Easy, 2 Medium, 2 Hard
+3. Questions should be specific to ${role} role
+4. Include technical, behavioral, and problem-solving questions
+5. Each question should test different aspects of ${role} skills
+6. Questions should be practical and relevant to real work scenarios
+
+QUESTION FORMAT:
+- Start each question with a number (1., 2., 3., 4., 5.)
+- Make questions clear and specific
+- Include both technical and soft skills assessment
+- Ensure questions are appropriate for ${role} level
+
+DIFFICULTY DISTRIBUTION:
+- 1 Easy question: Basic knowledge and understanding
+- 2 Medium questions: Practical application and experience
+- 2 Hard questions: Complex problem-solving and advanced concepts
+
+Generate professional interview questions that would be asked in a real ${role} interview:`;
+
+    console.log("Generated prompt:", prompt);
+    
+    // Call Gemini API
+    const responses = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `${prompt}`,
+    });
+
+    const generatedText = responses.text || "No questions generated.";
+    console.log("Generated questions text:", generatedText.substring(0, 300) + '...');
+
+    // Convert AI-generated text to structured questions
+    try {
+      const aiQuestions = convertTextToQuestions(generatedText, role);
+      if (aiQuestions && aiQuestions.length >= 3) {
+        console.log('Successfully converted AI text to questions:', aiQuestions.length);
+        return NextResponse.json({ questions: aiQuestions });
       }
-    } else {
-      console.log('No Hugging Face API key found, using fallback questions');
+    } catch (parseError) {
+      console.log('Failed to convert AI response to questions:', parseError.message);
     }
 
     // Use fallback questions if AI generation fails
@@ -429,21 +415,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Error generating interview questions:', error);
     
-    // Check for API key errors
-    if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
-      console.log('API key error, using fallback questions');
-      const fallbackQuestions = getFallbackQuestions(role);
-      return NextResponse.json({ questions: fallbackQuestions });
-    }
-    
-    // Check for quota/rate limit errors
-    if (error.message?.includes('429') || error.message?.includes('quota')) {
-      console.log('Rate limit error, using fallback questions');
-      const fallbackQuestions = getFallbackQuestions(role);
-      return NextResponse.json({ questions: fallbackQuestions });
-    }
-    
-    // For any other error, use fallback questions
+    // Use fallback questions for any error
     console.log('API error occurred, using fallback questions');
     const fallbackQuestions = getFallbackQuestions(role);
     return NextResponse.json({ questions: fallbackQuestions });

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import VerifiedBadge from '@/components/verification/VerifiedBadge';
 import { 
   FaArrowLeft, FaBuilding, FaGlobe, FaMapMarkerAlt, FaUsers, FaIndustry, FaCalendarAlt,
   FaEdit, FaSave, FaTimes, FaPlus, FaTrash, FaTwitter, FaLinkedin, FaFacebook,
@@ -13,6 +14,7 @@ import {
 export default function CompanyProfilePage() {
   const [loading, setLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [logoUploading, setLogoUploading] = useState(false);
   const [profile, setProfile] = useState({
     // Basic Info
     name: "",
@@ -117,6 +119,66 @@ export default function CompanyProfilePage() {
     }
   }
 
+  const handleLogoUpload = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Invalid file type', 
+          text: 'Please select a valid image (JPEG, PNG, GIF, WebP, or SVG).' 
+        });
+        return;
+      }
+      
+      // Validate file size (5MB max for company logos)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'File too large', 
+          text: 'Max size is 5MB for company logos.' 
+        });
+        return;
+      }
+      
+      setLogoUploading(true);
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/profile/company/upload-logo', { method: 'POST', body: form });
+      const data = await res.json();
+      
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+      
+      const logoUrl = String(data.logoUrl || '');
+      setProfile(prev => ({ 
+        ...prev, 
+        logo: logoUrl 
+      }));
+      
+      Swal.fire({ 
+        icon: 'success', 
+        title: 'Logo updated', 
+        text: 'Your company logo has been saved successfully.' 
+      });
+    } catch (err) {
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Upload failed', 
+        text: err instanceof Error ? err.message : 'Unknown error' 
+      });
+    } finally {
+      setLogoUploading(false);
+      // reset input value to allow re-uploading same file
+      if (event?.target) event.target.value = '';
+    }
+  };
+
   const header = (
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
@@ -163,7 +225,7 @@ export default function CompanyProfilePage() {
         <div className="bg-gradient-to-r from-primary/10 to-secondary/10 p-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center gap-8">
             {/* Company Logo */}
-            <div className="relative">
+            <div className="relative group">
               <div className="w-32 h-32 rounded-2xl bg-primary/10 flex items-center justify-center overflow-hidden shadow-lg">
                 {profile.logo ? (
                   <img src={profile.logo} alt={profile.name} className="w-full h-full object-cover" />
@@ -176,38 +238,108 @@ export default function CompanyProfilePage() {
                   <FaCheckCircle className="w-5 h-5" />
                 </div>
               )}
+              
+              {/* Upload Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-2xl">
+                <label 
+                  htmlFor="logo-upload" 
+                  className="cursor-pointer p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
+                  title="Upload Company Logo"
+                >
+                  {logoUploading ? (
+                    <div className="loading loading-spinner loading-sm text-primary"></div>
+                  ) : (
+                    <FaCamera className="w-4 h-4 text-primary" />
+                  )}
+                </label>
+                <input
+                  id="logo-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleLogoUpload}
+                  className="hidden"
+                  disabled={logoUploading}
+                />
+              </div>
             </div>
 
             {/* Company Details */}
             <div className="flex-1">
               {isEditing ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input className="input input-bordered w-full" placeholder="Company Name" value={profile.name}
-                         onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Tagline (e.g., Empowering Careers in Tech)" value={profile.tagline}
-                         onChange={(e) => setProfile({ ...profile, tagline: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Website" value={profile.website}
-                         onChange={(e) => setProfile({ ...profile, website: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Location" value={profile.location}
-                         onChange={(e) => setProfile({ ...profile, location: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Company Size (e.g., 200-500 employees)" value={profile.size}
-                         onChange={(e) => setProfile({ ...profile, size: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Industry" value={profile.industry}
-                         onChange={(e) => setProfile({ ...profile, industry: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Founded Year" value={profile.founded}
-                         onChange={(e) => setProfile({ ...profile, founded: e.target.value })} />
-                  <input className="input input-bordered w-full" placeholder="Head Office Location" value={profile.address}
-                         onChange={(e) => setProfile({ ...profile, address: e.target.value })} />
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input className="input input-bordered w-full" placeholder="Company Name" value={profile.name}
+                           onChange={(e) => setProfile({ ...profile, name: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Tagline (e.g., Empowering Careers in Tech)" value={profile.tagline}
+                           onChange={(e) => setProfile({ ...profile, tagline: e.target.value })} />
+                  </div>
+                  
+                  {/* Logo Upload Section */}
+                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
+                    <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center overflow-hidden">
+                      {profile.logo ? (
+                        <img 
+                          src={profile.logo} 
+                          alt="Company Logo"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <FaBuilding className="w-8 h-8 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <label 
+                        htmlFor="logo-upload-form" 
+                        className="btn btn-outline btn-sm cursor-pointer"
+                        disabled={logoUploading}
+                      >
+                        {logoUploading ? (
+                          <>
+                            <div className="loading loading-spinner loading-xs mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FaCamera className="w-3 h-3 mr-2" />
+                            {profile.logo ? 'Change Logo' : 'Upload Logo'}
+                          </>
+                        )}
+                      </label>
+                      <input
+                        id="logo-upload-form"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        className="hidden"
+                        disabled={logoUploading}
+                      />
+                      <p className="text-xs text-base-content/60 mt-1">
+                        JPG, PNG, GIF, WebP or SVG. Max 5MB.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input className="input input-bordered w-full" placeholder="Website" value={profile.website}
+                           onChange={(e) => setProfile({ ...profile, website: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Location" value={profile.location}
+                           onChange={(e) => setProfile({ ...profile, location: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Company Size (e.g., 200-500 employees)" value={profile.size}
+                           onChange={(e) => setProfile({ ...profile, size: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Industry" value={profile.industry}
+                           onChange={(e) => setProfile({ ...profile, industry: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Founded Year" value={profile.founded}
+                           onChange={(e) => setProfile({ ...profile, founded: e.target.value })} />
+                    <input className="input input-bordered w-full" placeholder="Head Office Location" value={profile.address}
+                           onChange={(e) => setProfile({ ...profile, address: e.target.value })} />
+                  </div>
                 </div>
               ) : (
                 <>
                   <div className="flex items-center gap-3 mb-2">
                     <h2 className="text-4xl font-bold text-primary">{profile.name || "Unnamed Company"}</h2>
-                    {profile.isVerified && (
-                      <div className="flex items-center gap-1 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
-                        <FaShieldAlt className="w-4 h-4" />
-                        Verified Company
-                      </div>
+                    {profile.verification?.isVerified && (
+                      <VerifiedBadge size="lg" showText={true} />
                     )}
                   </div>
                   {profile.tagline && (
@@ -254,6 +386,51 @@ export default function CompanyProfilePage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Verification Status */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              profile.verification?.isVerified 
+                ? 'bg-green-100 dark:bg-green-900/30' 
+                : 'bg-yellow-100 dark:bg-yellow-900/30'
+            }`}>
+              {profile.verification?.isVerified ? (
+                <FaCheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+              ) : (
+                <FaBuilding className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {profile.verification?.isVerified ? 'Company Verified' : 'Get Verified'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {profile.verification?.isVerified 
+                  ? 'Your company is verified and shows a trusted badge'
+                  : 'Verify your company to build trust with candidates'
+                }
+              </p>
+            </div>
+          </div>
+          {!profile.verification?.isVerified && (
+            <Link
+              href="/dashboard/verification"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+            >
+              Verify Now
+            </Link>
+          )}
+        </div>
+        {profile.verification?.isVerified && profile.verification?.verifiedAt && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Verified on: {new Date(profile.verification.verifiedAt).toLocaleDateString()}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Main Content Grid */}

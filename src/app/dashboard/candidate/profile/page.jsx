@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import Swal from 'sweetalert2';
+import VerifiedBadge from '@/components/verification/VerifiedBadge';
 import { 
   FaArrowLeft,
   FaUser,
@@ -47,6 +48,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(false);
   const [profileLoading, setProfileLoading] = useState(true);
   const [resumeUploading, setResumeUploading] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
   const [resumeUrl, setResumeUrl] = useState('');
 
   // Profile data from API - will be loaded from backend
@@ -208,6 +210,69 @@ export default function ProfilePage() {
       Swal.fire({ icon: 'error', title: 'Upload failed', text: err instanceof Error ? err.message : 'Unknown error' });
     } finally {
       setResumeUploading(false);
+      // reset input value to allow re-uploading same file
+      if (event?.target) event.target.value = '';
+    }
+  };
+
+  const handleAvatarUpload = async (event) => {
+    try {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Invalid file type', 
+          text: 'Please select a valid image (JPEG, PNG, GIF, or WebP).' 
+        });
+        return;
+      }
+      
+      // Validate file size (5MB max for profile pictures)
+      if (file.size > 5 * 1024 * 1024) {
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'File too large', 
+          text: 'Max size is 5MB for profile pictures.' 
+        });
+        return;
+      }
+      
+      setAvatarUploading(true);
+      const form = new FormData();
+      form.append('file', file);
+      const res = await fetch('/api/profile/upload-avatar', { method: 'POST', body: form });
+      const data = await res.json();
+      
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Upload failed');
+      }
+      
+      const avatarUrl = String(data.avatarUrl || '');
+      setProfile(prev => ({ 
+        ...prev, 
+        personalInfo: { 
+          ...prev.personalInfo, 
+          avatar: avatarUrl 
+        } 
+      }));
+      
+      Swal.fire({ 
+        icon: 'success', 
+        title: 'Profile picture updated', 
+        text: 'Your profile picture has been saved successfully.' 
+      });
+    } catch (err) {
+      Swal.fire({ 
+        icon: 'error', 
+        title: 'Upload failed', 
+        text: err instanceof Error ? err.message : 'Unknown error' 
+      });
+    } finally {
+      setAvatarUploading(false);
       // reset input value to allow re-uploading same file
       if (event?.target) event.target.value = '';
     }
@@ -592,6 +657,51 @@ export default function ProfilePage() {
         </div>
       )}
 
+      {/* Verification Status */}
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+              profile.verification?.isVerified 
+                ? 'bg-green-100 dark:bg-green-900/30' 
+                : 'bg-yellow-100 dark:bg-yellow-900/30'
+            }`}>
+              {profile.verification?.isVerified ? (
+                <FaCheck className="w-6 h-6 text-green-600 dark:text-green-400" />
+              ) : (
+                <FaUser className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
+              )}
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                {profile.verification?.isVerified ? 'Profile Verified' : 'Get Verified'}
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {profile.verification?.isVerified 
+                  ? 'Your profile is verified and shows a trusted badge'
+                  : 'Verify your profile to build trust with employers'
+                }
+              </p>
+            </div>
+          </div>
+          {!profile.verification?.isVerified && (
+            <Link
+              href="/dashboard/verification"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200"
+            >
+              Verify Now
+            </Link>
+          )}
+        </div>
+        {profile.verification?.isVerified && profile.verification?.verifiedAt && (
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Verified on: {new Date(profile.verification.verifiedAt).toLocaleDateString()}
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Profile Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div className="bg-base-100 p-4 rounded-xl border border-base-300 shadow-sm">
@@ -689,6 +799,29 @@ export default function ProfilePage() {
                   )}
                 </div>
               </div>
+              
+              {/* Upload Button Overlay */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-black/50 rounded-full">
+                <label 
+                  htmlFor="avatar-upload" 
+                  className="cursor-pointer p-2 bg-white/90 rounded-full hover:bg-white transition-colors"
+                  title="Upload Profile Picture"
+                >
+                  {avatarUploading ? (
+                    <div className="loading loading-spinner loading-sm text-primary"></div>
+                  ) : (
+                    <FaCamera className="w-4 h-4 text-primary" />
+                  )}
+                </label>
+                <input
+                  id="avatar-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                  disabled={avatarUploading}
+                />
+              </div>
             </div>
             
             <div className="flex-1">
@@ -756,6 +889,52 @@ export default function ProfilePage() {
                     placeholder="Bio"
                     rows={3}
                   />
+                  
+                  {/* Profile Picture Upload Section */}
+                  <div className="flex items-center gap-4 p-4 bg-base-200 rounded-lg">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden">
+                      {profile.personalInfo.avatar && profile.personalInfo.avatar.trim() !== '' ? (
+                        <img 
+                          src={profile.personalInfo.avatar} 
+                          alt="Profile"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <FaUser className="w-8 h-8 text-primary" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <label 
+                        htmlFor="avatar-upload-form" 
+                        className="btn btn-outline btn-sm cursor-pointer"
+                        disabled={avatarUploading}
+                      >
+                        {avatarUploading ? (
+                          <>
+                            <div className="loading loading-spinner loading-xs mr-2"></div>
+                            Uploading...
+                          </>
+                        ) : (
+                          <>
+                            <FaCamera className="w-3 h-3 mr-2" />
+                            {profile.personalInfo.avatar ? 'Change Picture' : 'Upload Picture'}
+                          </>
+                        )}
+                      </label>
+                      <input
+                        id="avatar-upload-form"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAvatarUpload}
+                        className="hidden"
+                        disabled={avatarUploading}
+                      />
+                      <p className="text-xs text-base-content/60 mt-1">
+                        JPG, PNG, GIF or WebP. Max 5MB.
+                      </p>
+                    </div>
+                  </div>
+                  
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <input
                       type="text"
@@ -781,9 +960,14 @@ export default function ProfilePage() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-3xl font-bold text-primary mb-2">
-                    {profile.personalInfo.name}
-                  </h2>
+                  <div className="flex items-center gap-3 mb-2">
+                    <h2 className="text-3xl font-bold text-primary">
+                      {profile.personalInfo.name}
+                    </h2>
+                    {profile.verification?.isVerified && (
+                      <VerifiedBadge size="lg" showText={true} />
+                    )}
+                  </div>
                   <p className="text-lg text-base-content/70 mb-2">
                     {profile.personalInfo.professionalTitle}
                   </p>

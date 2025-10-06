@@ -1,11 +1,13 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 
 export default function JobsPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,9 +17,10 @@ export default function JobsPage() {
   const [employmentType, setEmploymentType] = useState("All");
   const [jobLevel, setJobLevel] = useState("All");
   const [workMode, setWorkMode] = useState("All");
-  const [applying, setApplying] = useState(false);
   const [savingIds, setSavingIds] = useState({});
   const [savedSet, setSavedSet] = useState(new Set());
+  const [matchingPercentages, setMatchingPercentages] = useState({});
+  const [loadingMatches, setLoadingMatches] = useState(false);
 
   async function fetchJobs() {
     setLoading(true);
@@ -38,6 +41,74 @@ export default function JobsPage() {
     fetchJobs();
   }, []);
 
+  // Function to calculate job matching percentages
+  const calculateJobMatches = async (jobs) => {
+    if (!session?.user?.email) return;
+    
+    setLoadingMatches(true);
+    const matches = {};
+    
+    try {
+      // Process jobs in batches to avoid overwhelming the API
+      const batchSize = 5;
+      for (let i = 0; i < jobs.length; i += batchSize) {
+        const batch = jobs.slice(i, i + batchSize);
+        
+        const promises = batch.map(async (job) => {
+          try {
+            const response = await fetch('/api/jobs/match', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                jobId: job._id,
+                jobDescription: job.overview,
+                jobRequirements: job.requirements || '',
+                jobSkills: job.toolsTechnologies || []
+              }),
+            });
+            
+            if (response.ok) {
+              const result = await response.json();
+              return { jobId: job._id, percentage: result.matchingPercentage };
+            }
+            return { jobId: job._id, percentage: null };
+          } catch (error) {
+            console.error(`Error calculating match for job ${job._id}:`, error);
+            return { jobId: job._id, percentage: null };
+          }
+        });
+        
+        const batchResults = await Promise.all(promises);
+        batchResults.forEach(({ jobId, percentage }) => {
+          if (percentage !== null) {
+            matches[jobId] = percentage;
+          }
+        });
+        
+        // Update state with current batch results
+        setMatchingPercentages(prev => ({ ...prev, ...matches }));
+        
+        // Small delay between batches to be respectful to the API
+        if (i + batchSize < jobs.length) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    } catch (error) {
+      console.error('Error calculating job matches:', error);
+    } finally {
+      setLoadingMatches(false);
+    }
+  };
+
+  // Calculate matches when jobs are loaded and user is logged in
+  useEffect(() => {
+    if (jobs.length > 0 && session?.user?.email) {
+      calculateJobMatches(jobs);
+    }
+  }, [jobs, session?.user?.email]);
+
   useEffect(() => {
     async function fetchSaved() {
       if (!session?.user?.email) return;
@@ -53,7 +124,7 @@ export default function JobsPage() {
     fetchSaved();
   }, [session?.user?.email]);
 
-  const handleApply = async (jobId, jobTitle) => {
+  const handleApply = (jobId, jobTitle) => {
     if (!session?.user?.email) {
       Swal.fire({
         icon: 'warning',
@@ -64,61 +135,19 @@ export default function JobsPage() {
         cancelButtonText: 'Cancel'
       }).then((result) => {
         if (result.isConfirmed) {
-          window.location.href = '/auth/signin';
+          router.push('/login');
         }
       });
       return;
     }
 
-    setApplying(true);
-    
-    try {
-      const response = await fetch('/api/applications', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jobId: jobId,
-          coverLetter: `I am interested in applying for the ${jobTitle} position. I believe my skills and experience make me a strong candidate for this role.`,
-        }),
-      });
-
-      const result = await response.json();
-
-      if (response.ok && result.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Application Submitted!',
-          text: `Your application for ${jobTitle} has been submitted successfully.`,
-          confirmButtonText: 'OK',
-          timer: 3000,
-          timerProgressBar: true
-        });
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Application Failed',
-          text: result.error || 'Failed to submit application. Please try again.',
-          confirmButtonText: 'OK'
-        });
-      }
-    } catch (error) {
-      console.error('Error applying for job:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Network Error',
-        text: 'Please check your connection and try again.',
-        confirmButtonText: 'OK'
-      });
-    } finally {
-      setApplying(false);
-    }
+    // Navigate to the apply page
+    router.push(`/jobs/${jobId}/apply`);
   };
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
-    return jobs.filter(j =>
+    const filteredJobs = jobs.filter(j =>
       (!q || 
         j.title.toLowerCase().includes(q) || 
         j.companyName.toLowerCase().includes(q) ||
@@ -133,7 +162,18 @@ export default function JobsPage() {
       (location === "All" || (j.location && j.location.toLowerCase().includes(location.toLowerCase()))) &&
       j.status === "open"
     );
-  }, [jobs, query, category, location, employmentType, jobLevel, workMode]);
+
+    // Sort by matching percentage if user is logged in and matches are available
+    if (session?.user?.email && Object.keys(matchingPercentages).length > 0) {
+      return filteredJobs.sort((a, b) => {
+        const matchA = matchingPercentages[a._id] || 0;
+        const matchB = matchingPercentages[b._id] || 0;
+        return matchB - matchA; // Sort descending (highest match first)
+      });
+    }
+
+    return filteredJobs;
+  }, [jobs, query, category, location, employmentType, jobLevel, workMode, session?.user?.email, matchingPercentages]);
   const toggleSave = async (jobId) => {
     if (!session?.user?.email) {
       Swal.fire({
@@ -361,6 +401,45 @@ export default function JobsPage() {
                     <div>
                       <h2 className="card-title text-lg mb-2 line-clamp-2">{job.title}</h2>
                       <p className="text-primary font-semibold">{job.companyName}</p>
+                      
+                      {/* Job Matching Percentage */}
+                      {session?.user?.email && (
+                        <div className="mt-2">
+                          {loadingMatches || matchingPercentages[job._id] === undefined ? (
+                            <div className="flex items-center gap-2">
+                              <span className="loading loading-spinner loading-xs"></span>
+                              <span className="text-xs text-base-content/60">Calculating match...</span>
+                            </div>
+                          ) : matchingPercentages[job._id] !== null ? (
+                            <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-1">
+                                <svg className="w-3 h-3 text-success" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                                <span className={`text-xs font-semibold ${
+                                  matchingPercentages[job._id] >= 80 ? 'text-success' :
+                                  matchingPercentages[job._id] >= 60 ? 'text-warning' :
+                                  'text-error'
+                                }`}>
+                                  {matchingPercentages[job._id]}% Match
+                                </span>
+                              </div>
+                              <div className="w-16 bg-base-300 rounded-full h-1.5">
+                                <div 
+                                  className={`h-1.5 rounded-full ${
+                                    matchingPercentages[job._id] >= 80 ? 'bg-success' :
+                                    matchingPercentages[job._id] >= 60 ? 'bg-warning' :
+                                    'bg-error'
+                                  }`}
+                                  style={{ width: `${matchingPercentages[job._id]}%` }}
+                                ></div>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-xs text-base-content/60">Match unavailable</span>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <div className="badge badge-primary badge-sm">{job.category}</div>
                   </div>
@@ -439,17 +518,9 @@ export default function JobsPage() {
                       </button>
                       <button
                         onClick={() => handleApply(job._id, job.title)}
-                        disabled={applying}
                         className="btn btn-success btn-sm"
                       >
-                        {applying ? (
-                          <>
-                            <span className="loading loading-spinner loading-xs"></span>
-                            Applying...
-                          </>
-                        ) : (
-                          'Apply Now'
-                        )}
+                        Apply Now
                       </button>
                       <Link href={`/jobs/${job._id}`} className="btn btn-primary btn-sm">
                         View Details

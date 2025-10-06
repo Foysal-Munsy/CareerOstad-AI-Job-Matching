@@ -21,5 +21,6 @@ export const config = {
     matcher: [
         '/advice',
         '/dashboard',
+        '/jobs/:path*/apply',
     ],
 }

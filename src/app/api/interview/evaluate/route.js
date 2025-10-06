@@ -1,64 +1,59 @@
+import { GoogleGenAI } from "@google/genai";
 import { NextResponse } from 'next/server';
 
-// Function to generate AI feedback using Hugging Face API
+// Function to generate AI feedback using Gemini API
 async function generateAIFeedback(question, userAnswer) {
-  if (!process.env.HUGGINGFACE_API_KEY) {
-    console.log('No Hugging Face API key found for feedback generation');
-    return null;
-  }
+  // Gemini client
+  const ai = new GoogleGenAI({});
 
   try {
-    console.log('Generating AI feedback...');
+    console.log('Generating AI feedback using Gemini...');
     
-    const response = await fetch(
-      "https://api-inference.huggingface.co/models/gpt2-large",
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HUGGINGFACE_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-        method: "POST",
-        body: JSON.stringify({
-          inputs: `Evaluate this interview answer:
+    // Create comprehensive prompt for evaluation
+    const prompt = `Evaluate this interview answer professionally and provide detailed feedback:
 
-Question: ${question.question || question}
+INTERVIEW QUESTION:
+${question.question || question}
 
-Answer: ${userAnswer}
+CANDIDATE'S ANSWER:
+${userAnswer}
 
-Provide constructive feedback including:
-- Overall score (0-100)
-- Strengths of the answer
-- Areas for improvement
-- Specific suggestions
-- Rating (Excellent/Good/Fair/Needs Improvement)
+EVALUATION REQUIREMENTS:
+1. Provide an overall score (0-100)
+2. Analyze the answer for:
+   - Technical accuracy and knowledge
+   - Clarity and communication
+   - Problem-solving approach
+   - Experience and examples
+   - Completeness of response
 
-Format your evaluation as detailed feedback:`,
-          parameters: {
-            max_new_tokens: 800,
-            temperature: 0.7,
-            return_full_text: false,
-            do_sample: true,
-            top_p: 0.9
-          }
-        }),
-      }
-    );
+3. Identify specific strengths
+4. Point out areas for improvement
+5. Provide constructive suggestions
+6. Give an overall rating (Excellent/Good/Fair/Needs Improvement)
 
-    if (response.ok) {
-      const result = await response.json();
-      let responseText = '';
-      
-      if (Array.isArray(result) && result[0]?.generated_text) {
-        responseText = result[0].generated_text;
-      } else if (result.generated_text) {
-        responseText = result.generated_text;
-      }
-      
-      if (responseText) {
-        console.log('AI feedback generated:', responseText.substring(0, 200) + '...');
-        return parseAIFeedback(responseText);
-      }
-    }
+EVALUATION FORMAT:
+- Start with overall score (0-100)
+- List 2-3 key strengths
+- List 2-3 areas for improvement
+- Provide 2-3 specific suggestions
+- End with overall rating
+
+Be professional, constructive, and helpful in your evaluation:`;
+
+    console.log("Generated evaluation prompt:", prompt);
+    
+    // Call Gemini API
+    const responses = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `${prompt}`,
+    });
+
+    const generatedText = responses.text || "No evaluation generated.";
+    console.log("Generated evaluation text:", generatedText.substring(0, 200) + '...');
+
+    return parseAIFeedback(generatedText);
+    
   } catch (error) {
     console.log('AI feedback generation failed:', error.message);
   }
@@ -278,11 +273,9 @@ function generateSampleAnswer(question, score) {
 }
 
 export async function POST(request) {
-  let question, userAnswer;
   try {
     const body = await request.json();
-    question = body.question;
-    userAnswer = body.userAnswer;
+    const { question, userAnswer } = body;
 
     if (!question || !userAnswer) {
       return NextResponse.json(
@@ -291,8 +284,7 @@ export async function POST(request) {
       );
     }
 
-    // Try AI feedback generation first
-    console.log('Attempting AI feedback generation...');
+    console.log('Attempting AI feedback generation with Gemini...');
     let evaluation = await generateAIFeedback(question, userAnswer);
     
     // If AI feedback fails, use fallback system
