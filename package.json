@@ -38,6 +38,7 @@
     "react-spinners": "^0.17.0",
     "react-use": "^17.6.0",
     "stripe": "^19.1.0",
+    "recharts": "^3.2.1",
     "sweetalert2": "^11.23.0"
   },
   "devDependencies": {
