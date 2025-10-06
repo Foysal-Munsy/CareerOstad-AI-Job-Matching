@@ -1,22 +1,27 @@
-'use client';
-import React, { useState } from 'react';
-
+"use client";
+import React, { useState } from "react";
+import Swal from "sweetalert2";
 export default function MatchSkillPage() {
-  const [inputSkill, setInputSkill] = useState('');
+  const [inputSkill, setInputSkill] = useState("");
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const handleMatch = async () => {
     if (!inputSkill.trim()) {
-      alert('Please enter at least one skill.');
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Skill",
+        text: "Please enter at least one skill.",
+        confirmButtonText: "OK",
+      });
       return;
     }
 
     setLoading(true);
     try {
-      const res = await fetch('/match-skill', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/match-skill", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ inputSkill }),
       });
 
@@ -27,8 +32,13 @@ export default function MatchSkillPage() {
       const data = await res.json();
       setMatches(data);
     } catch (err) {
-      console.error('Error matching skills:', err);
-      alert('Failed to fetch matching jobs. Please try again.');
+      console.error("Error matching skills:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to Fetch",
+        text: "Failed to fetch matching jobs. Please try again.",
+        confirmButtonText: "OK",
+      });
     } finally {
       setLoading(false);
     }
@@ -45,7 +55,7 @@ export default function MatchSkillPage() {
           type="text"
           placeholder="Enter your skills (comma separated)"
           value={inputSkill}
-          onChange={e => setInputSkill(e.target.value)}
+          onChange={(e) => setInputSkill(e.target.value)}
           className="input input-bordered w-full"
         />
         <button
@@ -53,7 +63,7 @@ export default function MatchSkillPage() {
           className="btn btn-primary"
           disabled={loading}
         >
-          {loading ? 'Matching...' : 'Find Jobs'}
+          {loading ? "Matching..." : "Find Jobs"}
         </button>
       </div>
 
@@ -68,7 +78,7 @@ export default function MatchSkillPage() {
 
         {matches.length > 0 && (
           <ul className="space-y-4">
-            {matches.map(job => (
+            {matches.map((job) => (
               <li
                 key={job._id}
                 className="p-5 border rounded-xl shadow-sm hover:shadow-md transition"
@@ -78,17 +88,17 @@ export default function MatchSkillPage() {
                   <span
                     className={`text-sm font-semibold ${
                       job.matchPercent > 80
-                        ? 'text-green-600'
+                        ? "text-green-600"
                         : job.matchPercent > 50
-                        ? 'text-yellow-600'
-                        : 'text-gray-500'
+                        ? "text-yellow-600"
+                        : "text-gray-500"
                     }`}
                   >
                     {job.matchPercent}% Match
                   </span>
                 </div>
                 <p className="text-sm text-gray-600 mb-2">
-                  Required Skills: {job.skills.join(', ')}
+                  Required Skills: {job.skills.join(", ")}
                 </p>
 
                 {/* Progress bar */}
@@ -96,10 +106,10 @@ export default function MatchSkillPage() {
                   <div
                     className={`h-2 rounded-full ${
                       job.matchPercent > 80
-                        ? 'bg-green-500'
+                        ? "bg-green-500"
                         : job.matchPercent > 50
-                        ? 'bg-yellow-500'
-                        : 'bg-gray-400'
+                        ? "bg-yellow-500"
+                        : "bg-gray-400"
                     }`}
                     style={{ width: `${job.matchPercent}%` }}
                   ></div>
