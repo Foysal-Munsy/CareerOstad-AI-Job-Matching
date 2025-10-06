@@ -6,23 +6,25 @@ import { useEffect, useState } from "react";
 export default function CompanyDashboardPage() {
   const { data: session } = useSession();
   const [jobCount, setJobCount] = useState(0);
+  const [applicationCount, setApplicationCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchJobs() {
+    async function fetchAll() {
       try {
-        const res = await fetch("/api/jobs", { cache: "no-store" });
-        const data = await res.json();
-        if (res.ok) {
-          setJobCount((data.jobs || []).length);
-        }
+        const [jobsRes, appsRes] = await Promise.all([
+          fetch("/api/jobs", { cache: "no-store" }),
+          fetch("/api/company/applications", { cache: "no-store" })
+        ]);
+        const [jobsData, appsData] = await Promise.all([jobsRes.json(), appsRes.json()]);
+        if (jobsRes.ok) setJobCount((jobsData.jobs || []).length);
+        if (appsRes.ok && appsData.success) setApplicationCount((appsData.applications || []).length);
       } catch (e) {
-        // ignore for demo
       } finally {
         setLoading(false);
       }
     }
-    fetchJobs();
+    fetchAll();
   }, []);
 
   return (
@@ -39,14 +41,14 @@ export default function CompanyDashboardPage() {
           <div className="mt-1 text-xs text-base-content/60">Live openings created by your company</div>
         </div>
         <div className="rounded-xl border border-base-300 p-4 bg-base-100">
-          <div className="text-sm text-base-content/70">Applications (demo)</div>
-          <div className="mt-2 text-3xl font-bold">128</div>
-          <div className="mt-1 text-xs text-base-content/60">Applicants across all active jobs</div>
+          <div className="text-sm text-base-content/70">Applications</div>
+          <div className="mt-2 text-3xl font-bold">{loading ? '-' : applicationCount}</div>
+          <div className="mt-1 text-xs text-base-content/60">Applicants across all jobs</div>
         </div>
         <div className="rounded-xl border border-base-300 p-4 bg-base-100">
-          <div className="text-sm text-base-content/70">Candidates in Pipeline (demo)</div>
-          <div className="mt-2 text-3xl font-bold">37</div>
-          <div className="mt-1 text-xs text-base-content/60">Screening, interview, and offer stages</div>
+          <div className="text-sm text-base-content/70">Interviews Scheduled</div>
+          <div className="mt-2 text-3xl font-bold">{loading ? '-' : 0}</div>
+          <div className="mt-1 text-xs text-base-content/60">Coming soon</div>
         </div>
       </section>
 
@@ -58,26 +60,7 @@ export default function CompanyDashboardPage() {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-xl font-semibold mb-2">Recent Activity (demo)</h2>
-        <ul className="timeline timeline-vertical timeline-compact">
-          <li>
-            <div className="timeline-start">Now</div>
-            <div className="timeline-middle">⚡</div>
-            <div className="timeline-end timeline-box">Interview scheduled with 3 candidates</div>
-          </li>
-          <li>
-            <div className="timeline-start">2h</div>
-            <div className="timeline-middle">📨</div>
-            <div className="timeline-end timeline-box">15 new applications for Frontend Engineer</div>
-          </li>
-          <li>
-            <div className="timeline-start">Yesterday</div>
-            <div className="timeline-middle">📣</div>
-            <div className="timeline-end timeline-box">Job “Backend Engineer” published</div>
-          </li>
-        </ul>
-      </section>
+      {/* Recent Activity could be populated from applications later */}
     </div>
   );
 }

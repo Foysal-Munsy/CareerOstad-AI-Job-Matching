@@ -125,6 +125,21 @@ export const authOptions = {
         async session({ session, token }) {
             if (session?.user) {
                 session.user.role = token?.role || session.user.role
+                
+                // For company users, get the latest company name from database
+                if (session.user.role === 'company' || session.user.role === 'admin') {
+                    try {
+                        const userCollection = dbConnect(collectionNamesObj.userCollection)
+                        const identifier = session.user.providerAccountId ? { providerAccountId: session.user.providerAccountId } : { email: session.user.email }
+                        const user = await userCollection.findOne(identifier)
+                        if (user?.company?.name) {
+                            session.user.companyName = user.company.name
+                            session.user.name = user.name || user.company.name
+                        }
+                    } catch (e) {
+                        console.error('Error fetching company name in session:', e)
+                    }
+                }
             }
             return session
         },

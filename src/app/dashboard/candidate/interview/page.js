@@ -214,63 +214,74 @@ export default function InterviewPage() {
               </div>
             </div>
 
-            {/* Current Question */}
+            {/* Chat-style Q&A */}
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-              <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-                <h3 className="text-lg font-bold text-white mb-3 leading-relaxed">
-                  {questions[currentQuestionIndex]?.question}
-                </h3>
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {questions[currentQuestionIndex]?.skills?.map((skill, index) => (
-                    <span
-                      key={index}
-                      className="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-medium backdrop-blur-sm"
-                    >
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-                <div className="flex items-center text-indigo-100">
-                  <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span className="text-sm font-medium">
-                    Time limit: {Math.floor(questions[currentQuestionIndex]?.time_limit_seconds / 60)} minutes
-                  </span>
-                </div>
-              </div>
-              
+              {/* Assistant bubble with question */}
               <div className="p-6">
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="answer" className="block text-base font-semibold text-gray-900 mb-2">
-                      Your Answer
-                    </label>
-                    <textarea
-                      id="answer"
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="Share your thoughts and approach to this question..."
-                      rows={5}
-                      className="w-full px-4 py-3 text-base border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none transition-all duration-200"
-                    />
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-r from-indigo-500 to-purple-500 flex items-center justify-center text-white font-semibold shadow">AI</div>
+                  <div className="flex-1">
+                    <div className="rounded-2xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white p-4 shadow-md">
+                      <div className="font-semibold mb-2 leading-relaxed">
+                        {questions[currentQuestionIndex]?.question}
+                      </div>
+                      {questions[currentQuestionIndex]?.skills?.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {questions[currentQuestionIndex]?.skills?.map((skill, index) => (
+                            <span key={index} className="px-2 py-0.5 bg-white/20 rounded-full text-xs">
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="mt-3 text-xs text-white/80 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Time limit: {Math.floor(questions[currentQuestionIndex]?.time_limit_seconds / 60)} minutes
+                      </div>
+                    </div>
                   </div>
+                </div>
 
-                  <div className="flex gap-4">
+                {/* User bubble (preview before submit) */}
+                {userAnswer?.trim() && (
+                  <div className="mt-4 flex items-start gap-3 justify-end">
+                    <div className="flex-1 max-w-[80%]">
+                      <div className="rounded-2xl bg-blue-600 text-white p-4 shadow-md">
+                        <div className="whitespace-pre-wrap text-sm leading-relaxed">{userAnswer}</div>
+                      </div>
+                    </div>
+                    <div className="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center text-white font-semibold shadow">You</div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sticky composer */}
+              <div className="border-t bg-white p-4">
+                <div className="flex gap-3 items-end">
+                  <textarea
+                    value={userAnswer}
+                    onChange={(e) => setUserAnswer(e.target.value)}
+                    placeholder="Type your answer here..."
+                    rows={3}
+                    className="textarea textarea-bordered w-full"
+                  />
+                  <div className="flex flex-col gap-2">
                     <button
                       onClick={evaluateAnswer}
                       disabled={loading || !userAnswer.trim()}
-                      className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 px-6 rounded-lg font-semibold text-base hover:from-green-700 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                      className="btn btn-primary"
                     >
-                      {loading ? (
-                        <div className="flex items-center justify-center space-x-2">
-                          <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          <span>Evaluating...</span>
-                        </div>
-                      ) : (
-                        'Submit Answer'
-                      )}
+                      {loading ? 'Evaluating...' : 'Submit'}
                     </button>
+                    {evaluation && (
+                      currentQuestionIndex < questions.length - 1 ? (
+                        <button onClick={nextQuestion} className="btn btn-outline">Next</button>
+                      ) : (
+                        <button onClick={resetInterview} className="btn btn-outline">Restart</button>
+                      )
+                    )}
                   </div>
                 </div>
               </div>
