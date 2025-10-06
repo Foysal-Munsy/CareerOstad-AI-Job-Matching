@@ -49,7 +49,12 @@ export async function GET(request) {
         education: [],
         certifications: [],
         languages: [],
-        portfolio: []
+        portfolio: [],
+        verification: {
+          isVerified: false,
+          verifiedAt: null,
+          verificationType: null
+        }
       });
     }
     
@@ -79,7 +84,12 @@ export async function GET(request) {
         education: [],
         certifications: [],
         languages: [],
-        portfolio: []
+        portfolio: [],
+        verification: {
+          isVerified: false,
+          verifiedAt: null,
+          verificationType: null
+        }
       });
     }
 
@@ -108,7 +118,12 @@ export async function GET(request) {
       education: user.education || [],
       certifications: user.certifications || [],
       languages: user.languages || [],
-      portfolio: user.portfolio || []
+      portfolio: user.portfolio || [],
+      verification: {
+        isVerified: user.isVerified || false,
+        verifiedAt: user.verifiedAt || null,
+        verificationType: user.verificationType || null
+      }
     };
 
     return NextResponse.json(profileData);

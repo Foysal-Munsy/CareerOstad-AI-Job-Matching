@@ -24,9 +24,17 @@ export async function GET() {
       ? { providerAccountId: session.user.providerAccountId }
       : { email: session.user.email };
     const user = await collection.findOne(identifier);
+    
+    // Debug logging
+    console.log('Company profile API - User found:', {
+      email: user?.email,
+      isVerified: user?.isVerified,
+      verificationType: user?.verificationType,
+      verifiedAt: user?.verifiedAt
+    });
 
     const company = user?.company || {};
-    return NextResponse.json(mergeCompanyProfile(company, session));
+    return NextResponse.json(mergeCompanyProfile(company, session, user));
   } catch (e) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -88,10 +96,10 @@ export async function PUT(request) {
 }
 
 function defaultCompanyProfile(session) {
-  return mergeCompanyProfile({}, session);
+  return mergeCompanyProfile({}, session, null);
 }
 
-function mergeCompanyProfile(company, session) {
+function mergeCompanyProfile(company, session, user) {
   return {
     name: company.name || session?.user?.companyName || "",
     logo: company.logo || session?.user?.image || "",
@@ -106,6 +114,11 @@ function mergeCompanyProfile(company, session) {
     techStack: company.techStack || [],
     culture: company.culture || [],
     hiring: company.hiring ?? true,
+    verification: {
+      isVerified: user?.isVerified || false,
+      verifiedAt: user?.verifiedAt || null,
+      verificationType: user?.verificationType || null
+    }
   };
 }
 
