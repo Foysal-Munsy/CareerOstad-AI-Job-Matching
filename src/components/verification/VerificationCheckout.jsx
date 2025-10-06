@@ -117,3 +117,5 @@ const VerificationCheckout = ({ userType, amount }) => {
 };
 
 export default VerificationCheckout;
+
+

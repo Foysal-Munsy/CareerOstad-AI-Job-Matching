@@ -43,3 +43,5 @@ const VerifiedBadge = ({ size = "sm", showText = false, className = "" }) => {
 };
 
 export default VerifiedBadge;
+
+

@@ -92,3 +92,5 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 - Webhook signature verification
 - User authentication required for all endpoints
 - Verification status stored securely in database
+
+
