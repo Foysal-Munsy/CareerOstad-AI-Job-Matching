@@ -38,6 +38,11 @@ export async function GET(request, context) {
       certifications: user?.certifications || [],
       languages: user?.languages || [],
       portfolio: user?.portfolio || [],
+      verification: {
+        isVerified: user?.isVerified || false,
+        verifiedAt: user?.verifiedAt || null,
+        verificationType: user?.verificationType || null
+      }
     };
 
     // Recent applications (public-safe summary)
