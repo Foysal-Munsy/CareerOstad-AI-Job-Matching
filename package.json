@@ -19,6 +19,7 @@
     "cloudinary": "^2.7.0",
     "framer-motion": "^12.23.22",
     "genai": "^0.0.18",
+    "google-auth-library": "^10.4.0",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.544.0",
     "mongodb": "^6.20.0",
@@ -37,8 +38,8 @@
     "react-simple-typewriter": "^5.0.1",
     "react-spinners": "^0.17.0",
     "react-use": "^17.6.0",
-    "stripe": "^19.1.0",
     "recharts": "^3.2.1",
+    "stripe": "^19.1.0",
     "sweetalert2": "^11.23.0"
   },
   "devDependencies": {
