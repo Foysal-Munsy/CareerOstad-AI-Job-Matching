@@ -1,12 +1,39 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import Swal from "sweetalert2";
 
 export default function AdminCompaniesPage() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const handleDelete = async (_id) => {
+    const confirmation = await Swal.fire({
+      title: "Do you really want to delete?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    });
+
+    if (!confirmation.isConfirmed) return;
+
+    try {
+      const res = await fetch(`/api/deletecompany?id=${_id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok || !(data?.deletedCount > 0)) {
+        throw new Error(data?.message || "Delete failed");
+      }
+      await Swal.fire({ title: "Deleted!", text: "Company has been deleted.", icon: "success" });
+      const remainingUsers = users.filter((user) => user._id !== _id);
+      setUsers(remainingUsers);
+    } catch (e) {
+      Swal.fire({ title: "Error", text: e.message || "Failed to delete", icon: "error" });
+    }
+  }
 
   useEffect(() => {
     async function loadUsers() {
@@ -63,6 +90,7 @@ export default function AdminCompaniesPage() {
                   <th>Email</th>
                   <th>Role</th>
                   <th>Joined</th>
+                  <th>Delete</th>
                 </tr>
               </thead>
               <tbody>
@@ -79,6 +107,7 @@ export default function AdminCompaniesPage() {
                         <span className="badge badge-sm badge-warning">{u.role}</span>
                       </td>
                       <td>{u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-'}</td>
+                      <td><button className="btn bg-red-500 text-white" onClick={() => handleDelete(u._id)}>Delete</button></td>
                     </tr>
                   ))
                 )}
