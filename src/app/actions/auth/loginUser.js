@@ -7,7 +7,7 @@ export const loginUser = async (payload) => {
 
     const { email, password } = payload;
 
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const user = await userCollection.findOne({ email })
 
     if (!user) return null

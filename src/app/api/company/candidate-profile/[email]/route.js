@@ -18,8 +18,8 @@ export async function GET(request, { params }) {
     }
 
     const { email } = await params;
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Get all applications from this candidate
     const applications = await applicationsCollection.find({ 
@@ -78,7 +78,7 @@ export async function GET(request, { params }) {
 
     // Try to get more detailed profile from user collection if available
     try {
-      const userCollection = dbConnect(collectionNamesObj.userCollection);
+      const userCollection = await dbConnect(collectionNamesObj.userCollection);
       const userProfile = await userCollection.findOne({ email: email });
       
       if (userProfile) {

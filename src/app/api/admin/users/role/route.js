@@ -61,7 +61,7 @@ export async function PUT(request) {
     let result;
     
     try {
-      userCollection = dbConnect(collectionNamesObj.userCollection);
+      userCollection = await dbConnect(collectionNamesObj.userCollection);
       
       // Check if user exists
       const existingUser = await userCollection.findOne({ _id: userObjectId });

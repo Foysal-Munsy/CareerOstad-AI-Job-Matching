@@ -12,7 +12,7 @@ export async function GET(request, { params }) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
         const job = await jobsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!job) {
@@ -64,7 +64,7 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ error: "Title, category, overview, and requirements are required" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         // Check if job exists and belongs to the authenticated company
         const existingJob = await jobsCollection.findOne({ _id: new ObjectId(id) });
@@ -148,7 +148,7 @@ export async function DELETE(request, { params }) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         // Check if job exists and belongs to the authenticated company
         const existingJob = await jobsCollection.findOne({ _id: new ObjectId(id) });

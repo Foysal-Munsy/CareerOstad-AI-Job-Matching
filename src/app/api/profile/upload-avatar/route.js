@@ -106,7 +106,7 @@ export async function POST(request) {
     const avatarUrl = uploaded.secure_url || uploaded.url;
 
     // Save URL to user's profile
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const identifier = session.user.providerAccountId 
       ? { providerAccountId: session.user.providerAccountId } 
       : { email: session.user.email };

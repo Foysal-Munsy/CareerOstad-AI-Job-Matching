@@ -11,7 +11,7 @@ export async function GET(request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const identifier = session.user.providerAccountId 
       ? { providerAccountId: session.user.providerAccountId } 
       : { email: session.user.email };

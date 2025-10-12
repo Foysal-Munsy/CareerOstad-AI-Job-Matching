@@ -10,7 +10,7 @@ export async function GET(request) {
         const isPublic = searchParams.get('public') === 'true';
         
         const session = await getServerSession(authOptions);
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         let filter = {};
         let sort = { createdAt: -1 };
@@ -59,7 +59,7 @@ export async function POST(request) {
             return NextResponse.json({ error: "Title, category, overview, and requirements are required" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         const jobDoc = {
             title,
