@@ -118,7 +118,8 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
   return (
     <aside className={containerClass}>
       <div className="px-4 py-4 border-b border-base-300">
-        <div className="flex items-center space-x-3">
+        <Link href="/" className="flex items-center gap-2">
+          <div className="flex items-center space-x-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-white font-bold text-lg shadow-lg">
             CO
           </div>
@@ -127,6 +128,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <p className="text-[10px] text-gray-500 -mt-1 font-light">AI-Powered Career Dashboard</p>
           </div>
         </div>
+        </Link>
       </div>
       <nav className="px-2 py-4 space-y-1 overflow-y-auto">
         <div className="text-xs uppercase px-4 mb-1 text-base-content/60">Overview</div>
