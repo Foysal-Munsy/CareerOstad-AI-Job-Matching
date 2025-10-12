@@ -14,8 +14,8 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
 
     const companyQuery = {
       $or: [

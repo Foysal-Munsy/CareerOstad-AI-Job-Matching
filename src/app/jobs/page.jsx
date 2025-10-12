@@ -405,7 +405,7 @@ export default function JobsPage() {
                       {/* Job Matching Percentage */}
                       {session?.user?.email && (
                         <div className="mt-2">
-                          {loadingMatches || matchingPercentages[job._id] === undefined ? (
+                          {loadingMatches ? (
                             <div className="flex items-center gap-2">
                               <span className="loading loading-spinner loading-xs"></span>
                               <span className="text-xs text-base-content/60">Calculating match...</span>

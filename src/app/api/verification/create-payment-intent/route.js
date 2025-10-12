@@ -20,7 +20,7 @@ export async function POST(request) {
     }
 
     // Check if user is already verified
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const identifier = session.user.providerAccountId 
       ? { providerAccountId: session.user.providerAccountId } 
       : { email: session.user.email };

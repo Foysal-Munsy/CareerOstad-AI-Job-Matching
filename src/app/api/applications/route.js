@@ -13,8 +13,8 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Get applications for this user
     const applications = await applicationsCollection.find({ 
@@ -69,8 +69,8 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Check if job exists
     const job = await jobsCollection.findOne({ _id: new ObjectId(jobId) });

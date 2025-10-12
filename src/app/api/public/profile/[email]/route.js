@@ -8,9 +8,9 @@ export async function GET(request, context) {
     const { email } = await context.params;
     if (!email) return NextResponse.json({ error: 'Email required' }, { status: 400 });
 
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     const user = await userCollection.findOne({ email });
 

@@ -1,3 +1,4 @@
+// dbconnect.js
 import { MongoClient, ServerApiVersion } from 'mongodb';
 
 export const collectionNamesObj = {
@@ -8,31 +9,36 @@ export const collectionNamesObj = {
   messagesCollection: 'messages',
   savedJobsCollection: 'saved-jobs',
 };
-export default function dbConnect(collectionName) {
-  const uri = process.env.MONGO_URI;
 
-  if (!uri) {
-    throw new Error('MONGO_URI environment variable is not defined');
+const uri = process.env.MONGO_URI;
+const dbName = process.env.DB_NAME;
+if (!uri) throw new Error('MONGO_URI environment variable is not defined');
+if (!dbName) throw new Error('DB_NAME environment variable is not defined');
+
+const options = {
+  serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true }
+};
+
+const client = new MongoClient(uri, options);
+let connected = false;
+
+async function ensureConnected() {
+  if (!connected) {
+    await client.connect();
+    connected = true;
   }
-
-  if (!process.env.DB_NAME) {
-    throw new Error('DB_NAME environment variable is not defined');
-  }
-
-  const client = new MongoClient(uri, {
-    serverApi: {
-      version: ServerApiVersion.v1,
-      strict: false, // Make less strict
-      deprecationErrors: false,
-    },
-    // Remove problematic TLS settings
-    connectTimeoutMS: 10000,
-    socketTimeoutMS: 10000,
-    maxPoolSize: 5,
-    retryWrites: true,
-    retryReads: true,
-    // Let MongoDB handle SSL automatically
-  });
-
-  return client.db(process.env.DB_NAME).collection(collectionName);
 }
+
+export default async function dbConnect(collectionName) {
+  await ensureConnected();
+  return client.db(dbName).collection(collectionName);
+}
+
+// graceful shutdown (optional, good for production)
+process.on('SIGINT', async () => {
+  try { await client.close(); } catch (e) {}
+  process.exit(0);
+});
+
+
+

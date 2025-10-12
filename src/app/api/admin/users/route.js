@@ -21,7 +21,7 @@ export async function GET(request) {
     let users;
     
     try {
-      userCollection = dbConnect(collectionNamesObj.userCollection);
+      userCollection = await dbConnect(collectionNamesObj.userCollection);
       users = await userCollection.find({}).toArray();
     } catch (dbError) {
       console.error("Database connection error:", dbError);
