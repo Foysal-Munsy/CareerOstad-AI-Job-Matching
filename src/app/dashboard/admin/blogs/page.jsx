@@ -13,18 +13,19 @@ export default function AdminAdvicePage() {
     content: '',
     category: 'Resume Tips',
     image: '',
-    status: 'draft'
+    status: 'draft',
+    author: 'Admin'
   });
   const [uploading, setUploading] = useState(false);
 
-  // Fetch advice posts from API
+  // Fetch posts from new blogs API
   useEffect(() => {
     fetchAdvicePosts();
   }, []);
 
   const fetchAdvicePosts = async () => {
     try {
-      const response = await fetch('/api/admin/advice');
+      const response = await fetch('/api/admin/blogs');
       const result = await response.json();
       if (result.success) {
         setAdvicePosts(result.data);
@@ -37,9 +38,9 @@ export default function AdminAdvicePage() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to delete this advice post?")) {
+    if (confirm("Are you sure you want to delete this blog post?")) {
       try {
-        const response = await fetch(`/api/admin/advice/${id}`, {
+        const response = await fetch(`/api/admin/blogs/${id}`, {
           method: 'DELETE'
         });
         const result = await response.json();
@@ -54,7 +55,7 @@ export default function AdminAdvicePage() {
 
   const handleStatusChange = async (id, newStatus) => {
     try {
-      const response = await fetch(`/api/admin/advice/${id}`, {
+      const response = await fetch(`/api/admin/blogs/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -77,12 +78,10 @@ export default function AdminAdvicePage() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      
-      const response = await fetch('/api/admin/advice/upload', {
+      const response = await fetch('/api/admin/blogs/upload', {
         method: 'POST',
         body: formData
       });
-      
       const result = await response.json();
       if (result.success) {
         setFormData(prev => ({ ...prev, image: result.data.url }));
@@ -97,14 +96,13 @@ export default function AdminAdvicePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/admin/advice', {
+      const response = await fetch('/api/admin/blogs', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(formData)
       });
-      
       const result = await response.json();
       if (result.success) {
         setAdvicePosts([result.data, ...advicePosts]);
@@ -113,7 +111,8 @@ export default function AdminAdvicePage() {
           content: '',
           category: 'Resume Tips',
           image: '',
-          status: 'draft'
+          status: 'draft',
+          author: 'Admin'
         });
         setShowAddForm(false);
       }
@@ -137,22 +136,20 @@ export default function AdminAdvicePage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Advice Management</h1>
-          <p className="text-gray-600 mt-1">Manage career advice posts and content</p>
+          <h1 className="text-3xl font-bold text-gray-900">Blog Management</h1>
+          <p className="text-gray-600 mt-1">Manage career blog posts and content</p>
         </div>
         <button
           onClick={() => setShowAddForm(true)}
           className="btn btn-primary gap-2"
         >
           <FaPlus className="w-4 h-4" />
-          Add New Advice
+          Add New Post
         </button>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div className="stat bg-base-100 shadow rounded-lg p-4">
           <div className="stat-title">Total Posts</div>
@@ -178,12 +175,10 @@ export default function AdminAdvicePage() {
         </div>
       </div>
 
-      {/* Advice Posts Table */}
       <div className="bg-base-100 shadow rounded-lg overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">All Advice Posts</h3>
+          <h3 className="text-lg font-medium text-gray-900">All Blog Posts</h3>
         </div>
-        
         <div className="overflow-x-auto">
           <table className="table w-full">
             <thead>
@@ -257,12 +252,13 @@ export default function AdminAdvicePage() {
                       >
                         <FaEye className="w-4 h-4" />
                       </Link>
-                      <button
+                      <Link
+                        href={`/dashboard/admin/blogs/${post._id}`}
                         className="btn btn-ghost btn-sm text-warning"
                         title="Edit"
                       >
                         <FaEdit className="w-4 h-4" />
-                      </button>
+                      </Link>
                       <button
                         onClick={() => handleDelete(post._id)}
                         className="btn btn-ghost btn-sm text-error"
@@ -279,12 +275,11 @@ export default function AdminAdvicePage() {
         </div>
       </div>
 
-      {/* Add New Advice Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">Add New Advice Post</h3>
+              <h3 className="text-xl font-bold">Add New Blog Post</h3>
               <button
                 onClick={() => setShowAddForm(false)}
                 className="btn btn-ghost btn-sm"
@@ -292,7 +287,6 @@ export default function AdminAdvicePage() {
                 ✕
               </button>
             </div>
-            
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="label">
@@ -303,12 +297,25 @@ export default function AdminAdvicePage() {
                   name="title"
                   value={formData.title}
                   onChange={handleInputChange}
-                  placeholder="Enter advice post title"
+                  placeholder="Enter blog post title"
                   className="input input-bordered w-full"
                   required
                 />
               </div>
-              
+              <div>
+                <label className="label">
+                  <span className="label-text">Author</span>
+                </label>
+                <input
+                  type="text"
+                  name="author"
+                  value={formData.author}
+                  onChange={handleInputChange}
+                  placeholder="Enter author name"
+                  className="input input-bordered w-full"
+                  required
+                />
+              </div>
               <div>
                 <label className="label">
                   <span className="label-text">Category</span>
@@ -323,10 +330,28 @@ export default function AdminAdvicePage() {
                   <option value="Interview Tips">Interview Tips</option>
                   <option value="Career Planning">Career Planning</option>
                   <option value="Job Search">Job Search</option>
+                  <option value="Job Applications">Job Applications</option>
+                  <option value="Interview Preparation">Interview Preparation</option>
+                  <option value="Salary Negotiation">Salary Negotiation</option>
+                  <option value="Career Growth">Career Growth</option>
+                  <option value="Career Change">Career Change</option>
+                  <option value="Remote Work">Remote Work</option>
+                  <option value="Work-Life Balance">Work-Life Balance</option>
+                  <option value="Networking">Networking</option>
+                  <option value="LinkedIn Optimization">LinkedIn Optimization</option>
+                  <option value="Portfolio & Personal Branding">Portfolio & Personal Branding</option>
+                  <option value="Internships & Entry-Level">Internships & Entry-Level</option>
+                  <option value="Freelancing & Gig Work">Freelancing & Gig Work</option>
+                  <option value="Tech Careers">Tech Careers</option>
+                  <option value="Non-Tech Careers">Non-Tech Careers</option>
+                  <option value="Management & Leadership">Management & Leadership</option>
+                  <option value="Productivity & Skills">Productivity & Skills</option>
+                  <option value="Industry Trends">Industry Trends</option>
+                  <option value="Company Culture">Company Culture</option>
+                  <option value="Employee Benefits">Employee Benefits</option>
                   <option value="Professional Development">Professional Development</option>
                 </select>
               </div>
-              
               <div>
                 <label className="label">
                   <span className="label-text">Featured Image</span>
@@ -376,7 +401,6 @@ export default function AdminAdvicePage() {
                   </label>
                 </div>
               </div>
-              
               <div>
                 <label className="label">
                   <span className="label-text">Content</span>
@@ -385,12 +409,11 @@ export default function AdminAdvicePage() {
                   name="content"
                   value={formData.content}
                   onChange={handleInputChange}
-                  placeholder="Write your advice content here..."
+                  placeholder="Write your blog content here..."
                   className="textarea textarea-bordered w-full h-32"
                   required
                 ></textarea>
               </div>
-
               <div>
                 <label className="label">
                   <span className="label-text">Status</span>
@@ -405,7 +428,6 @@ export default function AdminAdvicePage() {
                   <option value="published">Published</option>
                 </select>
               </div>
-              
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
@@ -425,3 +447,5 @@ export default function AdminAdvicePage() {
     </div>
   );
 }
+
+
