@@ -185,7 +185,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
           <>
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Career Development</div>
             <NavItem href="/dashboard/candidate/profile" label="My Profile" icon={FaUserTie} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/resume" label="Resume Builder" icon={FaFileAlt} onClick={itemClick} />
+            <NavItem href="/dashboard/candidate/resume-builder" label="Resume Builder" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/skills" label="Skills Assessment" icon={FaChartLine} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/interview" label="Interview Prep" icon={BiMessageSquareDots} onClick={itemClick} />
           </>
