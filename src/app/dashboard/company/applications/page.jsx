@@ -158,11 +158,16 @@ export default function CompanyApplicationsPage() {
       app.candidateEmail?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.job?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       app.job?.companyName?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const matchesStatus = statusFilter === 'All' || app.status === statusFilter;
     const matchesJob = jobFilter === 'All' || app.jobId === jobFilter;
-    
-    return matchesSearch && matchesStatus && matchesJob;
+
+    // Extra safety: ensure ownership on client as well
+    const isOwnedByCompany = session?.user?.providerAccountId
+      ? app.job?.companyProviderAccountId === session.user.providerAccountId
+      : app.job?.companyEmail === session?.user?.email;
+
+    return Boolean(isOwnedByCompany) && matchesSearch && matchesStatus && matchesJob;
   });
 
   const getApplicationStats = () => {
