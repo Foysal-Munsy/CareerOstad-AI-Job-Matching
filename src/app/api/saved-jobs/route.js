@@ -12,8 +12,8 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const savedCollection = dbConnect(collectionNamesObj.savedJobsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const savedCollection = await dbConnect(collectionNamesObj.savedJobsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     const saved = await savedCollection
       .find({ userEmail: session.user.email })
@@ -54,7 +54,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "jobId is required" }, { status: 400 });
     }
 
-    const savedCollection = dbConnect(collectionNamesObj.savedJobsCollection);
+    const savedCollection = await dbConnect(collectionNamesObj.savedJobsCollection);
 
     const exists = await savedCollection.findOne({
       userEmail: session.user.email,
@@ -90,7 +90,7 @@ export async function DELETE(request) {
       return NextResponse.json({ error: "jobId is required" }, { status: 400 });
     }
 
-    const savedCollection = dbConnect(collectionNamesObj.savedJobsCollection);
+    const savedCollection = await dbConnect(collectionNamesObj.savedJobsCollection);
     await savedCollection.deleteOne({ userEmail: session.user.email, jobId });
     return NextResponse.json({ success: true, saved: false });
   } catch (e) {

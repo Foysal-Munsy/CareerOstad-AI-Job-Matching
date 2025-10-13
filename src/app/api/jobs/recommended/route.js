@@ -29,7 +29,7 @@ export async function GET(request) {
     const userProfile = await profileResponse.json();
 
     // Get all open jobs
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
     const jobs = await jobsCollection.find({ 
       status: 'open',
       public: true 

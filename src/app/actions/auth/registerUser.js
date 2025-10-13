@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 
 
 export const registerUser = async (form) => {
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
 
     const {email, password} = form;
 

@@ -69,7 +69,7 @@
 /* CSS for Navbar Start */
 .menu-list li {
     /* padding: 10px 20px; */
-    border-radius: 10px;
+    /* border-radius: 10px; */
     transition: color 0.5s;
     transition: background-color 0.5s;
 }

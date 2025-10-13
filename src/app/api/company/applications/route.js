@@ -17,8 +17,8 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Get company's jobs first
     const companyJobs = await jobsCollection.find({
@@ -88,8 +88,8 @@ export async function PUT(request) {
       }, { status: 400 });
     }
 
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Verify the application belongs to company's job
     const application = await applicationsCollection.findOne({ 
@@ -184,8 +184,8 @@ export async function DELETE(request) {
       }, { status: 400 });
     }
 
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
     // Verify the application belongs to company's job
     const application = await applicationsCollection.findOne({ 

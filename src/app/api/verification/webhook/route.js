@@ -35,7 +35,7 @@ export async function POST(request) {
         }
 
         // Update user verification status
-        const userCollection = dbConnect(collectionNamesObj.userCollection);
+        const userCollection = await dbConnect(collectionNamesObj.userCollection);
         
         const updateResult = await userCollection.updateOne(
           { email: userEmail },

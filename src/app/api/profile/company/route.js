@@ -15,7 +15,7 @@ export async function GET() {
 
     let collection;
     try {
-      collection = dbConnect(collectionNamesObj.userCollection);
+      collection = await dbConnect(collectionNamesObj.userCollection);
     } catch (e) {
       return NextResponse.json(defaultCompanyProfile(session), { status: 200 });
     }
@@ -54,7 +54,7 @@ export async function PUT(request) {
 
     let collection;
     try {
-      collection = dbConnect(collectionNamesObj.userCollection);
+      collection = await dbConnect(collectionNamesObj.userCollection);
     } catch (e) {
       return NextResponse.json({ error: "Database unavailable" }, { status: 503 });
     }

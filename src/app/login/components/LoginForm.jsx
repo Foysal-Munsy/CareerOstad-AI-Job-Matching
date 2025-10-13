@@ -78,6 +78,7 @@ const LoginForm = () => {
                         popup: 'swal-toast-zindex'
                     }
                 });
+                setLoading(false)
             }
         } catch (error) {
             //setLoading(false);
@@ -93,6 +94,7 @@ const LoginForm = () => {
                     popup: 'swal-toast-zindex'
                 }
             });
+            setLoading(false);
         }
     };
 
