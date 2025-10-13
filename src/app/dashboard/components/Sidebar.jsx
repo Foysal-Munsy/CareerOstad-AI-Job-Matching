@@ -231,7 +231,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/admin/jobs" label="All Jobs" icon={FaBriefcase} onClick={itemClick} />
             <NavItem href="/dashboard/admin/applications" label="Applications" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/admin/categories" label="Job Categories" icon={FaTags} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/advice" label="Advice Management" icon={HiOutlineDocumentText} onClick={itemClick} />
+            <NavItem href="/dashboard/admin/blogs" label="Blog Management" icon={HiOutlineDocumentText} onClick={itemClick} />
             
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Analytics & Reports</div>
             <NavItem href="/dashboard/admin/analytics" label="Analytics" icon={FaChartBar} onClick={itemClick} />
