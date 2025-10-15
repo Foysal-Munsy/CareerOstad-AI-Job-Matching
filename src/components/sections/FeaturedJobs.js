@@ -131,6 +131,7 @@ const FeaturedJobs = () => {
             return (
               <div
                 key={index}
+                onClick={() => window.location.href = `/jobs/${job._id}`}
                 className="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 cursor-pointer border border-gray-100 relative overflow-hidden group"
               >
                 {/* Premium gradient accent */}
@@ -230,7 +231,10 @@ const FeaturedJobs = () => {
                       <span>Quick Apply</span>
                     </div>
                     <button 
-                      onClick={() => window.location.href = `/jobs/${job._id}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/jobs/${job._id}`;
+                      }}
                       className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
                     >
                       Apply Now
