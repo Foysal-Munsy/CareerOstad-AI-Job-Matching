@@ -597,58 +597,58 @@ export default function ProfilePage() {
 
       {/* Profile Completion Tips */}
       {stats.profileCompleteness < 100 && (
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
+        <div className="bg-gradient-to-r from-primary/5 to-secondary/5  p-4 rounded-xl border border-blue-900 ">
           <div className="flex items-center gap-3 mb-3">
             <FaRocket className="w-5 h-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100">
+            <h3 className="text-lg font-semibold text-blue-900 ">
               Complete Your Profile ({stats.profileCompleteness}%)
             </h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {!profile.personalInfo.bio && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaUser className="w-4 h-4" />
                 <span>Add a professional bio</span>
               </div>
             )}
             {!profile.personalInfo.phone && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaPhone className="w-4 h-4" />
                 <span>Add your phone number</span>
               </div>
             )}
             {!profile.personalInfo.location && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaMapMarkerAlt className="w-4 h-4" />
                 <span>Add your location</span>
               </div>
             )}
             {profile.skills.length === 0 && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaCode className="w-4 h-4" />
                 <span>Add your skills</span>
               </div>
             )}
             {profile.experience.length === 0 && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaBriefcase className="w-4 h-4" />
                 <span>Add work experience</span>
               </div>
             )}
             {profile.education.length === 0 && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaGraduationCap className="w-4 h-4" />
                 <span>Add education</span>
               </div>
             )}
             {profile.languages.length === 0 && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaLanguage className="w-4 h-4" />
                 <span>Add languages</span>
               </div>
             )}
             {!profile.socialLinks.linkedin && (
-              <div className="flex items-center gap-2 text-sm text-blue-800 dark:text-blue-200">
+              <div className="flex items-center gap-2 text-sm text-black">
                 <FaLinkedin className="w-4 h-4" />
                 <span>Add LinkedIn profile</span>
               </div>

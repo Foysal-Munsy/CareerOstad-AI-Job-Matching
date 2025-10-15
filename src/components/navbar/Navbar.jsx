@@ -43,9 +43,12 @@ const Navbar = () => {
             <li>
               <Link href="/jobs">Jobs</Link>
             </li>
-            <Dropdowns />
+            {/* <Dropdowns /> */}
             <li>
               <Link href="/advice">Advice</Link>
+            </li>
+            <li>
+              <Link href="/getverified" className="bg-gradient-to-r from-primary to-secondary text-primary-content px-2 py-1">Get Verified</Link>
             </li>
             {/* Dashboard link removed for cleaner public navbar */}
           </ul>

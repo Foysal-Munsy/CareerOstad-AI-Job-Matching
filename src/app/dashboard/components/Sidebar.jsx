@@ -174,7 +174,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/candidate" label="Candidate Home" icon={TbPackage} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/applications" label="My Applications" icon={HiOutlineDocumentText} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/saved" label="Saved Jobs" icon={FaSearch} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/job-search" label="Job Search" icon={FaSearch} onClick={itemClick} />
+            <NavItem href="/jobs" label="Job Search" icon={FaSearch} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/recommended" label="Recommended Jobs" icon={IoMdAnalytics} onClick={itemClick} />
           </>
         )}
