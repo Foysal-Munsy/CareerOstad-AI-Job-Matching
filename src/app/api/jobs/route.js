@@ -14,16 +14,33 @@ export async function GET(request) {
 
         let filter = {};
         let sort = { createdAt: -1 };
+        
+        // Check if requesting featured jobs only
+        const featuredOnly = searchParams.get('featured') === 'true';
 
-        // If user is authenticated and is a company/admin, show only their jobs
-        if (session && (session.user.role === 'company' || session.user.role === 'admin') && !isPublic) {
+        // If user is authenticated and is a company, show only their jobs
+        // If user is admin, show all jobs
+        if (session && session.user.role === 'company' && !isPublic) {
             const companyIdentifier = session.user.providerAccountId 
                 ? { companyProviderAccountId: session.user.providerAccountId }
                 : { companyEmail: session.user.email };
             filter = companyIdentifier;
+        } else if (session && session.user.role === 'admin' && !isPublic) {
+            // Admin can see all jobs - no filter
+            filter = {};
         } else {
             // Public access - only show open jobs
             filter = { status: 'open' };
+        }
+        
+        // Add featured filter if requested
+        if (featuredOnly) {
+            filter.isFeatured = true;
+        }
+        
+        // Sort featured jobs first, then by creation date
+        if (isPublic) {
+            sort = { isFeatured: -1, createdAt: -1 };
         }
 
         const jobs = await jobsCollection.find(filter).sort(sort).toArray();

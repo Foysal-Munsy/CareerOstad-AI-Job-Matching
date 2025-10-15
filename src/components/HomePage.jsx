@@ -17,8 +17,8 @@ const HomePage = () => {
       <Banner></Banner>
       <KeyHighlights />
       <HowItWorks />
-      <ExploreCareerPaths />
       <FeaturedJobs />
+      <ExploreCareerPaths />
       <HomepageVerification />
       <TrustedCompanies />
 
