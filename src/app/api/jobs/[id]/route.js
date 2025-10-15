@@ -12,12 +12,35 @@ export async function GET(request, { params }) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
+        const companiesCollection = await dbConnect(collectionNamesObj.companiesCollection);
+        
         const job = await jobsCollection.findOne({ _id: new ObjectId(id) });
 
         if (!job) {
             return NextResponse.json({ error: "Job not found" }, { status: 404 });
         }
+
+        // Fetch company logo from company profile
+        let companyLogo = null;
+        try {
+            const companyIdentifier = job.companyProviderAccountId 
+                ? { providerAccountId: job.companyProviderAccountId }
+                : { email: job.companyEmail };
+            
+            const company = await companiesCollection.findOne(companyIdentifier);
+            if (company && company.logo) {
+                companyLogo = company.logo;
+            }
+        } catch (error) {
+            console.log("Could not fetch company logo:", error.message);
+        }
+
+        // Add company logo to job data
+        const jobWithLogo = {
+            ...job,
+            companyLogo
+        };
 
         // Only return open jobs for public access, or all jobs for authenticated company/admin users
         const session = await getServerSession(authOptions);
@@ -27,7 +50,7 @@ export async function GET(request, { params }) {
             }
         }
 
-        return NextResponse.json({ job });
+        return NextResponse.json({ job: jobWithLogo });
     } catch (error) {
         console.error("Error fetching job:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -64,7 +87,7 @@ export async function PUT(request, { params }) {
             return NextResponse.json({ error: "Title, category, overview, and requirements are required" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         // Check if job exists and belongs to the authenticated company
         const existingJob = await jobsCollection.findOne({ _id: new ObjectId(id) });
@@ -148,7 +171,7 @@ export async function DELETE(request, { params }) {
             return NextResponse.json({ error: "Invalid job ID" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         // Check if job exists and belongs to the authenticated company
         const existingJob = await jobsCollection.findOne({ _id: new ObjectId(id) });

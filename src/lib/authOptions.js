@@ -2,7 +2,7 @@ import { loginUser } from "@/app/actions/auth/loginUser";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GitHubProvider from "next-auth/providers/github";
-import dbConnect, { collectionNamesObj } from "./dbConnect";
+import dbConnect, { collectionNamesObj } from "@/lib/dbConnect";
 // import { cookies } from 'next/headers'; // For Next.js app router - causing issues in Next.js 15
 
 export const authOptions = {
@@ -72,7 +72,7 @@ export const authOptions = {
                 const { providerAccountId, provider } = account
                 const { email, image, name } = user
                 // console.log(email)
-                const userCollection = dbConnect(collectionNamesObj.userCollection)
+                const userCollection = await dbConnect(collectionNamesObj.userCollection)
                 const isExisted = await userCollection.findOne({ providerAccountId })
                 console.log('Existing user:', isExisted);
                 
@@ -97,7 +97,7 @@ export const authOptions = {
             try {
                 // On initial sign-in, enrich token with role from DB
                 if (user) {
-                    const userCollection = dbConnect(collectionNamesObj.userCollection)
+                    const userCollection = await dbConnect(collectionNamesObj.userCollection)
                     const identifier = user.providerAccountId ? { providerAccountId: user.providerAccountId } : { email: user.email }
                     const existing = await userCollection.findOne(identifier)
                     console.log('JWT callback - user found:', existing);
@@ -109,9 +109,9 @@ export const authOptions = {
                 
                 // Always refresh role from DB on each JWT call to get latest role
                 if (token?.email || token?.providerAccountId) {
-                    const userCollection = dbConnect(collectionNamesObj.userCollection)
+                    const userCollection = await dbConnect(collectionNamesObj.userCollection)
                     const identifier = token.providerAccountId ? { providerAccountId: token.providerAccountId } : { email: token.email }
-                    const existing = await userCollection.findOne(identifier)
+                    const existing = userCollection.findOne(identifier)
                     if (existing?.role) {
                         token.role = existing.role
                         console.log('JWT callback - refreshed role:', existing.role);
@@ -129,9 +129,9 @@ export const authOptions = {
                 // For company users, get the latest company name from database
                 if (session.user.role === 'company' || session.user.role === 'admin') {
                     try {
-                        const userCollection = dbConnect(collectionNamesObj.userCollection)
+                        const userCollection = await dbConnect(collectionNamesObj.userCollection)
                         const identifier = session.user.providerAccountId ? { providerAccountId: session.user.providerAccountId } : { email: session.user.email }
-                        const user = await userCollection.findOne(identifier)
+                        const user = await userCollection?.findOne(identifier)
                         if (user?.company?.name) {
                             session.user.companyName = user.company.name
                             session.user.name = user.name || user.company.name

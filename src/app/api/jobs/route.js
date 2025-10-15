@@ -10,24 +10,65 @@ export async function GET(request) {
         const isPublic = searchParams.get('public') === 'true';
         
         const session = await getServerSession(authOptions);
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
+        const companiesCollection = await dbConnect(collectionNamesObj.companiesCollection);
 
         let filter = {};
         let sort = { createdAt: -1 };
+        
+        // Check if requesting featured jobs only
+        const featuredOnly = searchParams.get('featured') === 'true';
 
-        // If user is authenticated and is a company/admin, show only their jobs
-        if (session && (session.user.role === 'company' || session.user.role === 'admin') && !isPublic) {
+        // If user is authenticated and is a company, show only their jobs
+        // If user is admin, show all jobs
+        if (session && session.user.role === 'company' && !isPublic) {
             const companyIdentifier = session.user.providerAccountId 
                 ? { companyProviderAccountId: session.user.providerAccountId }
                 : { companyEmail: session.user.email };
             filter = companyIdentifier;
+        } else if (session && session.user.role === 'admin' && !isPublic) {
+            // Admin can see all jobs - no filter
+            filter = {};
         } else {
             // Public access - only show open jobs
             filter = { status: 'open' };
         }
+        
+        // Add featured filter if requested
+        if (featuredOnly) {
+            filter.isFeatured = true;
+        }
+        
+        // Sort featured jobs first, then by creation date
+        if (isPublic) {
+            sort = { isFeatured: -1, createdAt: -1 };
+        }
 
         const jobs = await jobsCollection.find(filter).sort(sort).toArray();
-        return NextResponse.json({ jobs });
+        
+        // Fetch company logos for each job
+        const jobsWithLogos = await Promise.all(jobs.map(async (job) => {
+            let companyLogo = null;
+            try {
+                const companyIdentifier = job.companyProviderAccountId 
+                    ? { providerAccountId: job.companyProviderAccountId }
+                    : { email: job.companyEmail };
+                
+                const company = await companiesCollection.findOne(companyIdentifier);
+                if (company && company.logo) {
+                    companyLogo = company.logo;
+                }
+            } catch (error) {
+                console.log(`Could not fetch company logo for job ${job._id}:`, error.message);
+            }
+            
+            return {
+                ...job,
+                companyLogo
+            };
+        }));
+        
+        return NextResponse.json({ jobs: jobsWithLogos });
     } catch (error) {
         console.error("Error listing jobs:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -59,7 +100,7 @@ export async function POST(request) {
             return NextResponse.json({ error: "Title, category, overview, and requirements are required" }, { status: 400 });
         }
 
-        const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
+        const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
 
         const jobDoc = {
             title,

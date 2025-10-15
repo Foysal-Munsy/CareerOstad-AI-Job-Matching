@@ -14,7 +14,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const peerEmail = searchParams.get('peerEmail');
 
-    const messagesCollection = dbConnect(collectionNamesObj.messagesCollection);
+    const messagesCollection = await dbConnect(collectionNamesObj.messagesCollection);
 
     let query = {
       $or: [
@@ -59,7 +59,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'receiverEmail and body are required' }, { status: 400 });
     }
 
-    const messagesCollection = dbConnect(collectionNamesObj.messagesCollection);
+    const messagesCollection = await dbConnect(collectionNamesObj.messagesCollection);
 
     const doc = {
       senderEmail: session.user.email,

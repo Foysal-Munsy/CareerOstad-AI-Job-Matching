@@ -16,7 +16,7 @@ export async function GET(request) {
     let user;
     
     try {
-      userCollection = dbConnect(collectionNamesObj.userCollection);
+      userCollection = await dbConnect(collectionNamesObj.userCollection);
       const identifier = session.user.providerAccountId 
         ? { providerAccountId: session.user.providerAccountId } 
         : { email: session.user.email };
@@ -145,7 +145,7 @@ export async function PUT(request) {
     let userCollection;
     
     try {
-      userCollection = dbConnect(collectionNamesObj.userCollection);
+      userCollection = await dbConnect(collectionNamesObj.userCollection);
     } catch (dbError) {
       console.error("Database connection error:", dbError);
       return NextResponse.json({ 

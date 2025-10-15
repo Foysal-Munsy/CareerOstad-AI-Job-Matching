@@ -14,9 +14,9 @@ export async function GET() {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
 
-    const usersCollection = dbConnect(collectionNamesObj.userCollection);
-    const jobsCollection = dbConnect(collectionNamesObj.jobsCollection);
-    const applicationsCollection = dbConnect(collectionNamesObj.applicationsCollection);
+    const usersCollection = await dbConnect(collectionNamesObj.userCollection);
+    const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
+    const applicationsCollection = await dbConnect(collectionNamesObj.applicationsCollection);
 
     const [totalUsers, totalCompanies, activeJobs, totalApplications] = await Promise.all([
       usersCollection.countDocuments({}),

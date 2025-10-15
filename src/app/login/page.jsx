@@ -3,7 +3,7 @@ import LoginForm from './components/LoginForm';
 import dbConnect, { collectionNamesObj } from '@/lib/dbConnect';
 
 const page = async () => {
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const data = await userCollection.find({}).toArray();
     const sampleData = JSON.parse(JSON.stringify(data))
     

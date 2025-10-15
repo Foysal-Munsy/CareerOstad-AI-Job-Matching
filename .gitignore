@@ -40,3 +40,33 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+
+
+# Error fetching applications: MongoServerSelectionError: C020870102000000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1605:SSL alert number 80
+
+#     at async GET (src/app/api/applications/route.js:20:26)
+#   18 |
+#   19 |     // Get applications for this user
+# > 20 |     const applications = await applicationsCollection.find({ 
+#      |                          ^
+#   21 |       candidateEmail: session.user.email 
+#   22 |     }).sort({ createdAt: -1 }).toArray();
+#   23 | {
+#   errorLabelSet: Set(0) {},
+#   reason: [TopologyDescription],
+#   code: undefined,
+#   [cause]: [MongoNetworkError: C020870102000000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1605:SSL alert number 80
+#   ] {
+#     errorLabelSet: Set(1) { 'ResetPool' },
+#     beforeHandshake: false,
+#     [cause]: [Error: C020870102000000:error:0A000438:SSL routines:ssl3_read_bytes:tlsv1 alert internal error:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1605:SSL alert number 80
+#     ] {
+#       library: 'SSL routines',
+#       reason: 'tlsv1 alert internal error',
+#       code: 'ERR_SSL_TLSV1_ALERT_INTERNAL_ERROR'
+#     }
+#   }
+# }
+#  GET /api/applications 500 in 32403ms

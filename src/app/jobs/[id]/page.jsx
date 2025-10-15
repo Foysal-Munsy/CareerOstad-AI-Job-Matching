@@ -301,109 +301,144 @@ export default function JobDetailsPage({ params }) {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-4 order-1 lg:order-1">
             {/* Job Header */}
-            <div className="bg-base-100 rounded-xl shadow-md p-4">
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-3">
-                <div className="flex-1">
-                  <div className="flex items-start gap-3 mb-3">
-                    <div className="w-14 h-14 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center shadow-md">
-                      <svg className="w-7 h-7 text-primary-content" fill="currentColor" viewBox="0 0 20 20">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+              {/* Featured Job Top Border */}
+              {job.isFeatured && (
+                <div className="h-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
+              )}
+              
+              <div className="p-4 sm:p-6">
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-start gap-3 sm:gap-4">
+                    {/* Company Logo */}
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                      {job.companyLogo ? (
+                        <img 
+                          src={job.companyLogo} 
+                          alt={`${job.companyName} logo`}
+                          className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg object-cover"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            e.target.nextSibling.style.display = 'block';
+                          }}
+                        />
+                      ) : null}
+                      <svg className={`w-6 h-6 sm:w-8 sm:h-8 text-white ${job.companyLogo ? 'hidden' : ''}`} fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <h1 className="text-2xl font-bold mb-1">{job.title}</h1>
-                          <p className="text-lg text-primary font-semibold mb-2">{job.companyName}</p>
-                        </div>
-                        {/* Job Matching Badge */}
-                        {session?.user?.email && (
-                          <div className="text-right">
-                            {loadingMatch ? (
-                              <div className="flex items-center gap-2">
-                                <span className="loading loading-spinner loading-xs"></span>
-                                <span className="text-xs text-base-content/60">Calculating...</span>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2">
+                            <h1 className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight">{job.title}</h1>
+                            {job.isFeatured && (
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs sm:text-sm font-bold rounded-full shadow-md self-start">
+                                <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="currentColor" viewBox="0 0 20 20">
+                                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                                </svg>
+                                Featured Job
                               </div>
-                            ) : matchingData?.matchingPercentage !== undefined ? (
-                              <div className="text-right">
-                                <div className={`badge font-bold ${
-                                  matchingData.matchingPercentage >= 80 ? 'badge-success' :
-                                  matchingData.matchingPercentage >= 60 ? 'badge-warning' :
-                                  'badge-error'
-                                }`}>
-                                  {matchingData.matchingPercentage}% Match
-                                </div>
-                                <div className="w-20 bg-base-300 rounded-full h-1.5 mt-1">
-                                  <div 
-                                    className={`h-1.5 rounded-full ${
-                                      matchingData.matchingPercentage >= 80 ? 'bg-success' :
-                                      matchingData.matchingPercentage >= 60 ? 'bg-warning' :
-                                      'bg-error'
-                                    }`}
-                                    style={{ width: `${matchingData.matchingPercentage}%` }}
-                                  ></div>
-                                </div>
-                              </div>
-                            ) : null}
+                            )}
                           </div>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1.5 mb-3">
-                        <span className="badge badge-primary">{job.category}</span>
-                        <span className="badge badge-outline">{job.employmentType}</span>
-                        <span className="badge badge-outline">{job.jobLevel}</span>
-                        <span className="badge badge-outline">{job.workMode}</span>
+                          <p className="text-lg sm:text-xl text-blue-600 font-semibold mb-3">{job.companyName}</p>
+                          
+                          {/* Job Meta Tags */}
+                          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3">
+                            <span className="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1 bg-blue-50 text-blue-700 text-xs sm:text-sm font-medium rounded-full border border-blue-200">
+                              {job.category}
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1 bg-purple-50 text-purple-700 text-xs sm:text-sm font-medium rounded-full border border-purple-200">
+                              {job.employmentType}
+                            </span>
+                            <span className="inline-flex items-center px-2.5 py-1 sm:px-3 sm:py-1 bg-green-50 text-green-700 text-xs sm:text-sm font-medium rounded-full border border-green-200">
+                              {job.jobLevel}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-base-content/60" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{job.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-base-content/60" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                      </svg>
-                      <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    {job.applicationDeadline && (
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-base-content/60" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                  {/* Job Details Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                    <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span className={isApplicationDeadlinePassed ? "text-error" : "text-warning"}>
-                          Deadline: {new Date(job.applicationDeadline).toLocaleDateString()}
-                          {isApplicationDeadlinePassed && " (Expired)"}
-                        </span>
                       </div>
-                    )}
-                    {job.numberOfVacancies > 1 && (
-                      <div className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-base-content/60" fill="currentColor" viewBox="0 0 20 20">
-                          <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z" />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-blue-600 font-medium uppercase tracking-wide">Location</p>
+                        <p className="text-xs font-semibold text-gray-900 truncate">{job.location}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                      <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <span>{job.numberOfVacancies} positions available</span>
                       </div>
-                    )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-purple-600 font-medium uppercase tracking-wide">Posted</p>
+                        <p className="text-xs font-semibold text-gray-900">{new Date(job.createdAt).toLocaleDateString()}</p>
+                      </div>
+                    </div>
+                    
+                    {job.applicationDeadline ? (
+                      <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-yellow-50 to-orange-100 rounded-lg border border-yellow-200">
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm ${
+                          isApplicationDeadlinePassed ? 'bg-red-500' : 'bg-yellow-500'
+                        }`}>
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-yellow-600 font-medium uppercase tracking-wide">Deadline</p>
+                          <p className={`text-xs font-semibold ${isApplicationDeadlinePassed ? 'text-red-600' : 'text-yellow-700'}`}>
+                            {new Date(job.applicationDeadline).toLocaleDateString()}
+                            {isApplicationDeadlinePassed && " (Expired)"}
+                          </p>
+                        </div>
+                      </div>
+                    ) : job.numberOfVacancies > 1 ? (
+                      <div className="flex items-center gap-2 p-3 bg-gradient-to-r from-green-50 to-green-100 rounded-lg border border-green-200">
+                        <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                          </svg>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs text-green-600 font-medium uppercase tracking-wide">Vacancies</p>
+                          <p className="text-xs font-semibold text-gray-900">{job.numberOfVacancies} positions</p>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
+
                 </div>
               </div>
             </div>
 
             {/* Job Overview */}
-            <div className="bg-base-100 rounded-xl shadow-md p-4">
-              <h2 className="text-xl font-bold mb-3">Job Overview</h2>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+              <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Job Overview
+              </h2>
               <div className="prose max-w-none">
-                <p className="whitespace-pre-line text-base-content/80 leading-relaxed text-sm">
+                <p className="whitespace-pre-line text-gray-700 leading-relaxed text-sm">
                   {job.overview}
                 </p>
               </div>
@@ -411,9 +446,9 @@ export default function JobDetailsPage({ params }) {
 
               {/* Professional Job Matching Analysis */}
               {session?.user?.email && matchingData && (
-                <div className="bg-base-100 rounded-xl shadow-md p-4">
-                  <h2 className="text-xl font-bold mb-3 flex items-center gap-2">
-                    <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 20 20">
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+                  <h2 className="text-xl font-bold mb-4 text-gray-900 flex items-center gap-2">
+                    <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
                     AI-Powered Match Analysis
@@ -827,54 +862,75 @@ export default function JobDetailsPage({ params }) {
 
           {/* Sidebar */}
           <div className="space-y-4 order-2 lg:order-2">
+            {/* Match Score Card */}
+            {session?.user?.email && matchingData && (
+              <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-4 sticky top-8">
+                <div className="text-center">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      matchingData.matchingPercentage >= 80 ? 'bg-green-500' :
+                      matchingData.matchingPercentage >= 60 ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`}>
+                      <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                    </div>
+                    <span className="text-sm font-semibold text-gray-700">Your Match Score</span>
+                  </div>
+                  <div className={`text-3xl font-bold mb-2 ${
+                    matchingData.matchingPercentage >= 80 ? 'text-green-600' :
+                    matchingData.matchingPercentage >= 60 ? 'text-yellow-600' :
+                    'text-red-600'
+                  }`}>
+                    {matchingData.matchingPercentage}%
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-3 mb-3">
+                    <div 
+                      className={`h-3 rounded-full transition-all duration-700 ${
+                        matchingData.matchingPercentage >= 80 ? 'bg-gradient-to-r from-green-400 to-green-600' :
+                        matchingData.matchingPercentage >= 60 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
+                        'bg-gradient-to-r from-red-400 to-red-600'
+                      }`}
+                      style={{ width: `${matchingData.matchingPercentage}%` }}
+                    ></div>
+                  </div>
+                  <div className={`text-sm font-medium ${
+                    matchingData.matchingPercentage >= 80 ? 'text-green-700' :
+                    matchingData.matchingPercentage >= 60 ? 'text-yellow-700' :
+                    matchingData.matchingPercentage >= 40 ? 'text-orange-700' : 'text-red-700'
+                  }`}>
+                    {matchingData.matchingPercentage >= 80 ? '🎯 Excellent match!' :
+                     matchingData.matchingPercentage >= 60 ? '👍 Good match' :
+                     matchingData.matchingPercentage >= 40 ? '⚖️ Moderate match' : '📚 Focus on skills'}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Apply Card */}
-            <div className="bg-base-100 rounded-xl shadow-md p-4 sticky top-8">
-              <div className="text-center mb-4">
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 sticky top-8">
+              <div className="text-center mb-6">
                 {job.salaryMin && job.salaryMax ? (
-                  <div className="mb-3">
-                    <div className="text-2xl font-bold text-success">
+                  <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 mb-4">
+                    <div className="text-2xl font-bold text-green-700 mb-1">
                       {job.salaryMin.toLocaleString()} - {job.salaryMax.toLocaleString()}
                     </div>
-                    <div className="text-xs text-base-content/70">
-                      {job.salaryType} {job.isNegotiable && "(Negotiable)"}
+                    <div className="text-sm text-green-600 font-medium">
+                      {job.salaryType} {job.isNegotiable && "• Negotiable"}
                     </div>
                   </div>
                 ) : (
-                  <div className="text-lg font-bold text-base-content/70 mb-3">
-                    Salary Not Specified
+                  <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 mb-4">
+                    <div className="text-lg font-semibold text-gray-600">
+                      Salary Not Specified
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Contact company for details
+                    </div>
                   </div>
                 )}
 
-                {/* Matching Confidence for Apply Button */}
-                {session?.user?.email && matchingData && (
-                  <div className="mb-3 p-3 bg-base-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs font-semibold">Application Confidence</span>
-                      <span className={`text-xs font-bold ${
-                        matchingData.matchingPercentage >= 80 ? 'text-success' :
-                        matchingData.matchingPercentage >= 60 ? 'text-warning' :
-                        'text-error'
-                      }`}>
-                        {matchingData.matchingPercentage}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-base-300 rounded-full h-1.5">
-                      <div 
-                        className={`h-1.5 rounded-full ${
-                          matchingData.matchingPercentage >= 80 ? 'bg-success' :
-                          matchingData.matchingPercentage >= 60 ? 'bg-warning' :
-                          'bg-error'
-                        }`}
-                        style={{ width: `${matchingData.matchingPercentage}%` }}
-                      ></div>
-                    </div>
-                    <div className="text-xs text-base-content/60 mt-1">
-                      {matchingData.matchingPercentage >= 80 ? 'High chance of success' :
-                       matchingData.matchingPercentage >= 60 ? 'Good chance of success' :
-                       matchingData.matchingPercentage >= 40 ? 'Moderate chance' : 'Consider improving skills first'}
-                    </div>
-                  </div>
-                )}
 
                 {job.perksBenefits && (
                   <div className="text-left mb-3">
@@ -886,29 +942,63 @@ export default function JobDetailsPage({ params }) {
                 )}
               </div>
 
-              <div className="flex flex-col gap-2">
-              <button
-                className={`btn w-full ${
-                  isApplicationDeadlinePassed 
-                    ? "btn-disabled" 
-                    : "btn-primary hover:btn-primary/90"
-                }`}
-                onClick={handleApply}
-                disabled={isApplicationDeadlinePassed}
-              >
-                {isApplicationDeadlinePassed ? (
-                  "Application Closed"
-                ) : (
-                  "Apply Now"
-                )}
-              </button>
-              <button
-                className="btn btn-outline w-full btn-sm"
-                onClick={toggleSave}
-                disabled={saving}
-              >
-                {saving ? 'Working...' : (saved ? '★ Saved' : '☆ Save job')}
-              </button>
+              <div className="flex flex-col gap-3">
+                <button
+                  className={`w-full py-3 px-4 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 ${
+                    isApplicationDeadlinePassed 
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                      : "bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                  }`}
+                  onClick={handleApply}
+                  disabled={isApplicationDeadlinePassed}
+                >
+                  {isApplicationDeadlinePassed ? (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12"/>
+                      </svg>
+                      Application Closed
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                      </svg>
+                      Apply Now
+                    </>
+                  )}
+                </button>
+                
+                <button
+                  className={`w-full py-2.5 px-4 rounded-xl font-medium text-sm transition-all duration-200 flex items-center justify-center gap-2 border ${
+                    saved 
+                      ? "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100" 
+                      : "bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100"
+                  }`}
+                  onClick={toggleSave}
+                  disabled={saving}
+                >
+                  {saving ? (
+                    <>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                      Working...
+                    </>
+                  ) : saved ? (
+                    <>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                      </svg>
+                      Saved Job
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00-.95 1.313l3.97 3.97a1 1 0 01.072 1.415l-2.828 2.829a1 1 0 01-1.414 0l-3.97-3.97a1 1 0 00-1.313.95L2.927 11.049c-.921.3-.921 1.603 0 1.902l4.674 1.519a1 1 0 00.95 1.313l-3.97 3.97a1 1 0 01-1.415.072l-2.829-2.828a1 1 0 010-1.414l3.97-3.97a1 1 0 00-.95-1.313L2.927 12.951c-.3-.921-1.603-.921-1.902 0z"/>
+                      </svg>
+                      Save Job
+                    </>
+                  )}
+                </button>
               </div>
 
               {/* Company Contact Information */}
@@ -972,6 +1062,38 @@ export default function JobDetailsPage({ params }) {
                 </div>
               </div>
             </div>
+
+            {/* Featured Jobs Section */}
+            {job.isFeatured && (
+              <div className="bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl shadow-md p-4 border border-yellow-200">
+                <h3 className="text-lg font-bold mb-3 flex items-center gap-2 text-yellow-800">
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                  Featured Job Benefits
+                </h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex items-center gap-2 text-yellow-700">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span>Priority visibility to employers</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-yellow-700">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span>Enhanced job matching</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-yellow-700">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    <span>Fast-track application process</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
           </div>
         </div>

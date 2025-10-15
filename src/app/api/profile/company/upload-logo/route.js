@@ -111,7 +111,7 @@ export async function POST(request) {
     const logoUrl = uploaded.secure_url || uploaded.url;
 
     // Save URL to company's profile
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const identifier = session.user.providerAccountId 
       ? { providerAccountId: session.user.providerAccountId } 
       : { email: session.user.email };

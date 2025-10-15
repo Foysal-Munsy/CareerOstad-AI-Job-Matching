@@ -4,7 +4,7 @@ import dbConnect, { collectionNamesObj } from "@/lib/dbConnect";
 // Public advice feed: published posts
 export async function GET() {
   try {
-    const adviceCollection = dbConnect(collectionNamesObj.adviceCollection);
+    const adviceCollection = await dbConnect(collectionNamesObj.adviceCollection);
     const adviceList = await adviceCollection
       .find({ status: { $in: ['published', 'public'] } })
       .sort({ createdAt: -1 })

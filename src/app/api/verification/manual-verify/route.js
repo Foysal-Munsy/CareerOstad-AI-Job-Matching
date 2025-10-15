@@ -17,7 +17,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Invalid user type" }, { status: 400 });
     }
 
-    const userCollection = dbConnect(collectionNamesObj.userCollection);
+    const userCollection = await dbConnect(collectionNamesObj.userCollection);
     const identifier = session.user.providerAccountId 
       ? { providerAccountId: session.user.providerAccountId } 
       : { email: session.user.email };
