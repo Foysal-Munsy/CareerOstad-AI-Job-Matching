@@ -11,6 +11,7 @@ export async function GET(request) {
         
         const session = await getServerSession(authOptions);
         const jobsCollection = await dbConnect(collectionNamesObj.jobsCollection);
+        const companiesCollection = await dbConnect(collectionNamesObj.companiesCollection);
 
         let filter = {};
         let sort = { createdAt: -1 };
@@ -44,7 +45,30 @@ export async function GET(request) {
         }
 
         const jobs = await jobsCollection.find(filter).sort(sort).toArray();
-        return NextResponse.json({ jobs });
+        
+        // Fetch company logos for each job
+        const jobsWithLogos = await Promise.all(jobs.map(async (job) => {
+            let companyLogo = null;
+            try {
+                const companyIdentifier = job.companyProviderAccountId 
+                    ? { providerAccountId: job.companyProviderAccountId }
+                    : { email: job.companyEmail };
+                
+                const company = await companiesCollection.findOne(companyIdentifier);
+                if (company && company.logo) {
+                    companyLogo = company.logo;
+                }
+            } catch (error) {
+                console.log(`Could not fetch company logo for job ${job._id}:`, error.message);
+            }
+            
+            return {
+                ...job,
+                companyLogo
+            };
+        }));
+        
+        return NextResponse.json({ jobs: jobsWithLogos });
     } catch (error) {
         console.error("Error listing jobs:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
