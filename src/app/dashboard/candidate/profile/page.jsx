@@ -2495,10 +2495,10 @@ export default function ProfilePage() {
       {/* Action Buttons */}
       <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-6 border border-primary/10">
         <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <a href={`/profile/${profile?.personalInfo?.email || ''}`} className="btn btn-primary shadow-lg hover:shadow-xl transition-all duration-200">
+          <Link href={`/profile/${profile?.personalInfo?.email || ''}`} className="btn btn-primary shadow-lg hover:shadow-xl transition-all duration-200">
             <FaEye className="w-4 h-4" />
             Preview Public Profile
-          </a>
+          </Link>
           <button className="btn btn-outline hover:bg-primary hover:text-primary-content transition-all duration-200">
             <FaShare className="w-4 h-4" />
             Share Profile

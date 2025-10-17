@@ -53,7 +53,7 @@ const LoginForm = () => {
                         popup: 'swal-toast-zindex'
                     }
                 }).then(() => {
-                    //setLoading(false);
+                    setLoading(false);
                     router.push(res.url || callbackUrl);
                 });
                 // Save credentials if rememberMe is checked

@@ -32,13 +32,11 @@ async function ensureConnected() {
 export default async function dbConnect(collectionName) {
   await ensureConnected();
   return client.db(dbName).collection(collectionName);
+
 }
 
 // graceful shutdown (optional, good for production)
 process.on('SIGINT', async () => {
-  try { await client.close(); } catch (e) {}
+  try { await client.close(); } catch (e) { }
   process.exit(0);
 });
-
-
-
