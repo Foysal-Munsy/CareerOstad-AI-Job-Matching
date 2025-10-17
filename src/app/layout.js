@@ -3,6 +3,7 @@ import Script from "next/script";
 import "./globals.css";
 import NextAuthProvider from "@/Providers/NextAuthProvider";
 import Chrome from "@/components/Chrome";
+import RouteProgressBar from "@/components/RouteProgressBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,9 +25,12 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      >        
         <NextAuthProvider>
-          <Chrome>{children}</Chrome>
+          <Chrome>
+            <RouteProgressBar />
+            {children}            
+          </Chrome>
         </NextAuthProvider>
         <Script id="tawk-init" strategy="afterInteractive">
           {`
