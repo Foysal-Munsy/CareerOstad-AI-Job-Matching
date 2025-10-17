@@ -44,7 +44,7 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <div className="hidden md:block">
+        <div className="hidden sm:block">
           <Search />
         </div>
 
@@ -55,8 +55,8 @@ const Navbar = () => {
 
               return (
                 <li key={href} className="relative cursor-pointer">
-                  <Link href={href} legacyBehavior>
-                    <motion.a
+                  <Link href={href}>
+                    <motion.div
                       className={`relative inline-block px-1 py-1 transition-colors duration-150 ${
                         active ? "text-primary" : "text-gray-700 hover:text-primary"
                       }`}
@@ -82,7 +82,7 @@ const Navbar = () => {
                         }}
                         style={{ transformOrigin: "center" }}
                       />
-                    </motion.a>
+                    </motion.div>
                   </Link>
                 </li>
               );
@@ -140,8 +140,8 @@ const Navbar = () => {
                   </div>
                 </div>
                 <div className="py-2">
-                  <Link href="/dashboard" legacyBehavior>
-                    <a className="block px-6 py-3 text-sm font-semibold text-primary hover:bg-purple-50 transition rounded-lg" onClick={() => setDrawerOpen(false)}>Dashboard</a>
+                  <Link href="/dashboard" className="block px-6 py-3 text-sm font-semibold text-primary hover:bg-purple-50 transition rounded-lg" onClick={() => setDrawerOpen(false)}>
+                    Dashboard
                   </Link>
                   <button
                     onClick={() => {
@@ -158,11 +158,11 @@ const Navbar = () => {
           </div>
         ) : (
           <div className="hidden md:flex items-center gap-3 mx-3">
-            <Link href="/login" legacyBehavior>
-              <a className="inline-flex items-center gap-2 cursor-pointer text-sm border py-1.5 px-4 rounded-full border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300">Login</a>
+            <Link href="/login" className="inline-flex items-center gap-2 cursor-pointer text-sm border py-1.5 px-4 rounded-full border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300">
+              Login
             </Link>
-            <Link href="/signup" legacyBehavior>
-              <a className="inline-flex items-center gap-2 cursor-pointer text-sm border py-1.5 px-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all duration-300">Signup</a>
+            <Link href="/signup" className="inline-flex items-center gap-2 cursor-pointer text-sm border py-1.5 px-4 rounded-full bg-primary text-white hover:bg-primary/90 transition-all duration-300">
+              Signup
             </Link>
           </div>
         )}
