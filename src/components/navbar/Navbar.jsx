@@ -26,6 +26,7 @@ const Navbar = () => {
     { href: "/jobs", label: "Jobs" },
     { href: "/career-advice", label: "Advice" },
     { href: "/blogs", label: "Blogs" },
+    { href: "/getverified", label: "Get Verified" },
   ];
 
   // choose matching strategy:
