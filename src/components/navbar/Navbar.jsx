@@ -26,6 +26,7 @@ const Navbar = () => {
     { href: "/jobs", label: "Jobs" },
     { href: "/career-advice", label: "Advice" },
     { href: "/blogs", label: "Blogs" },
+    { href: "/getverified", label: "Get Verified" },
   ];
 
   // choose matching strategy:
@@ -48,21 +49,44 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:block">
-          <ul className="flex gap-2 xl:gap-6 menu-list text-sm xl:text-[16px] text-base-content">
-            <li onClick={() => window.scrollTo(0, 0)}>
-              <Link href="/">Home</Link>
-            </li>
-            <li>
-              <Link href="/jobs">Jobs</Link>
-            </li>
-            {/* <Dropdowns /> */}
-            <li>
-              <Link href="/advice">Advice</Link>
-            </li>
-            <li>
-              <Link href="/getverified" className="bg-gradient-to-r from-primary to-secondary text-primary-content px-2 py-1">Get Verified</Link>
-            </li>
-            {/* Dashboard link removed for cleaner public navbar */}
+          <ul className="flex gap-5 xl:gap-8 text-[15px] text-gray-700 font-medium">
+            {navLinks.map(({ href, label }) => {
+              const active = isMatch(href);
+
+              return (
+                <li key={href} className="relative cursor-pointer">
+                  <Link href={href} legacyBehavior>
+                    <motion.a
+                      className={`relative inline-block px-1 py-1 transition-colors duration-150 ${
+                        active ? "text-primary" : "text-gray-700 hover:text-primary"
+                      }`}
+                      onClick={() => window.scrollTo(0, 0)}
+                      // keep hover animation; if active, keep animate on "hover" state
+                      whileHover="hover"
+                      initial="rest"
+                      animate={active ? "hover" : "rest"}
+                    >
+                      <span className="relative z-10">{label}</span>
+
+                      {/* underline */}
+                      <motion.span
+                        className="absolute -bottom-1 left-1/2 h-[2px] bg-primary rounded-full"
+                        variants={{
+                          rest: { width: 6, left: "50%", opacity: 0.95, transition: { duration: 0.18 } },
+                          hover: {
+                            width: "100%",
+                            left: 0,
+                            opacity: 1,
+                            transition: { duration: 0.32, ease: "easeOut" },
+                          },
+                        }}
+                        style={{ transformOrigin: "center" }}
+                      />
+                    </motion.a>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
 
