@@ -16,7 +16,8 @@ export async function POST(req) {
       .filter(Boolean);
 
     const collection = await dbConnect(collectionNamesObj.userCollection);
-    const candidates = await collection.find({}).toArray();
+    // Limit to 1000 candidates to prevent memory issues
+    const candidates = await collection.find({ role: 'candidate' }).limit(1000).toArray();
 
     // calculate matching score
     const scoredCandidates = candidates.map(candidate => {

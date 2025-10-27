@@ -1,12 +1,7 @@
 import React from 'react';
 import LoginForm from './components/LoginForm';
-import dbConnect, { collectionNamesObj } from '@/lib/dbConnect';
 
 const page = async () => {
-    const userCollection = await dbConnect(collectionNamesObj.userCollection);
-    const data = await userCollection.find({}).toArray();
-    const sampleData = JSON.parse(JSON.stringify(data))
-    
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
             <div className="w-full max-w-5xl grid lg:grid-cols-2 gap-6 items-center">

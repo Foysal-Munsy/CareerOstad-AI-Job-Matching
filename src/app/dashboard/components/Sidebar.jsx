@@ -6,7 +6,7 @@ import { CiBoxList } from "react-icons/ci";
 import { AiOutlinePlusCircle } from "react-icons/ai";
 import { TbPackage } from "react-icons/tb";
 import { MdSpaceDashboard } from "react-icons/md";
-import { FaUsersCog, FaUserTie, FaChartLine, FaBell, FaCog, FaFileAlt, FaSearch, FaTachometerAlt, FaUsers, FaUser, FaBuilding, FaUserShield, FaBriefcase, FaTags, FaChartBar, FaHistory, FaDatabase, FaShieldAlt, FaCheckCircle } from "react-icons/fa";
+import { FaUsersCog, FaUserTie, FaChartLine, FaBell, FaCog, FaFileAlt, FaSearch, FaTachometerAlt, FaUsers, FaUser, FaBuilding, FaUserShield, FaBriefcase, FaTags, FaChartBar, FaHistory, FaDatabase, FaShieldAlt, FaCheckCircle, FaBook } from "react-icons/fa";
 import { IoMdAnalytics } from "react-icons/io";
 import { HiOutlineDocumentText, HiOutlineUsers } from "react-icons/hi";
 import { BiMessageSquareDots } from "react-icons/bi";
@@ -187,7 +187,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/candidate/profile" label="My Profile" icon={FaUserTie} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/resume-builder" label="Resume Builder" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/skills" label="Skills Assessment" icon={FaChartLine} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/interview" label="Interview Prep" icon={BiMessageSquareDots} onClick={itemClick} />
           </>
         )}
         
@@ -203,9 +202,8 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
         {!isCompany && !isAdmin && (
           <>
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Learning</div>
-            <NavItem href="/dashboard/candidate/courses" label="Courses" icon={HiOutlineDocumentText} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/certifications" label="Certifications" icon={FaFileAlt} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/progress" label="Progress Tracking" icon={IoMdAnalytics} onClick={itemClick} />
+            <NavItem href="/dashboard/candidate/learning" label="My Learning" icon={HiOutlineDocumentText} onClick={itemClick} />
+            <NavItem href="/dashboard/candidate/learning" label="Certificates" icon={FaFileAlt} onClick={itemClick} />
           </>
         )}
         
@@ -234,16 +232,16 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/admin/categories" label="Job Categories" icon={FaTags} onClick={itemClick} />
             <NavItem href="/dashboard/admin/blogs" label="Blog Management" icon={HiOutlineDocumentText} onClick={itemClick} />
             
+            <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Learning Management</div>
+            <NavItem href="/dashboard/admin/courses" label="Course Management" icon={FaBook} onClick={itemClick} />
+            
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Analytics & Reports</div>
             <NavItem href="/dashboard/admin/analytics" label="Analytics" icon={FaChartBar} onClick={itemClick} />
             <NavItem href="/dashboard/admin/reports" label="Reports" icon={FaFileAlt} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/activity" label="Activity Logs" icon={FaHistory} onClick={itemClick} />
             
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">System Management</div>
             <NavItem href="/dashboard/admin/settings" label="System Settings" icon={FaCog} onClick={itemClick} />
             <NavItem href="/dashboard/admin/notifications" label="Notifications" icon={FaBell} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/backup" label="Data Backup" icon={FaDatabase} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/security" label="Security" icon={FaShieldAlt} onClick={itemClick} />
           </>
         )}
       </nav>

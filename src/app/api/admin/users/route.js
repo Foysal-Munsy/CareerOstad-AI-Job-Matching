@@ -17,12 +17,24 @@ export async function GET(request) {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
 
+    // Get pagination parameters from query string
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '100', 10);
+    const skip = (page - 1) * limit;
+
     let userCollection;
     let users;
+    let totalUsers;
     
     try {
       userCollection = await dbConnect(collectionNamesObj.userCollection);
-      users = await userCollection.find({}).toArray();
+      
+      // Get paginated users and total count
+      [users, totalUsers] = await Promise.all([
+        userCollection.find({}).skip(skip).limit(limit).toArray(),
+        userCollection.countDocuments({})
+      ]);
     } catch (dbError) {
       console.error("Database connection error:", dbError);
       return NextResponse.json({ 
@@ -44,7 +56,10 @@ export async function GET(request) {
 
     return NextResponse.json({ 
       users: sanitizedUsers,
-      total: sanitizedUsers.length,
+      total: totalUsers,
+      page,
+      limit,
+      totalPages: Math.ceil(totalUsers / limit),
       success: true 
     });
 

@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "node --max-old-space-size=4096 server.js",
+    "dev:next": "node --max-old-space-size=4096 node_modules/.bin/next dev",
+    "build": "node --max-old-space-size=4096 node_modules/.bin/next build",
+    "start": "node --max-old-space-size=4096 server.js",
     "lint": "eslint"
   },
   "dependencies": {
@@ -22,9 +23,11 @@
     "genai": "^0.0.18",
     "google-auth-library": "^10.4.0",
     "js-cookie": "^3.0.5",
+    "jspdf": "^2.5.2",
     "lightningcss": "^1.30.2",
     "lucide-react": "^0.544.0",
     "mongodb": "^6.20.0",
+    "mongoose": "^8.19.2",
     "multer": "^2.0.2",
     "next": "^16.0.0-canary.2",
     "next-auth": "^4.24.11",
@@ -43,6 +46,8 @@
     "react-spinners": "^0.17.0",
     "react-use": "^17.6.0",
     "recharts": "^3.2.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "stripe": "^19.1.0",
     "sweetalert2": "^11.23.0"
   },
@@ -52,6 +57,7 @@
     "daisyui": "^5.1.12",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "html2canvas": "^1.4.1",
     "tailwindcss": "^4"
   }
 }

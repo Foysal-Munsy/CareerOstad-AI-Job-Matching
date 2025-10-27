@@ -8,6 +8,10 @@ export const collectionNamesObj = {
   applicationsCollection: 'applications',
   messagesCollection: 'messages',
   savedJobsCollection: 'saved-jobs',
+  categoriesCollection: 'jobcategories',
+  coursesCollection: 'courses',
+  progressCollection: 'course-progress',
+  certificatesCollection: 'certificates',
 };
 
 const uri = process.env.MONGO_URI;
