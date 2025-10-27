@@ -165,7 +165,7 @@ export default function CandidateDashboardPage() {
             </div>
             <div className="p-6 space-y-3">
               {[
-                { title: "Search Jobs", description: "Find your next opportunity", icon: FaSearch, href: "/dashboard/candidate/job-search", color: "bg-blue-500" },
+                { title: "Search Jobs", description: "Find your next opportunity", icon: FaSearch, href: "/jobs", color: "bg-blue-500" },
                 { title: "Update Profile", description: "Keep your profile fresh", icon: FaEdit, href: "/dashboard/candidate/profile", color: "bg-green-500" },
                 { title: "Build Resume", description: "Generate AI resume (Gemini)", icon: FaFileAlt, href: "/dashboard/candidate/resume-builder", color: "bg-purple-500" },
               ].map((action, index) => (

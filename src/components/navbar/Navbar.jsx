@@ -58,7 +58,7 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <div className="hidden md:block">
+        <div className="hidden sm:block">
           <Search />
         </div>
 
