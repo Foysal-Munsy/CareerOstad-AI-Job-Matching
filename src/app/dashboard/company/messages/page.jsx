@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { FaEnvelope, FaUser, FaClock, FaReply, FaPaperPlane } from "react-icons/fa";
 import io from "socket.io-client";
 
-export default function CandidateMessagesPage() {
+export default function CompanyMessagesPage() {
   const { data: session } = useSession();
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -365,5 +365,4 @@ export default function CandidateMessagesPage() {
     </div>
   );
 }
-
 

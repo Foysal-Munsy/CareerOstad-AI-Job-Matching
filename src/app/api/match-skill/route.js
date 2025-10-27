@@ -15,7 +15,8 @@ export async function POST(req) {
       .filter(Boolean);
 
     const collection = await dbConnect(collectionNamesObj.jobsCollection);
-    const jobs = await collection.find({}).toArray();
+    // Limit to 500 jobs to prevent memory issues
+    const jobs = await collection.find({}).limit(500).toArray();
 
     const matchedJobs = jobs.map(job => {
       const jobSkills = job.skills?.map(s => s.toLowerCase()) || [];

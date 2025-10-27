@@ -125,27 +125,38 @@ export async function POST(request) {
     const notificationsCollection = await dbConnect('notifications');
     
     if (sendToAll) {
-      // Send to all users
+      // Send to all users - process in batches to prevent memory issues
       const usersCollection = await dbConnect(collectionNamesObj.userCollection);
-      const users = await usersCollection.find({}).toArray();
       
-      const notifications = users.map(user => ({
-        title,
-        message,
-        type: type || "general",
-        priority: priority || "normal",
-        recipientEmail: user.email,
-        recipientRole: user.role,
-        read: false,
-        createdAt: new Date()
-      }));
+      let totalUsers = 0;
+      const batchSize = 500;
+      let skip = 0;
+      
+      while (true) {
+        const users = await usersCollection.find({}).skip(skip).limit(batchSize).toArray();
+        
+        if (users.length === 0) break;
+        
+        const notifications = users.map(user => ({
+          title,
+          message,
+          type: type || "general",
+          priority: priority || "normal",
+          recipientEmail: user.email,
+          recipientRole: user.role,
+          read: false,
+          createdAt: new Date()
+        }));
 
-      await notificationsCollection.insertMany(notifications);
+        await notificationsCollection.insertMany(notifications);
+        totalUsers += users.length;
+        skip += batchSize;
+      }
       
       return NextResponse.json({ 
         success: true, 
-        message: `Notification sent to ${notifications.length} users`,
-        count: notifications.length
+        message: `Notification sent to ${totalUsers} users`,
+        count: totalUsers
       });
     } else {
       // Send to specific recipients

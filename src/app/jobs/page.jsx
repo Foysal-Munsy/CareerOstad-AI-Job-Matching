@@ -414,30 +414,30 @@ export default function JobsPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((job) => (
-              <div key={job._id} className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 overflow-hidden">
+              <div key={job._id} className="group relative bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border border-gray-100 overflow-hidden">
                 {/* Featured Job Top Border */}
                 {job.isFeatured && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500"></div>
                 )}
                 
-                <div className="p-6">
+                <div className="p-4">
                   {/* Header Section */}
-                  <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-start justify-between mb-3">
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-3 mb-2">
+                      <div className="flex items-start gap-2 mb-1.5">
                         <div className="flex-1 min-w-0">
-                          <h2 className="text-lg font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+                          <h2 className="text-base font-bold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
                             {job.title}
                           </h2>
-                          <p className="text-blue-600 font-semibold text-base mt-1">{job.companyName}</p>
+                          <p className="text-blue-600 font-semibold text-sm mt-0.5">{job.companyName}</p>
                         </div>
                         {/* Featured Badge - Positioned at top right */}
                         {job.isFeatured && (
                           <div className="flex-shrink-0">
-                            <div className="inline-flex items-center gap-1 px-3 py-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-md">
-                              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full shadow">
+                              <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                               </svg>
                               Featured
@@ -447,201 +447,123 @@ export default function JobsPage() {
                       </div>
                       
                       {/* Category Badge */}
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-200">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-xs font-medium rounded-full border border-blue-200">
                           {job.category}
                         </span>
                       </div>
                       
                       {/* Job Matching Percentage */}
-                      {session?.user?.email && (
-                        <div className="mb-3">
-                          {loadingMatches ? (
-                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                              <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-600"></div>
-                              <span className="text-xs text-gray-600">Calculating match...</span>
+                      {session?.user?.email && matchingPercentages[job._id] !== null && matchingPercentages[job._id] !== undefined && (
+                        <div className="mb-2 p-1.5 bg-gray-50 rounded">
+                          <div className="flex items-center gap-2">
+                            <span className={`text-xs font-semibold ${
+                              matchingPercentages[job._id] >= 80 ? 'text-green-600' :
+                              matchingPercentages[job._id] >= 60 ? 'text-yellow-600' :
+                              'text-red-600'
+                            }`}>
+                              {matchingPercentages[job._id]}% Match
+                            </span>
+                            <div className="flex-1 bg-gray-200 rounded-full h-1">
+                              <div 
+                                className={`h-1 rounded-full ${
+                                  matchingPercentages[job._id] >= 80 ? 'bg-green-500' :
+                                  matchingPercentages[job._id] >= 60 ? 'bg-yellow-500' :
+                                  'bg-red-500'
+                                }`}
+                                style={{ width: `${matchingPercentages[job._id]}%` }}
+                              ></div>
                             </div>
-                          ) : matchingPercentages[job._id] !== null ? (
-                            <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-2">
-                                <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                                  matchingPercentages[job._id] >= 80 ? 'bg-green-100' :
-                                  matchingPercentages[job._id] >= 60 ? 'bg-yellow-100' :
-                                  'bg-red-100'
-                                }`}>
-                                  <svg className={`w-3 h-3 ${
-                                    matchingPercentages[job._id] >= 80 ? 'text-green-600' :
-                                    matchingPercentages[job._id] >= 60 ? 'text-yellow-600' :
-                                    'text-red-600'
-                                  }`} fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                  </svg>
-                                </div>
-                                <span className={`text-sm font-semibold ${
-                                  matchingPercentages[job._id] >= 80 ? 'text-green-600' :
-                                  matchingPercentages[job._id] >= 60 ? 'text-yellow-600' :
-                                  'text-red-600'
-                                }`}>
-                                  {matchingPercentages[job._id]}% Match
-                                </span>
-                              </div>
-                              <div className="flex-1 bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className={`h-2 rounded-full transition-all duration-500 ${
-                                    matchingPercentages[job._id] >= 80 ? 'bg-gradient-to-r from-green-400 to-green-600' :
-                                    matchingPercentages[job._id] >= 60 ? 'bg-gradient-to-r from-yellow-400 to-yellow-600' :
-                                    'bg-gradient-to-r from-red-400 to-red-600'
-                                  }`}
-                                  style={{ width: `${matchingPercentages[job._id]}%` }}
-                                ></div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                              <span className="text-xs text-gray-600">Match unavailable</span>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Job Details Grid */}
-                  <div className="grid grid-cols-1 gap-3 mb-4">
-                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 font-medium">Location</p>
-                        <p className="text-sm font-semibold text-gray-900 truncate">{job.location}</p>
-                      </div>
+                  {/* Job Details - Compact */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-md">
+                      <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      </svg>
+                      <span className="text-xs font-medium text-gray-700 truncate">{job.location}</span>
                     </div>
-                    
-                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 font-medium">Employment Type</p>
-                        <p className="text-sm font-semibold text-gray-900">{job.employmentType}</p>
-                      </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-md">
+                      <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                      </svg>
+                      <span className="text-xs font-medium text-gray-700">{job.employmentType}</span>
                     </div>
-                    
-                    <div className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg">
-                      <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-gray-500 font-medium">Job Level</p>
-                        <p className="text-sm font-semibold text-gray-900">{job.jobLevel}</p>
-                      </div>
+                    <div className="flex items-center gap-1.5 px-2 py-1 bg-gray-50 rounded-md">
+                      <svg className="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                      </svg>
+                      <span className="text-xs font-medium text-gray-700">{job.jobLevel}</span>
                     </div>
                   </div>
 
-                  {/* Job Description */}
-                  <div className="mb-4">
-                    <p className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
-                      {job.overview}
-                    </p>
-                  </div>
+                  {/* Job Description - Shortened */}
+                  <p className="text-xs text-gray-600 line-clamp-2 mb-3">
+                    {job.overview}
+                  </p>
 
-                  {/* Skills Section */}
+                  {/* Skills Section - Compact */}
                   {job.toolsTechnologies?.length > 0 && (
-                    <div className="mb-4">
-                      <h4 className="text-xs font-semibold text-gray-500 mb-2">Required Skills</h4>
-                      <div className="flex flex-wrap gap-1.5">
+                    <div className="mb-3">
+                      <div className="flex flex-wrap gap-1">
                         {job.toolsTechnologies.slice(0, 3).map((tech, idx) => (
-                          <span key={idx} className="inline-flex items-center px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-medium rounded-lg border border-blue-200">
+                          <span key={idx} className="inline-flex items-center px-2 py-0.5 bg-blue-50 text-blue-700 text-xs rounded border border-blue-200">
                             {tech}
                           </span>
                         ))}
                         {job.toolsTechnologies.length > 3 && (
-                          <span className="inline-flex items-center px-2.5 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-lg border border-gray-200">
-                            +{job.toolsTechnologies.length - 3} more
+                          <span className="inline-flex items-center px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded border border-gray-200">
+                            +{job.toolsTechnologies.length - 3}
                           </span>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Salary Section */}
-                  {job.salaryMin && job.salaryMax && (
-                    <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                          <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
-                          </svg>
-                        </div>
-                        <div>
-                          <p className="text-xs text-green-600 font-medium">Salary Range</p>
-                          <p className="text-sm font-bold text-green-700">
-                            {job.salaryMin.toLocaleString()} - {job.salaryMax.toLocaleString()} {job.salaryType}
-                            {job.isNegotiable && <span className="text-xs font-normal text-green-600"> (Negotiable)</span>}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Footer Section */}
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <div className="flex items-center gap-2 text-xs text-gray-500">
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                      </svg>
-                      <span>Posted {new Date(job.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="flex gap-2">
+                  {/* Footer Section - Compact */}
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+                    <span className="text-xs text-gray-500">{new Date(job.createdAt).toLocaleDateString()}</span>
+                    <div className="flex gap-1.5">
                       <button
                         onClick={() => toggleSave(job._id)}
                         disabled={!!savingIds[job._id]}
-                        className={`inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded-lg border transition-all duration-200 ${
+                        className={`inline-flex items-center gap-1 px-2 py-1 text-xs rounded border transition-all ${
                           savedSet.has(job._id) 
-                            ? 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100' 
-                            : 'bg-gray-50 text-gray-600 border-gray-200 hover:bg-gray-100'
+                            ? 'bg-yellow-50 text-yellow-700 border-yellow-200' 
+                            : 'bg-gray-50 text-gray-600 border-gray-200'
                         }`}
-                        title={savedSet.has(job._id) ? 'Unsave' : 'Save job'}
+                        title={savedSet.has(job._id) ? 'Remove from saved' : 'Save job'}
                       >
                         {savingIds[job._id] ? (
-                          <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gray-600"></div>
-                        ) : savedSet.has(job._id) ? (
-                          <>
-                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
-                            Saved
-                          </>
+                          <div className="animate-spin rounded-full h-2.5 w-2.5 border-b border-gray-600"></div>
                         ) : (
-                          <>
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00-.95 1.313l3.97 3.97a1 1 0 01.072 1.415l-2.828 2.829a1 1 0 01-1.414 0l-3.97-3.97a1 1 0 00-1.313.95L2.927 11.049c-.921.3-.921 1.603 0 1.902l4.674 1.519a1 1 0 00.95 1.313l-3.97 3.97a1 1 0 01-1.415.072l-2.829-2.828a1 1 0 010-1.414l3.97-3.97a1 1 0 00-.95-1.313L2.927 12.951c-.3-.921-1.603-.921-1.902 0z"/>
-                            </svg>
-                            Save
-                          </>
+                          <svg className="w-3 h-3" fill={savedSet.has(job._id) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                            {savedSet.has(job._id) ? (
+                              <path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                            ) : (
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
+                            )}
+                          </svg>
                         )}
                       </button>
                       
                       <button
                         onClick={() => handleApply(job._id, job.title)}
-                        className="inline-flex items-center gap-1 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                        className="inline-flex items-center px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-all"
                       >
-                        Apply Now
+                        Apply
                       </button>
                       
                       <Link 
                         href={`/jobs/${job._id}`} 
-                        className="inline-flex items-center gap-1 px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition-all duration-200 shadow-sm hover:shadow-md"
+                        className="inline-flex items-center px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition-all"
                       >
-                        View Details
+                        View
                       </Link>
                     </div>
                   </div>
