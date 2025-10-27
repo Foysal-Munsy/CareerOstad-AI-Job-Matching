@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const ExploreCareerPaths = () => {
   return (
@@ -227,37 +228,39 @@ const ExploreCareerPaths = () => {
 
         {/* Call-to-Action Button */}
         <div className="text-center mt-12">
-          <button className="bg-primary hover:bg-primary/90 text-primary-content font-semibold py-3 px-6 rounded-btn transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto group text-sm">
-            <svg
-              className="w-4 h-4 group-hover:animate-pulse"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 10V3L4 14h7v7l9-11h-7z"
-              />
-            </svg>
-            Get Personalized Career Guidance
-            <svg
-              className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </button>
+          <Link href="/explore-careers">
+            <button className="bg-primary hover:bg-primary/90 text-primary-content font-semibold py-3 px-6 rounded-btn transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto group text-sm">
+              <svg
+                className="w-4 h-4 group-hover:animate-pulse"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              Explore Career Paths with AI
+              <svg
+                className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </Link>
           <p className="mt-3 text-neutral text-xs">
             Our AI analyzes your skills and preferences to recommend the best
             career paths

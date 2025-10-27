@@ -12,7 +12,7 @@ import HomepageVerification from "./verification/HomepageVerification";
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white-800">
       {/* Import and render all sections */}
       <Banner></Banner>
       <KeyHighlights />
