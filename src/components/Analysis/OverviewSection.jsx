@@ -2,18 +2,19 @@
 
 import React from "react";
 import {
-  Users, Briefcase, FileText, Heart, CreditCard
+  Users, Briefcase, FileText, Heart, CreditCard, Building
 } from "lucide-react";
 import MetricCard from "./MetricCard";
 import ChartCard from "./ChartCard";
 
-export default function OverviewSection() {
+export default function OverviewSection({ stats = {} }) {
+  // Real data from API or default values
   const metrics = [
-    { icon: Users, title: "Total Users", value: "12,847", change: "+12.5%", changeType: "positive", description: "New registrations this month" },
-    { icon: Briefcase, title: "Posted Jobs", value: "3,214", change: "+8.3%", changeType: "positive", description: "Active job postings" },
-    { icon: FileText, title: "Applications", value: "28,531", change: "+15.7%", changeType: "positive", description: "Total applications received" },
-    { icon: Heart, title: "Matches", value: "9,846", change: "+22.1%", changeType: "positive", description: "Successful matches made" },
-    { icon: CreditCard, title: "Subscriptions", value: "$47,892", change: "-3.2%", changeType: "negative", description: "Monthly recurring revenue" },
+    { icon: Users, title: "Total Users", value: stats?.users?.toString() || "0", change: "+12.5%", changeType: "positive", description: "Total registered users" },
+    { icon: Briefcase, title: "Active Jobs", value: stats?.activeJobs?.toString() || "0", change: "+8.3%", changeType: "positive", description: "Active job postings" },
+    { icon: FileText, title: "Applications", value: stats?.applications?.toString() || "0", change: "+15.7%", changeType: "positive", description: "Total applications received" },
+    { icon: Building, title: "Companies", value: stats?.companies?.toString() || "0", change: "+5.2%", changeType: "positive", description: "Registered companies" },
+    { icon: Heart, title: "Matches", value: stats?.matches?.toString() || "0", change: "+22.1%", changeType: "positive", description: "Successful matches made" },
   ];
 
   const activities = [
@@ -24,22 +25,22 @@ export default function OverviewSection() {
   ];
 
   return (
-    <div className="space-y-6 w-9/12 mx-auto my-6">
+    <div className="space-y-6 w-full max-w-[95%] sm:max-w-[90%] mx-auto my-6">
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-4 lg:gap-6">
         {metrics.map((metric, idx) => (
           <MetricCard key={idx} {...metric} />
         ))}
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
         <ChartCard title="User Growth" subtitle="User registrations over time" type="line" />
         <ChartCard title="Application Trends" subtitle="Daily application volumes" type="bar" />
       </div>
 
       {/* Charts + Activity */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 lg:gap-6">
         <ChartCard title="Match Success Rate" subtitle="Percentage of successful matches" type="pie" />
         <ChartCard title="Subscription Revenue" subtitle="Monthly revenue breakdown" type="area" />
         
@@ -50,14 +51,14 @@ export default function OverviewSection() {
           </h3>
           <div className="space-y-3 max-h-64 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
             {activities.map((activity, idx) => (
-              <div key={idx} className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: activity.color }}></div>
-                  <span className="text-xs sm:text-sm text-gray-700 dark:text-[#E0E0E0]">
+              <div key={idx} className="flex items-center justify-between gap-2">
+                <div className="flex items-center space-x-2 min-w-0 flex-1">
+                  <div className="w-2 h-2 rounded-full animate-pulse flex-shrink-0" style={{ backgroundColor: activity.color }}></div>
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-[#E0E0E0] truncate">
                     {activity.text}
                   </span>
                 </div>
-                <span className="text-[11px] sm:text-xs text-gray-500 dark:text-[#A0A0A0]">
+                <span className="text-[11px] sm:text-xs text-gray-500 dark:text-[#A0A0A0] whitespace-nowrap flex-shrink-0">
                   {activity.time}
                 </span>
               </div>

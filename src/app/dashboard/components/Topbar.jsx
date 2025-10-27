@@ -1,28 +1,75 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { FaSearch, FaBell, FaCog, FaUser, FaSignOutAlt, FaHome, FaMoon, FaSun } from "react-icons/fa";
+import { FaSearch, FaBell, FaCog, FaUser, FaSignOutAlt, FaHome } from "react-icons/fa";
 import { HiOutlineMenuAlt2 } from "react-icons/hi";
 
 export default function Topbar({ onMenuClick }) {
   const { data: session } = useSession();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (session?.user) {
+      fetchNotifications();
+    }
+  }, [session]);
+
+  async function fetchNotifications() {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/notifications', { cache: 'no-store' });
+      const data = await res.json();
+      
+      if (data.success) {
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unreadCount || 0);
+      }
+    } catch (error) {
+      console.error('Failed to fetch notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleMarkAsRead(notificationId) {
+    try {
+      await fetch('/api/notifications', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationId })
+      });
+      fetchNotifications();
+    } catch (error) {
+      console.error('Failed to mark notification as read:', error);
+    }
+  }
+
+  function getRelativeTime(date) {
+    if (!date) return 'Unknown';
+    
+    const now = new Date();
+    const notificationTime = new Date(date);
+    const seconds = Math.floor((now - notificationTime) / 1000);
+    
+    if (seconds < 60) return 'Just now';
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes} min ago`;
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+    return notificationTime.toLocaleDateString();
+  }
 
   const handleSignOut = () => {
     signOut({ callbackUrl: "/" });
   };
-
-  const notifications = [
-    { id: 1, title: "New job application", message: "You have a new application for Software Engineer position", time: "2 min ago", unread: true },
-    { id: 2, title: "Interview scheduled", message: "Interview scheduled for tomorrow at 2:00 PM", time: "1 hour ago", unread: true },
-    { id: 3, title: "Profile update", message: "Your profile has been viewed 5 times today", time: "3 hours ago", unread: false },
-  ];
-
-  const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
     <div className="w-full border-b border-base-300 bg-base-100/80 backdrop-blur supports-[backdrop-filter]:bg-base-100/80 sticky top-0 z-40 shadow-sm">
@@ -60,15 +107,6 @@ export default function Topbar({ onMenuClick }) {
             <span className="hidden lg:inline">Home</span>
           </Link>
 
-          {/* Dark Mode Toggle */}
-          <button 
-            onClick={() => setIsDarkMode(!isDarkMode)}
-            className="btn btn-ghost btn-sm btn-circle"
-            title="Toggle theme"
-          >
-            {isDarkMode ? <FaSun className="w-4 h-4" /> : <FaMoon className="w-4 h-4" />}
-          </button>
-
           {/* Notifications */}
           <div className="relative">
             <button 
@@ -91,26 +129,59 @@ export default function Topbar({ onMenuClick }) {
                   <h3 className="font-semibold text-sm">Notifications</h3>
                 </div>
                 <div className="max-h-64 overflow-y-auto">
-                  {notifications.map((notification) => (
-                    <div 
-                      key={notification.id} 
-                      className={`p-3 border-b border-base-200 hover:bg-base-200/50 cursor-pointer ${notification.unread ? 'bg-primary/5' : ''}`}
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-primary' : 'bg-base-300'}`}></div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-sm">{notification.title}</h4>
-                          <p className="text-xs text-base-content/70 mt-1">{notification.message}</p>
-                          <p className="text-xs text-base-content/50 mt-1">{notification.time}</p>
+                  {loading ? (
+                    <div className="p-4 text-center">
+                      <span className="loading loading-spinner loading-sm"></span>
+                    </div>
+                  ) : notifications.length === 0 ? (
+                    <div className="p-4 text-center text-base-content/60 text-sm">
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map((notification) => (
+                      <div 
+                        key={notification.id} 
+                        className={`p-3 border-b border-base-200 hover:bg-base-200/50 cursor-pointer ${notification.unread ? 'bg-primary/5' : ''}`}
+                        onClick={() => notification.unread && handleMarkAsRead(notification.id)}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-primary' : 'bg-base-300'}`}></div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-sm">{notification.title}</h4>
+                            <p className="text-xs text-base-content/70 mt-1">{notification.message}</p>
+                            <p className="text-xs text-base-content/50 mt-1">{getRelativeTime(notification.time)}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
-                <div className="p-3 border-t border-base-300">
-                  <Link href="/dashboard/notifications" className="text-primary text-sm font-medium hover:underline">
+                <div className="p-3 border-t border-base-300 flex items-center justify-between">
+                  <Link 
+                    href={`/dashboard/${session?.user?.role === 'admin' ? 'admin' : session?.user?.role || 'candidate'}/notifications`}
+                    className="text-primary text-sm font-medium hover:underline"
+                  >
                     View all notifications
                   </Link>
+                  {unreadCount > 0 && (
+                    <button
+                      onClick={async () => {
+                        try {
+                          await fetch('/api/notifications', {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ markAllAsRead: true })
+                          });
+                          fetchNotifications();
+                        } catch (error) {
+                          console.error('Failed to mark all as read:', error);
+                        }
+                      }}
+                      className="text-xs text-primary hover:underline"
+                    >
+                      Mark all as read
+                    </button>
+                  )}
                 </div>
               </div>
             )}
