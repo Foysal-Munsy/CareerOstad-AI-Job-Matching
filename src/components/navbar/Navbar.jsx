@@ -27,6 +27,7 @@ const Navbar = () => {
     { href: "/explore-careers", label: "Explore Careers" },
     { href: "/career-advice", label: "Advice" },
     { href: "/blogs", label: "Blogs" },
+    { href: "/interview", label: "Mock Interview" },
   ];
 
   // choose matching strategy:

@@ -187,7 +187,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/candidate/profile" label="My Profile" icon={FaUserTie} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/resume-builder" label="Resume Builder" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/skills" label="Skills Assessment" icon={FaChartLine} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/interview" label="Interview Prep" icon={BiMessageSquareDots} onClick={itemClick} />
           </>
         )}
         
@@ -237,13 +236,10 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Analytics & Reports</div>
             <NavItem href="/dashboard/admin/analytics" label="Analytics" icon={FaChartBar} onClick={itemClick} />
             <NavItem href="/dashboard/admin/reports" label="Reports" icon={FaFileAlt} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/activity" label="Activity Logs" icon={FaHistory} onClick={itemClick} />
             
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">System Management</div>
             <NavItem href="/dashboard/admin/settings" label="System Settings" icon={FaCog} onClick={itemClick} />
             <NavItem href="/dashboard/admin/notifications" label="Notifications" icon={FaBell} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/backup" label="Data Backup" icon={FaDatabase} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/security" label="Security" icon={FaShieldAlt} onClick={itemClick} />
           </>
         )}
       </nav>
