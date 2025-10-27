@@ -11,10 +11,10 @@ const FeaturedJobs = () => {
 
   const fetchFeaturedJobs = async () => {
     try {
-      const res = await fetch("/api/admin/feature-jobs", { cache: "no-store" });
+      const res = await fetch("/api/jobs?public=true&featured=true", { cache: "no-store" });
       if (res.ok) {
         const data = await res.json();
-        setFeaturedJobs(data.featuredJobs || []);
+        setFeaturedJobs(data.jobs || []);
       }
     } catch (error) {
       console.error("Error fetching featured jobs:", error);

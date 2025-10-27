@@ -48,7 +48,11 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             Jobs <span className='hidden go-icon'>&gt;</span>
           </Link>
         </li>
-
+        <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+          <Link href="/explore-careers">
+            Explore Careers <span className='hidden go-icon'>&gt;</span>
+          </Link>
+        </li>
         {/* Dashboard-related collapses removed for a cleaner public navbar */}
         <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
           <Link href="/career-advice" className="">
