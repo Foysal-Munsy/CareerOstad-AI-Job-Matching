@@ -54,7 +54,11 @@ const Navbar = () => {
   return (
     <nav className="bg-white sticky top-0 z-50 border-b border-gray-100 shadow-sm">
       <div className="py-3 font-semibold container mx-auto flex justify-between items-center px-3 sm:px-0">
-        <Link href="/" onClick={() => window.scrollTo(0, 0)} className="flex items-end">
+        <Link
+          href="/"
+          onClick={() => window.scrollTo(0, 0)}
+          className="flex items-end"
+        >
           <Logo />
         </Link>
 
@@ -72,9 +76,11 @@ const Navbar = () => {
                 return (
                   <li key={href} className="relative">
                     <Link href={href} legacyBehavior>
-                      <motion.a
+                      <motion.div
                         className={`relative inline-block px-1 py-1 transition-colors duration-150 ${
-                          active ? "text-primary" : "text-gray-700 hover:text-primary"
+                          active
+                            ? "text-primary"
+                            : "text-gray-700 hover:text-primary"
                         }`}
                         onClick={() => window.scrollTo(0, 0)}
                         whileHover="hover"
@@ -88,11 +94,11 @@ const Navbar = () => {
                         <motion.span
                           className="absolute -bottom-1 left-1/2 h-[2px] bg-primary rounded-full"
                           variants={{
-                            rest: { 
-                              width: 6, 
-                              left: "50%", 
-                              opacity: 0.95, 
-                              transition: { duration: 0.18 } 
+                            rest: {
+                              width: 6,
+                              left: "50%",
+                              opacity: 0.95,
+                              transition: { duration: 0.18 },
                             },
                             hover: {
                               width: "100%",
@@ -102,7 +108,7 @@ const Navbar = () => {
                             },
                           }}
                         />
-                      </motion.a>
+                      </motion.div>
                     </Link>
                   </li>
                 );
@@ -113,8 +119,14 @@ const Navbar = () => {
 
         {/* Authentication Status */}
         {status === "loading" ? (
-          <div className="hidden md:flex items-center gap-3 mx-3" aria-live="polite">
-            <span className="loading loading-dots loading-xs text-primary" aria-label="Loading"></span>
+          <div
+            className="hidden md:flex items-center gap-3 mx-3"
+            aria-live="polite"
+          >
+            <span
+              className="loading loading-dots loading-xs text-primary"
+              aria-label="Loading"
+            ></span>
           </div>
         ) : status === "authenticated" ? (
           <div className="hidden md:flex items-center gap-3 mx-3 relative">
