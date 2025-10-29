@@ -2,12 +2,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Typewriter } from "react-simple-typewriter";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 const categories = ["All", "Jobs", "Candidates", "Companies"];
 
 const Search = () => {
   const router = useRouter();
+  const { status } = useSession();
   const [category, setCategory] = useState("All");
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
@@ -78,10 +80,10 @@ const Search = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-lg mx-2">
+    <div ref={containerRef} className="relative w-full max-w-md md:max-w-lg mx-2 min-w-0">
       <form
         onSubmit={handleSubmit}
-        className="flex items-center text-sm rounded-lg h-9 shadow-md overflow-hidden"
+        className="flex items-center text-sm rounded-lg h-9 shadow-md overflow-hidden w-full"
       >
         {/* Category Selector */}
         <select
@@ -95,30 +97,36 @@ const Search = () => {
         </select>
 
         {/* Search Input */}
-        <div className="flex items-center px-2 relative bg-white h-9 w-full">
-          <FaSearch className="text-gray-400 mr-2" />
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onFocus={() => query && setShowSuggestions(true)}
-            placeholder="Search For"
-            className="bg-transparent outline-none w-full"
-            style={{ minWidth: "140px" }}
-          />
-          {query === "" && (
-            <span className="absolute left-[105px] text-gray-400 pointer-events-none">
-              <Typewriter
-                words={["Jobs...", "Candidates...", "Companies..."]}
-                loop={0}
-                cursor
-                cursorStyle="|"
-                typeSpeed={100}
-                deleteSpeed={80}
-                delaySpeed={1500}
-              />
-            </span>
-          )}
+        <div className="flex items-center px-2 relative bg-white h-9 w-full min-w-0">
+          <FaSearch className="text-gray-400 mr-2 flex-shrink-0" />
+          <div className="relative flex-1 min-w-0">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onFocus={() => query && setShowSuggestions(true)}
+              className="bg-transparent outline-none w-full pr-2 text-sm"
+            />
+            {query === "" && status === "authenticated" && (
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none overflow-hidden whitespace-nowrap text-sm hidden md:block pr-2">
+                Search For{" "}
+                <Typewriter
+                  words={["Jobs...", "Candidates...", "Companies..."]}
+                  loop={0}
+                  cursor
+                  cursorStyle="|"
+                  typeSpeed={100}
+                  deleteSpeed={80}
+                  delaySpeed={1500}
+                />
+              </span>
+            )}
+            {query === "" && status !== "authenticated" && (
+              <span className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none text-sm">
+                Search For
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Search Button */}
