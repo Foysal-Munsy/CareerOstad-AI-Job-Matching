@@ -58,12 +58,12 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <div className="hidden sm:block">
+        <div className="hidden lg:flex flex-1 justify-center px-2 xl:px-0 min-w-0">
           <Search />
         </div>
 
         {/* Desktop Navigation Links */}
-        <div className="hidden lg:block">
+        <div className="hidden lg:block flex-shrink-0">
           <nav aria-label="Main navigation">
             <ul className="flex gap-5 xl:gap-8 text-[15px] text-gray-700 font-medium">
               {navLinks.map(({ href, label }) => {
