@@ -143,66 +143,71 @@ export default function CourseDetailPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-100 via-base-100 to-base-200/30">
       {/* Navigation */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <Link href="/learning" className="inline-flex items-center gap-2 text-primary hover:text-primary/80">
-            <FaArrowLeft /> Back to Courses
-          </Link>
+      <div className="bg-white/80 backdrop-blur border-b">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/learning" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 text-sm">
+              <FaArrowLeft /> Back to Courses
+            </Link>
+            <div className="hidden md:block text-xs text-base-content/60 truncate max-w-[70%]">
+              {course.title}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-5">
             {/* Hero Section */}
-            <div className="card bg-base-100 shadow-xl">
+            <div className="card bg-base-100 shadow-lg">
               {course.thumbnail && (
-                <figure>
+                <figure className="relative overflow-hidden">
                   <img 
                     src={course.thumbnail} 
                     alt={course.title} 
-                    className="w-full h-80 object-cover"
+                    className="w-full h-56 md:h-72 lg:h-80 object-cover"
                   />
                 </figure>
               )}
               
-              <div className="card-body">
-                <div className="flex items-center gap-2 mb-4">
-                  <span className="badge badge-primary">{course.level}</span>
-                  <span className="badge badge-secondary">{course.category}</span>
+              <div className="card-body p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="badge badge-primary text-xs">{course.level}</span>
+                  <span className="badge badge-secondary text-xs">{course.category}</span>
                   {course.isFeatured && (
-                    <span className="badge badge-accent">FEATURED</span>
+                    <span className="badge badge-accent text-xs">FEATURED</span>
                   )}
                   {course.price === 0 && (
-                    <span className="badge badge-success">FREE</span>
+                    <span className="badge badge-success text-xs">FREE</span>
                   )}
                 </div>
 
-                <h1 className="text-3xl font-bold text-primary mb-4">{course.title}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">{course.title}</h1>
                 
-                <div className="flex items-center gap-6 text-base-content/60 mb-4">
+                <div className="flex flex-wrap items-center gap-4 text-base-content/60 mb-3 text-sm">
                   <div className="flex items-center gap-2">
-                    <FaClock /> {course.duration} hours
+                    <FaClock className="text-primary/70" /> {course.duration} hours
                   </div>
                   <div className="flex items-center gap-2">
-                    <FaUsers /> {course.enrolledStudents || 0} students
+                    <FaUsers className="text-secondary/70" /> {course.enrolledStudents || 0} students
                   </div>
                   {course.rating > 0 && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 font-semibold">
                       <FaStar className="text-warning" /> {course.rating.toFixed(1)} ({course.totalRatings || 0})
                     </div>
                   )}
                 </div>
 
-                <p className="text-lg mb-4">{course.description}</p>
+                <p className="text-base md:text-lg mb-4 leading-relaxed text-base-content/80">{course.description}</p>
 
                 <div className="divider"></div>
 
-                <h2 className="text-2xl font-bold mb-4">What you'll learn</h2>
-                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+                <h2 className="text-xl md:text-2xl font-bold mb-3">What you'll learn</h2>
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-5">
                   {course.tags?.slice(0, 8).map((tag, index) => (
-                    <li key={index} className="flex items-center gap-2">
+                    <li key={index} className="flex items-center gap-2 text-sm">
                       <FaCheckCircle className="text-success" />
                       <span>{tag}</span>
                     </li>
@@ -213,9 +218,9 @@ export default function CourseDetailPage() {
 
             {/* Course Content */}
             {course.lessons && course.lessons.length > 0 && (
-              <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
-                  <h2 className="card-title text-2xl mb-4">
+              <div className="card bg-base-100 shadow-lg">
+                <div className="card-body p-6">
+                  <h2 className="card-title text-xl md:text-2xl mb-3">
                     Course Curriculum
                     <span className="text-base-content/60 font-normal ml-2">
                       ({course.lessons.length} lessons)
@@ -224,17 +229,17 @@ export default function CourseDetailPage() {
                   
                   <div className="space-y-2">
                     {course.lessons.map((lesson, index) => (
-                      <div key={index} className="flex items-center gap-4 p-4 border border-base-300 rounded-lg hover:bg-base-200 transition-colors">
-                        <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary/10 text-primary font-bold">
+                      <div key={index} className="flex items-center gap-4 p-4 border border-base-300/60 rounded-lg hover:bg-base-200/60 transition-colors">
+                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-primary/10 text-primary font-semibold text-sm">
                           {index + 1}
                         </div>
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{lesson.title}</h3>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold truncate">{lesson.title}</h3>
                           {lesson.description && (
-                            <p className="text-sm text-base-content/60">{lesson.description}</p>
+                            <p className="text-sm text-base-content/60 line-clamp-2">{lesson.description}</p>
                           )}
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-base-content/60">
+                        <div className="flex items-center gap-3 text-xs md:text-sm text-base-content/60 whitespace-nowrap">
                           {lesson.contentType === 'video' && <FaPlay />}
                           {lesson.contentType === 'pdf' && <FaFilePdf />}
                           {lesson.contentType === 'link' && <FaLink />}
@@ -248,18 +253,18 @@ export default function CourseDetailPage() {
             )}
 
             {/* Instructor */}
-            <div className="card bg-base-100 shadow-xl">
-              <div className="card-body">
-                <h2 className="card-title text-2xl mb-4">Your Instructor</h2>
+            <div className="card bg-base-100 shadow-lg">
+              <div className="card-body p-6">
+                <h2 className="card-title text-xl md:text-2xl mb-3">Your Instructor</h2>
                 <div className="flex items-center gap-4">
                   <div className="avatar placeholder">
-                    <div className="bg-primary text-primary-content rounded-full w-16">
-                      <FaUser className="text-2xl" />
+                    <div className="bg-primary text-primary-content rounded-full w-14">
+                      <FaUser className="text-xl" />
                     </div>
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg">{course.instructorName}</h3>
-                    <p className="text-base-content/60">Expert Instructor</p>
+                    <h3 className="font-bold text-base md:text-lg">{course.instructorName}</h3>
+                    <p className="text-base-content/60 text-sm">Expert Instructor</p>
                   </div>
                 </div>
               </div>
@@ -268,9 +273,9 @@ export default function CourseDetailPage() {
 
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="card bg-base-100 shadow-xl sticky top-4">
-              <div className="card-body">
-                <div className="text-3xl font-bold mb-4">
+            <div className="card bg-base-100 shadow-lg sticky top-4">
+              <div className="card-body p-6">
+                <div className="text-2xl md:text-3xl font-bold mb-3">
                   {course.price === 0 ? (
                     <span className="text-success">FREE</span>
                   ) : (
@@ -279,16 +284,16 @@ export default function CourseDetailPage() {
                 </div>
 
                 {!session ? (
-                  <div className="space-y-3">
+                  <div className="space-y-2.5">
                     <Link 
                       href={`/login?callbackUrl=${encodeURIComponent(`/learning/${courseId}`)}`} 
-                      className="btn btn-primary btn-block"
+                      className="btn btn-primary btn-md btn-block"
                     >
                       Login to Enroll
                     </Link>
                     <Link 
                       href={`/signup?callbackUrl=${encodeURIComponent(`/learning/${courseId}`)}`} 
-                      className="btn btn-outline btn-primary btn-block"
+                      className="btn btn-outline btn-primary btn-md btn-block"
                     >
                       Sign Up Free
                     </Link>
@@ -296,7 +301,7 @@ export default function CourseDetailPage() {
                 ) : enrolled ? (
                   <Link 
                     href={`/dashboard/candidate/learning/${courseId}`}
-                    className="btn btn-success btn-block gap-2"
+                    className="btn btn-success btn-md btn-block gap-2"
                   >
                     <FaCheckCircle /> Start Learning
                   </Link>
@@ -304,7 +309,7 @@ export default function CourseDetailPage() {
                   <button
                     onClick={handleEnroll}
                     disabled={enrolling}
-                    className="btn btn-primary btn-block gap-2"
+                    className="btn btn-primary btn-md btn-block gap-2"
                   >
                     {enrolling ? 'Enrolling...' : (
                       <>
@@ -346,11 +351,11 @@ export default function CourseDetailPage() {
                 <div className="divider"></div>
 
                 <div className="flex flex-col gap-2">
-                  <button className="btn btn-ghost btn-block">
+                  <button className="btn btn-ghost btn-sm md:btn-md btn-block">
                     <FaCertificate className="mr-2" />
                     Share Certificate
                   </button>
-                  <button className="btn btn-ghost btn-block">
+                  <button className="btn btn-ghost btn-sm md:btn-md btn-block">
                     <FaDownload className="mr-2" />
                     Download Resources
                   </button>
