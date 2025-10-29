@@ -80,7 +80,7 @@ const Search = () => {
   };
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-md md:max-w-lg mx-2 min-w-0">
+    <div ref={containerRef} className="relative w-full max-w-xs md:max-w-sm mx-2 min-w-0">
       <form
         onSubmit={handleSubmit}
         className="flex items-center text-sm rounded-lg h-9 shadow-md overflow-hidden w-full"

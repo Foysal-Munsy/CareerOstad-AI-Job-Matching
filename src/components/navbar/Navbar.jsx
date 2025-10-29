@@ -36,6 +36,15 @@ const Navbar = () => {
     { href: "/interview", label: "Mock Interview" },
   ];
 
+  // Hide certain links for unauthenticated users
+  const authOnlyHrefs = new Set(["/explore-careers", "/career-advice", "/interview"]);
+  const visibleLinks = navLinks.filter(({ href }) => {
+    if (authOnlyHrefs.has(href)) {
+      return status === "authenticated";
+    }
+    return true;
+  });
+
   /**
    * Checks if a navigation link is active
    * Uses startsWith matching for nested routes
@@ -58,7 +67,7 @@ const Navbar = () => {
           <Logo />
         </Link>
 
-        <div className="hidden lg:flex flex-1 justify-center px-2 xl:px-0 min-w-0">
+        <div className="hidden lg:flex flex-shrink-0 justify-center px-2 xl:px-0 min-w-0">
           <Search />
         </div>
 
@@ -66,7 +75,7 @@ const Navbar = () => {
         <div className="hidden lg:block flex-shrink-0">
           <nav aria-label="Main navigation">
             <ul className="flex gap-5 xl:gap-8 text-[15px] text-gray-700 font-medium">
-              {navLinks.map(({ href, label }) => {
+              {visibleLinks.map(({ href, label }) => {
                 const active = isActive(href);
 
                 return (

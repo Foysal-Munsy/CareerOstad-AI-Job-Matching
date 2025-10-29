@@ -8,13 +8,22 @@ const COLLECTION_NAME = 'courses';
 
 export async function GET(request, { params }) {
   try {
-    const { id } = params;
+    const { id } = await params;
+    
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ 
+        success: false,
+        error: "Invalid course ID" 
+      }, { status: 400 });
+    }
+    
     const collection = await dbConnect(COLLECTION_NAME);
     
     const course = await collection.findOne({ _id: new ObjectId(id) });
     
     if (!course) {
       return NextResponse.json({ 
+        success: false,
         error: "Course not found" 
       }, { status: 404 });
     }
@@ -27,6 +36,7 @@ export async function GET(request, { params }) {
   } catch (error) {
     console.error("Error fetching course:", error);
     return NextResponse.json({ 
+      success: false,
       error: "Failed to fetch course" 
     }, { status: 500 });
   }
@@ -44,7 +54,13 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
     
-    const { id } = params;
+    const { id } = await params;
+    
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ 
+        error: "Invalid course ID" 
+      }, { status: 400 });
+    }
     const body = await request.json();
     const collection = await dbConnect(COLLECTION_NAME);
     
@@ -91,7 +107,13 @@ export async function DELETE(request, { params }) {
       return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
     
-    const { id } = params;
+    const { id } = await params;
+    
+    if (!id || !ObjectId.isValid(id)) {
+      return NextResponse.json({ 
+        error: "Invalid course ID" 
+      }, { status: 400 });
+    }
     const collection = await dbConnect(COLLECTION_NAME);
     
     const result = await collection.deleteOne({ _id: new ObjectId(id) });
