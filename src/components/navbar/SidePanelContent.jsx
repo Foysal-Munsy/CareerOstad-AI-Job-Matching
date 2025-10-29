@@ -3,6 +3,7 @@ import React from "react";
 import { CgClose } from "react-icons/cg";
 import Link from "next/link";
 import Logo from "./Logo";
+import Search from "./Search";
 import { signOut, useSession } from "next-auth/react";
 
 
@@ -33,6 +34,12 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
           <CgClose />
         </button>
       </div>
+      
+      {/* Mobile Search Bar */}
+      <div className="mx-4 mb-4 lg:hidden">
+        <Search />
+      </div>
+      
       <ul className="-mx-4 flex flex-col gap-2 menu-list text-lg justify-center">
         <li
           className="px-5 py-2.5 sub-menu-list"
@@ -64,9 +71,14 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             Advice by AI<span className='hidden go-icon'>&gt;</span>
           </Link>
         </li>
-        <li className="border-b pb-8 px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+        <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
           <Link href="/blogs">
             Blogs <span className='hidden go-icon'>&gt;</span>
+          </Link>
+        </li>
+        <li className="border-b pb-8 px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+          <Link href="/interview">
+            Mock Interview <span className='hidden go-icon'>&gt;</span>
           </Link>
         </li>
         {/* <details className="collapse collapse-plus">
