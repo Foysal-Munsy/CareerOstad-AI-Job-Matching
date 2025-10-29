@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   FaCheckCircle, FaClock, FaUsers, FaStar, FaPlay, 
@@ -13,10 +13,12 @@ import {
 export default function CourseDetailPage() {
   const { data: session } = useSession();
   const params = useParams();
-  const courseId = params.id;
+  const router = useRouter();
+  const courseId = params?.id;
   
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [enrolling, setEnrolling] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
 
@@ -26,29 +28,53 @@ export default function CourseDetailPage() {
       if (session) {
         checkEnrollment();
       }
+    } else {
+      setLoading(false);
+      setError('Invalid course ID');
     }
   }, [courseId, session]);
 
   const fetchCourseDetails = async () => {
+    if (!courseId) {
+      setError('Course ID is required');
+      setLoading(false);
+      return;
+    }
+
     try {
+      setLoading(true);
+      setError(null);
       const res = await fetch(`/api/courses/${courseId}`);
+      
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({ error: 'Failed to fetch course' }));
+        throw new Error(errorData.error || `Error ${res.status}: ${res.statusText}`);
+      }
+
       const data = await res.json();
-      if (data.success) {
+      if (data.success && data.course) {
         setCourse(data.course);
+      } else {
+        setError(data.error || 'Course not found');
       }
     } catch (error) {
       console.error('Error fetching course:', error);
+      setError(error.message || 'Failed to load course details. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const checkEnrollment = async () => {
+    if (!courseId || !session) return;
+    
     try {
       const res = await fetch(`/api/courses/progress?courseId=${courseId}`);
-      const data = await res.json();
-      if (data.success && data.progress.length > 0) {
-        setEnrolled(true);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.progress && data.progress.length > 0) {
+          setEnrolled(true);
+        }
       }
     } catch (error) {
       console.error('Error checking enrollment:', error);
@@ -57,7 +83,7 @@ export default function CourseDetailPage() {
 
   const handleEnroll = async () => {
     if (!session) {
-      window.location.href = '/login';
+      router.push(`/login?callbackUrl=${encodeURIComponent(`/learning/${courseId}`)}`);
       return;
     }
 
@@ -82,21 +108,33 @@ export default function CourseDetailPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-100 via-base-100 to-base-200/30">
-        <div className="loading loading-spinner loading-lg text-primary"></div>
+        <div className="text-center">
+          <div className="loading loading-spinner loading-lg text-primary mb-4"></div>
+          <p className="text-base-content/60">Loading course details...</p>
+        </div>
       </div>
     );
   }
 
-  if (!course) {
+  if (error || !course) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-base-100 via-base-100 to-base-200/30">
-        <div className="text-center">
+        <div className="text-center max-w-md">
           <FaBook className="text-6xl text-base-content/30 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">Course Not Found</h2>
-          <p className="text-base-content/60 mb-4">The course you're looking for doesn't exist.</p>
-          <Link href="/learning" className="btn btn-primary">
-            <FaArrowLeft /> Back to Courses
-          </Link>
+          <p className="text-base-content/60 mb-4">
+            {error || "The course you're looking for doesn't exist."}
+          </p>
+          <div className="flex gap-4 justify-center">
+            <Link href="/learning" className="btn btn-primary">
+              <FaArrowLeft /> Back to Courses
+            </Link>
+            {error && courseId && (
+              <button onClick={fetchCourseDetails} className="btn btn-outline btn-primary">
+                Try Again
+              </button>
+            )}
+          </div>
         </div>
       </div>
     );
@@ -242,10 +280,16 @@ export default function CourseDetailPage() {
 
                 {!session ? (
                   <div className="space-y-3">
-                    <Link href="/login" className="btn btn-primary btn-block">
+                    <Link 
+                      href={`/login?callbackUrl=${encodeURIComponent(`/learning/${courseId}`)}`} 
+                      className="btn btn-primary btn-block"
+                    >
                       Login to Enroll
                     </Link>
-                    <Link href="/signup" className="btn btn-outline btn-primary btn-block">
+                    <Link 
+                      href={`/signup?callbackUrl=${encodeURIComponent(`/learning/${courseId}`)}`} 
+                      className="btn btn-outline btn-primary btn-block"
+                    >
                       Sign Up Free
                     </Link>
                   </div>

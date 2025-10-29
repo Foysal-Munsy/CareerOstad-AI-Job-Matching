@@ -60,27 +60,33 @@ const SidePanelContent = ({ sideMenu, setSideMenu }) => {
             Learning <span className='hidden go-icon'>&gt;</span>
           </Link>
         </li>
-        <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
-          <Link href="/explore-careers">
-            Explore Careers <span className='hidden go-icon'>&gt;</span>
-          </Link>
-        </li>
+        {status === 'authenticated' && (
+          <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+            <Link href="/explore-careers">
+              Explore Careers <span className='hidden go-icon'>&gt;</span>
+            </Link>
+          </li>
+        )}
         {/* Dashboard-related collapses removed for a cleaner public navbar */}
-        <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
-          <Link href="/career-advice" className="">
-            Advice by AI<span className='hidden go-icon'>&gt;</span>
-          </Link>
-        </li>
+        {status === 'authenticated' && (
+          <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+            <Link href="/career-advice" className="">
+              Advice by AI<span className='hidden go-icon'>&gt;</span>
+            </Link>
+          </li>
+        )}
         <li className="px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
           <Link href="/blogs">
             Blogs <span className='hidden go-icon'>&gt;</span>
           </Link>
         </li>
-        <li className="border-b pb-8 px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
-          <Link href="/interview">
-            Mock Interview <span className='hidden go-icon'>&gt;</span>
-          </Link>
-        </li>
+        {status === 'authenticated' && (
+          <li className="border-b pb-8 px-5 py-2.5 sub-menu-list" onClick={() => setSideMenu(!sideMenu)}>
+            <Link href="/interview">
+              Mock Interview <span className='hidden go-icon'>&gt;</span>
+            </Link>
+          </li>
+        )}
         {/* <details className="collapse collapse-plus">
                     <summary className="collapse-title font-bold">Profile</summary>
                     <div className="collapse-content text-sm">
