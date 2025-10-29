@@ -141,7 +141,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <NavItem href="/dashboard/company/post-job" label="Post a Job" icon={AiOutlinePlusCircle} onClick={itemClick} />
             <NavItem href="/dashboard/company/jobs" label="My Job Posts" icon={TbPackage} onClick={itemClick} />
             <NavItem href="/dashboard/company/applications" label="Applications" icon={HiOutlineDocumentText} onClick={itemClick} />
-            <NavItem href="/dashboard/company/candidates" label="Candidates" icon={HiOutlineUsers} onClick={itemClick} />
             <NavItem href="/dashboard/company/search-talent" label="Search Talent" icon={FaSearch} onClick={itemClick} />
           </>
         )}
@@ -151,14 +150,12 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Analytics</div>
             <NavItem href="/dashboard/company/analytics" label="Job Analytics" icon={IoMdAnalytics} onClick={itemClick} />
             <NavItem href="/dashboard/company/performance" label="Performance" icon={FaChartLine} onClick={itemClick} />
-            <NavItem href="/dashboard/company/reports" label="Reports" icon={FaFileAlt} onClick={itemClick} />
           </>
         )}
         
         {isCompany && (
           <>
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Team & Communication</div>
-            <NavItem href="/dashboard/company/team" label="My Team" icon={RiTeamLine} onClick={itemClick} />
             <NavItem href="/dashboard/company/messages" label="Messages" icon={BiMessageSquareDots} onClick={itemClick} />
             <NavItem href="/dashboard/company/notifications" label="Notifications" icon={FaBell} onClick={itemClick} />
           </>
