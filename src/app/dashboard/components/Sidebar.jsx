@@ -190,7 +190,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
         {!isCompany && !isAdmin && (
           <>
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Networking</div>
-            <NavItem href="/dashboard/candidate/connections" label="My Network" icon={RiTeamLine} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/messages" label="Messages" icon={BiMessageSquareDots} onClick={itemClick} />
             <NavItem href="/dashboard/candidate/notifications" label="Notifications" icon={FaBell} onClick={itemClick} />
           </>
@@ -200,7 +199,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
           <>
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Learning</div>
             <NavItem href="/dashboard/candidate/learning" label="My Learning" icon={HiOutlineDocumentText} onClick={itemClick} />
-            <NavItem href="/dashboard/candidate/learning" label="Certificates" icon={FaFileAlt} onClick={itemClick} />
+            <NavItem href="/dashboard/candidate/certificates" label="Certificates" icon={FaFileAlt} onClick={itemClick} />
           </>
         )}
         
@@ -225,7 +224,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Job Management</div>
             <NavItem href="/dashboard/admin/jobs" label="All Jobs" icon={FaBriefcase} onClick={itemClick} />
             <NavItem href="/dashboard/admin/feature-jobs" label="Feature Jobs" icon={FaTags} onClick={itemClick} />
-            <NavItem href="/dashboard/admin/applications" label="Applications" icon={FaFileAlt} onClick={itemClick} />
             <NavItem href="/dashboard/admin/categories" label="Job Categories" icon={FaTags} onClick={itemClick} />
             <NavItem href="/dashboard/admin/blogs" label="Blog Management" icon={HiOutlineDocumentText} onClick={itemClick} />
             
