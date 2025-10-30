@@ -18,7 +18,7 @@ const Footer = () => (
           <h3 className="font-bold text-base md:text-lg mb-3 text-base-content">About Us</h3>
           <ul className="space-y-1.5 sm:space-y-2">
             <li>
-              <Link href="/" className="hover:underline transition">
+              <Link href="/about" className="hover:underline transition">
                 About CareerOstad
               </Link>
             </li>
@@ -29,7 +29,7 @@ const Footer = () => (
             </li>
             <li>
               <Link
-                href="/terms"
+                href="/accessibility"
                 className="hover:underline transition"
               >
                 Accessibility Statement
@@ -38,12 +38,12 @@ const Footer = () => (
             
             
             <li>
-              <Link href="/terms" className="hover:underline transition">
+              <Link href="/privacy" className="hover:underline transition">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/blogs" className="hover:underline transition">
+              <Link href="/feedback" className="hover:underline transition">
                 Feedback
               </Link>
             </li>
@@ -72,13 +72,13 @@ const Footer = () => (
               </Link>
             </li>
             <li>
-              <Link href="/explore-careers" className="hover:underline transition">
+              <Link href="/features" className="hover:underline transition">
                 List of Features
               </Link>
             </li>
             
             <li>
-              <Link href="/terms" className="hover:underline transition">
+              <Link href="/faq" className="hover:underline transition">
                 FAQ
               </Link>
             </li>
@@ -100,8 +100,19 @@ const Footer = () => (
             </li>
             
             <li>
-              <Link href="/terms" className="hover:underline transition">
-                FAQ
+              <Link
+                href="/dashboard/company/post-job"
+                className="hover:underline transition"
+              >
+                Post a Job
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/dashboard/company/search-talent"
+                className="hover:underline transition"
+              >
+                Search Talent
               </Link>
             </li>
           </ul>
@@ -110,7 +121,7 @@ const Footer = () => (
               Download Employer App
             </span>
             <div className="flex gap-2">
-              <a href="#" target="_blank" rel="noopener noreferrer">
+              <a href="/" target="_blank" rel="noopener noreferrer">
                 <FaGooglePlay size={32} className="hover:underline" />
               </a>
               <a href="#" target="_blank" rel="noopener noreferrer">

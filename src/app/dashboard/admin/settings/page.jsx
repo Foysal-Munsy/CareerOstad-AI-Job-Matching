@@ -456,6 +456,20 @@ function InputField({ label, value, onChange, placeholder, type = "text" }) {
 }
 
 function NumberField({ label, value, onChange, min, max }) {
+  function handleChange(e) {
+    const raw = e.target.value;
+    const num = Number(raw);
+    if (Number.isNaN(num)) {
+      // Fallback to 0 or min when input is invalid
+      onChange(typeof min === 'number' ? min : 0);
+      return;
+    }
+    let next = num;
+    if (typeof min === 'number') next = Math.max(min, next);
+    if (typeof max === 'number') next = Math.min(max, next);
+    onChange(next);
+  }
+
   return (
     <div className="form-control py-2">
       <label className="label">
@@ -464,8 +478,8 @@ function NumberField({ label, value, onChange, min, max }) {
       <input
         type="number"
         className="input input-bordered"
-        value={value || 0}
-        onChange={(e) => onChange(parseInt(e.target.value))}
+        value={typeof value === 'number' ? value : (typeof min === 'number' ? min : 0)}
+        onChange={handleChange}
         min={min}
         max={max}
       />
