@@ -128,7 +128,6 @@ export default function AdminDashboardPage() {
             <a className="btn btn-sm btn-primary" href="/dashboard/admin/users">Manage Users</a>
             <a className="btn btn-sm btn-success" href="/dashboard/admin/jobs">Review Jobs</a>
             <a className="btn btn-sm btn-warning" href="/dashboard/admin/roles">Role Settings</a>
-            <a className="btn btn-sm btn-info" href="/dashboard/admin/advice">Advice Content</a>
           </div>
         </div>
       </div>
