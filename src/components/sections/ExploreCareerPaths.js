@@ -7,7 +7,7 @@ const ExploreCareerPaths = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <h2 className="text-2xl font-bold sm:text-3xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+          <h2 className="text-3xl md:text-4xl font-bold text-base-content mb-4">
             Explore Career Paths with AI Guidance
           </h2>
           <p className="mt-3 text-sm text-neutral max-w-2xl mx-auto leading-relaxed">
@@ -135,9 +135,10 @@ const ExploreCareerPaths = () => {
               iconColor: "text-success",
             },
           ].map((industry, index) => (
-            <div
+            <Link
+              href="/explore-careers"
               key={index}
-              className="bg-base-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 cursor-pointer p-6 border border-base-300 group overflow-hidden relative"
+              className="bg-base-200 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 cursor-pointer p-6 border border-base-300 group overflow-hidden relative block"
             >
               <div className="absolute top-0 right-0 w-32 h-32 -mr-16 -mt-16 rounded-full bg-base-100 opacity-10"></div>
               <div className="flex flex-col h-full relative z-10">
@@ -200,9 +201,8 @@ const ExploreCareerPaths = () => {
                   </div>
                 </div>
 
-                {/* CTA Button */}
-                <a
-                  href="#"
+                {/* CTA Button (non-link to avoid nested anchors) */}
+                <div
                   className="inline-flex items-center justify-center text-base-content hover:text-primary-content font-medium text-xs py-2 px-3 rounded-btn border border-base-300 hover:border-primary bg-base-100 hover:bg-primary transition-all duration-300 group/btn shadow-sm"
                 >
                   Explore Jobs
@@ -220,9 +220,9 @@ const ExploreCareerPaths = () => {
                       d="M9 5l7 7-7 7"
                     />
                   </svg>
-                </a>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
