@@ -3,24 +3,22 @@ import Link from "next/link";
 import {
   FaFacebook,
   FaLinkedin,
-  FaWhatsapp,
   FaGooglePlay,
   FaApple,
   FaYoutube,
   FaInstagram,
 } from "react-icons/fa";
-import { SiGmail } from "react-icons/si";
 
 const Footer = () => (
   <footer className="bg-base-100 text-base-content pt-10 pb-6 mt-10">
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
         {/* About Us */}
-        <div>
-          <h3 className="font-bold text-lg mb-3 text-base-content">About Us</h3>
-          <ul className="space-y-2">
+        <div className="text-center sm:text-left">
+          <h3 className="font-bold text-base md:text-lg mb-3 text-base-content">About Us</h3>
+          <ul className="space-y-1.5 sm:space-y-2">
             <li>
-              <Link href="/about" className="hover:underline transition">
+              <Link href="/" className="hover:underline transition">
                 About CareerOstad
               </Link>
             </li>
@@ -31,133 +29,78 @@ const Footer = () => (
             </li>
             <li>
               <Link
-                href="/accessibility"
+                href="/terms"
                 className="hover:underline transition"
               >
                 Accessibility Statement
               </Link>
             </li>
+            
+            
             <li>
-              <Link
-                href="/partners/international"
-                className="hover:underline transition"
-              >
-                International Partners
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/partners/other"
-                className="hover:underline transition"
-              >
-                Other Partners
-              </Link>
-            </li>
-            <li>
-              <Link href="/privacy" className="hover:underline transition">
+              <Link href="/terms" className="hover:underline transition">
                 Privacy Policy
               </Link>
             </li>
             <li>
-              <Link href="/feedback" className="hover:underline transition">
+              <Link href="/blogs" className="hover:underline transition">
                 Feedback
               </Link>
             </li>
-            <li>
-              <Link href="/contact" className="hover:underline transition">
-                Contact Us
-              </Link>
-            </li>
+            
           </ul>
         </div>
         {/* Job Seekers */}
-        <div>
-          <h3 className="font-bold text-lg mb-3 text-base-content">
+        <div className="text-center sm:text-left">
+          <h3 className="font-bold text-base md:text-lg mb-3 text-base-content">
             Job Seekers
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5 sm:space-y-2">
             <li>
-              <Link href="/register" className="hover:underline transition">
+              <Link href="/signup" className="hover:underline transition">
                 Create Account
               </Link>
             </li>
             <li>
-              <Link href="/pro" className="hover:underline transition">
+              <Link href="/getverified" className="hover:underline transition">
                 CareerOstad Pro
               </Link>
             </li>
             <li>
-              <Link href="/video-cv" className="hover:underline transition">
-                Video CV
-              </Link>
-            </li>
-            <li>
-              <Link href="/panel" className="hover:underline transition">
+              <Link href="/dashboard" className="hover:underline transition">
                 My Panel
               </Link>
             </li>
             <li>
-              <Link href="/features" className="hover:underline transition">
+              <Link href="/explore-careers" className="hover:underline transition">
                 List of Features
               </Link>
             </li>
+            
             <li>
-              <Link href="/counseling" className="hover:underline transition">
-                Career Counseling
-              </Link>
-            </li>
-            <li>
-              <Link href="/guides" className="hover:underline transition">
-                Video Guides
-              </Link>
-            </li>
-            <li>
-              <Link href="/faq" className="hover:underline transition">
+              <Link href="/terms" className="hover:underline transition">
                 FAQ
               </Link>
             </li>
           </ul>
         </div>
         {/* Recruiter */}
-        <div>
-          <h3 className="font-bold text-lg mb-3 text-base-content">
+        <div className="text-center sm:text-left">
+          <h3 className="font-bold text-base md:text-lg mb-3 text-base-content">
             Recruiter
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5 sm:space-y-2">
             <li>
               <Link
-                href="/employer/register"
+                href="/signup"
                 className="hover:underline transition"
               >
                 Create Account
               </Link>
             </li>
+            
             <li>
-              <Link
-                href="/employer/products"
-                className="hover:underline transition"
-              >
-                Products/Service
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/employer/disability"
-                className="hover:underline transition"
-              >
-                Disability Inclusion Practice
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/employer/post-job"
-                className="hover:underline transition"
-              >
-                Post a Job
-              </Link>
-            </li>
-            <li>
-              <Link href="/employer/faq" className="hover:underline transition">
+              <Link href="/terms" className="hover:underline transition">
                 FAQ
               </Link>
             </li>
@@ -177,11 +120,11 @@ const Footer = () => (
           </div>
         </div>
         {/* Tools & Social Media */}
-        <div>
-          <h3 className="font-bold text-lg mb-3 text-base-content">
+        <div className="text-center sm:text-left">
+          <h3 className="font-bold text-base md:text-lg mb-3 text-base-content">
             Tools & Social Media
           </h3>
-          <ul className="space-y-2">
+          <ul className="space-y-1.5 sm:space-y-2">
             <li>
               <a href="#" className="hover:underline transition">
                 CareerOstad Android App
@@ -192,46 +135,7 @@ const Footer = () => (
                 CareerOstad iOS App
               </a>
             </li>
-            <li>
-              <a
-                href="#"
-                className="hover:underline transition flex items-center gap-2"
-              >
-                <FaFacebook /> Facebook
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:underline transition flex items-center gap-2"
-              >
-                <FaGooglePlay /> Google
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:underline transition flex items-center gap-2"
-              >
-                <FaYoutube /> Youtube
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:underline transition flex items-center gap-2"
-              >
-                <FaLinkedin /> LinkedIn
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="hover:underline transition flex items-center gap-2"
-              >
-                <FaInstagram /> Instagram
-              </a>
-            </li>
+           
           </ul>
           <div className="mt-4">
             <span className="block mb-2 text-sm text-neutral">

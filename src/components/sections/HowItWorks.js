@@ -1,7 +1,21 @@
+"use client";
 import React from "react";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { User, FileText, Search, Users, CheckCircle, Zap } from "lucide-react";
 
 const HowItWorks = () => {
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
+
+  const candidateHref = isAuthenticated
+    ? "/dashboard/candidate"
+    : "/login?callbackUrl=/dashboard/candidate";
+
+  const employerHref = isAuthenticated
+    ? "/dashboard/company"
+    : "/login?callbackUrl=/dashboard/company";
+
   return (
     <section className="py-20 bg-base-100">
       <div className="max-w-7xl mx-auto px-6 text-center">
@@ -48,9 +62,9 @@ const HowItWorks = () => {
                 </p>
               </div>
             </div>
-            <button className="mt-8 px-6 py-3 bg-primary text-primary-content rounded-full font-semibold hover:bg-primary/90 transition">
+            <Link href={candidateHref} className="inline-block mt-8 px-6 py-3 bg-primary text-primary-content rounded-full font-semibold hover:bg-primary/90 transition">
               Get Started
-            </button>
+            </Link>
           </div>
 
           {/* Employer Flow */}
@@ -84,9 +98,9 @@ const HowItWorks = () => {
                 </p>
               </div>
             </div>
-            <button className="mt-8 px-6 py-3 bg-secondary text-secondary-content rounded-full font-semibold hover:bg-secondary/90 transition">
+            <Link href={employerHref} className="inline-block mt-8 px-6 py-3 bg-secondary text-secondary-content rounded-full font-semibold hover:bg-secondary/90 transition">
               Get Started
-            </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 const Banner = () => {
   return (
@@ -18,12 +19,12 @@ const Banner = () => {
 
           {/* Buttons */}
           <div className="mt-6 flex space-x-4">
-            <button className="px-6 py-3 bg-primary text-primary-content font-medium rounded-btn shadow hover:bg-primary/90 transition">
+            <Link href="/jobs" className="px-6 py-3 bg-primary text-primary-content font-medium rounded-btn shadow hover:bg-primary/90 transition">
               Find Jobs
-            </button>
-            <button className="px-6 py-3 bg-base-300 border border-base-300 text-base-content font-medium rounded-btn shadow hover:bg-base-200 transition">
-              Post a Job
-            </button>
+            </Link>
+            <Link href="/explore-careers" className="px-6 py-3 bg-base-300 border border-base-300 text-base-content font-medium rounded-btn shadow hover:bg-base-200 transition">
+              Explore Careers
+            </Link>
           </div>
 
           {/* Stats */}

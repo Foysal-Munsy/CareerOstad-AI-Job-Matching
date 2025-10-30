@@ -134,7 +134,7 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
         <div className="text-xs uppercase px-4 mb-1 text-base-content/60">Overview</div>
         <NavItem href="/dashboard" label="Dashboard" icon={MdSpaceDashboard} onClick={itemClick} />
         <NavItem href="/dashboard/verification" label="Get Verified" icon={FaCheckCircle} onClick={itemClick} />
-        <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Jobs</div>
+       
         {isCompany && (
           <>
             <NavItem href="/dashboard/company" label="Company Home" icon={TbPackage} onClick={itemClick} />
@@ -212,8 +212,6 @@ export default function Sidebar({ variant = "desktop", onNavigate }) {
         )}
         {isAdmin && (
           <>
-            <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">Dashboard</div>
-            <NavItem href="/dashboard/admin" label="Overview" icon={FaTachometerAlt} onClick={itemClick} />
             
             <div className="text-xs uppercase px-4 mt-4 mb-1 text-base-content/60">User Management</div>
             <NavItem href="/dashboard/admin/users" label="All Users" icon={FaUsers} onClick={itemClick} />

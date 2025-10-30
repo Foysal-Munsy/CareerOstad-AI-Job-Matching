@@ -231,7 +231,7 @@ export default function JobsPage() {
       <div className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white">
         <div className="container mx-auto px-4 py-6">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-xl md:text-2xl font-bold mb-2 text-white">
+            <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">
               Find Your Dream Job
             </h1>
             <p className="text-sm md:text-base mb-4 text-blue-100 max-w-2xl mx-auto leading-relaxed">
