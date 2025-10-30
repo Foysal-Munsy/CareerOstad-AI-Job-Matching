@@ -20,7 +20,7 @@ export const middleware = async (req) => {
 export const config = {
     matcher: [
         '/advice',
-        '/dashboard',
+        '/dashboard/:path*',
         '/jobs/:path*/apply',
     ],
 }
